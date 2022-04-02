@@ -1,0 +1,8 @@
+
+#Binaries
+/test
+/build
+
+#personal files
+.bash_local
+/anotations.txt
