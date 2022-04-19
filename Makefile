@@ -37,13 +37,13 @@ clean:
 $(TST_DIR):
 	mkdir -p $(TST_DIR)
 
-alltests: stateMachine_bt
+alltests: stateMachine_bt smc_instances_bt
 
 bin_tests: $(TST_DIR) alltests exec_bin_tests
 
 exec_bin_tests:
 	echo -e  "\033[0;36m"
-	cd $(TST_DIR); for i in *.bin; do  $(SAFE) ./$$i;  done
+	cd $(TST_DIR); for i in *.bin; do  echo $$i; $(SAFE) ./$$i;  done
 	echo -e "\033[0m"
 
 #Binary tests
