@@ -18,10 +18,8 @@ struct testType {
 
 typedef struct testType testType;
 
-void en(time_t dt, void *data) {}
-void ex(time_t dt, void *data) {}
-void up(time_t dt, void *data) {}
-void ss() {}
+void intWipper(void *dt) { free(dt); }
+void subStructWipper(void *dt) { free(dt); }
 
 short int simpleSort(int *a, int *b) { return *a - *b; }
 boolean testInt(int *nodeData, int *data) { return *nodeData == *data; }
@@ -75,6 +73,8 @@ START_TEST(test_ListNode_create) {
 
   void *dt = malloc(sizeof(int));
 
+  //Does this ausence of checking has
+  //potential to disaster?
   int n;
   void *nxt = &n;
 
@@ -85,7 +85,7 @@ START_TEST(test_ListNode_create) {
   ck_assert_ptr_eq(nd->dt, dt);
   ck_assert_ptr_eq(nd->next, nxt);
 
-  ListNode_freeWipe(nd);
+  ListNode_free(nd, &intWipper);
 }
 END_TEST
 
@@ -111,7 +111,7 @@ START_TEST(test_ListNode_create_typecast) {
   ck_assert_int_eq(tst->dt->b, 2);
 
   ListNode_freeSafe(nd);
-  ListNode_freeWipe((ListNode *)tst);
+  ListNode_free((ListNode *)tst, subStructWipper);
 }
 END_TEST
 
@@ -185,7 +185,8 @@ START_TEST(test_List_free) {
   ListNode *nd1, *nd2, *nd3, *nd4;
   List *list = NULL;
 
-  void *dt1 = malloc(sizeof(int)), *dt2 = malloc(sizeof(int)), *dt3 = malloc(sizeof(int)), *dt4 = malloc(sizeof(int));
+  void *dt1 = malloc(sizeof(int)), *dt2 = malloc(sizeof(int)),
+       *dt3 = malloc(sizeof(int)), *dt4 = malloc(sizeof(int));
 
   nd1 = ListNode_create(dt1, NULL);
   nd2 = ListNode_create(dt2, NULL);
@@ -197,7 +198,7 @@ START_TEST(test_List_free) {
   list = List_add(list, nd3);
   list = List_add(list, nd4);
 
-  List_freeWipe(list);
+  List_free(list,intWipper);
 }
 END_TEST
 
@@ -356,25 +357,26 @@ Suite *smc_state_list_suite(void) {
   s = suite_create("State Machine State List");
   tc_sm = tcase_create("Smoke");
 
-  //Pre
+  // Pre
   tcase_add_test(tc_sm, test_testInt);
   tcase_add_test(tc_sm, test_testEven);
   tcase_add_test(tc_sm, test_simpleSort);
 
-  //Node
+  // Node
   tcase_add_test(tc_sm, test_ListNode_create);
   tcase_add_test(tc_sm, test_ListNode_create_typecast);
   tcase_add_test(tc_sm, test_ListNode_swapData);
   tcase_add_test(tc_sm, test_ListNode_attatch);
 
-
-  //List
+  // List
   tcase_add_test(tc_sm, test_List_Add);
   tcase_add_test(tc_sm, test_List_free);
   tcase_add_test(tc_sm, test_List_sortedAdd_SwapFalse);
   tcase_add_test(tc_sm, test_List_sortedAdd_SwapTrue);
   tcase_add_test(tc_sm, test_List_search);
   tcase_add_test(tc_sm, test_List_searchNth);
+  /*
+   */
 
   suite_add_tcase(s, tc_sm);
 

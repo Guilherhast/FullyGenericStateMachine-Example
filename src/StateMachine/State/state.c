@@ -3,7 +3,8 @@
 #include <stdlib.h>
 
 // State functions
-void State_free(State *stt) {
+void State_free(void *vStt) {
+  State *stt = (State *)vStt;
   free(stt->name);
   free(stt);
 }
@@ -48,7 +49,7 @@ void State_update(State *stt, time_t dt, void *data) {
     stt->update(dt, data);
   }
 }
-void State_exit(State *stt,  time_t dt, void *data) {
+void State_exit(State *stt, time_t dt, void *data) {
   if (stt->exit) {
     stt->exit(dt, data);
   }

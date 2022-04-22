@@ -6,15 +6,19 @@
 // State Node functions
 ListNode *ListNode_create(void *dt, ListNode *next) {
   ListNode *node = malloc(sizeof(ListNode));
+  if (!node) {
+    fprintf(stderr, "Error: ListNode: Could not alloc space");
+    return NULL;
+  }
 
   node->dt = dt;
   node->next = next;
 
   return node;
 }
-void ListNode_free(ListNode *node, boolean wipeData) {
+void ListNode_free(ListNode *node, wipeDataFunc wipeData) {
   if (wipeData) {
-    free(node->dt);
+    wipeData(node->dt);
   }
   free(node);
 }
@@ -41,7 +45,7 @@ ListNode *ListNode_attatch(ListNode *cur, ListNode *new) {
 }
 
 // List functions
-void List_free(List *list, boolean wipeData) {
+void List_free(List *list, wipeDataFunc wipeData) {
   List *next;
   while (list != NULL) {
     next = list->next;

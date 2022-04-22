@@ -41,6 +41,8 @@ START_TEST(test_State_create) {
   ck_assert_ptr_eq(stt->update, &up);
   ck_assert_ptr_eq(stt->exit, &ex);
   ck_assert_ptr_eq(stt->sendSignal, &ss);
+
+  State_free(stt);
 }
 END_TEST
 START_TEST(test_State_enter) {
@@ -59,6 +61,8 @@ START_TEST(test_State_enter) {
 
   ck_assert_int_eq(d, 0);
   ck_assert_str_eq(test,STR_ENTER);
+
+  State_free(stt);
 }
 END_TEST
 START_TEST(test_State_update) {
@@ -77,6 +81,8 @@ START_TEST(test_State_update) {
 
   ck_assert_int_eq(d, 0);
   ck_assert_str_eq(test,STR_UPDATED);
+
+  State_free(stt);
 }
 END_TEST
 
@@ -90,6 +96,8 @@ START_TEST(test_State_exit) {
   State_exit(stt, 0, test);
 
   ck_assert_str_eq(test,STR_EXIT);
+
+  State_free(stt);
 }
 END_TEST
 START_TEST(test_State_sendSignal) {
@@ -106,12 +114,10 @@ START_TEST(test_State_sendSignal) {
   int d = difftime(now, stt->lastSignalSent);
 
   ck_assert_int_eq(d, 0);
+
+  State_free(stt);
 }
 END_TEST
-// TODO
-// After State_sendSignal
-// Should be 0
-// It is done sir!
 
 Suite *smc_state_suite(void) {
   Suite *s;

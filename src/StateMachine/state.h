@@ -4,8 +4,8 @@
 #include <string.h>
 #include <time.h>
 
-#include "../consts.h"
 #include "../Lists/list.h"
+#include "../consts.h"
 
 #include "stateCondition.h"
 
@@ -14,7 +14,7 @@ typedef void (*stateChangeFunc)(time_t dt, void *data);
 typedef void (*stateUpdateFunc)(time_t dt, void *data);
 typedef void (*stateSignalFunc)();
 
-//Some typedefs
+// Some typedefs
 typedef struct State State;
 typedef struct StateNode StateNode;
 typedef struct StateNode StateList;
@@ -41,11 +41,10 @@ struct StateNode {
   struct StateNode *next;
 };
 
-
 /*
  * STATE FUNCTIONS
  */
-void State_free(State *stt);
+void State_free(void *stt);
 
 State *State_create(char *name, StateCondition *stateConditionList,
                     stateChangeFunc enter, stateUpdateFunc update,
@@ -65,32 +64,34 @@ void StateList_sendSignalByName(StateList *list, char *name);
  * not allow me to check types.
  * So I am using functions
  */
-void StateNode_free(StateNode *sttNode, boolean wipeData);
-#define StateNode_freeSafe(s) StateNode_free(s,false)
-#define StateNode_freeWipe(s) StateNode_free(s,true)
+void StateNode_free(StateNode *sttNode, wipeDataFunc wipeData);
+#define StateNode_freeSafe(s) StateNode_free(s, NULL)
+#define StateNode_freeWipe(s) StateNode_free(s, State_free)
 
-StateNode *StateNode_create(State *stt,StateNode *next);
-#define StateNode_createFull(nm,cl,en,up,ex,ss,nxt) StateNode_create( State_create(nm, cl, en, up, ex, ss),nxt)
+StateNode *StateNode_create(State *stt, StateNode *next);
+#define StateNode_createFull(nm, cl, en, up, ex, ss, nxt)                      \
+  StateNode_create(State_create(nm, cl, en, up, ex, ss), nxt)
 
 StateNode *StateNode_attatch(StateNode *curStt, StateNode *newStt);
 
 /*
  * STATELIST FUNCTIONS
  */
-void StateList_free(StateList *sttNode,boolean wipeData);
-#define StateList_freeSafe(s)  StateList_free(  s,false)
-#define StateList_freeWipe(s)  StateList_free(  s,true)
+void StateList_free(StateList *sttNode, wipeDataFunc wipeData);
+#define StateList_freeSafe(s) StateList_free(s, NULL)
+#define StateList_freeWipe(s) StateList_free(s, State_free)
 
-StateList *StateList_sortedAdd(StateList *sttList,StateNode *sttNode ,sortFunc sfn ,boolean swapData);
-#define StateList_add(s,n)  StateList_sortedAdd( s, n, NULL, false)
+StateList *StateList_sortedAdd(StateList *sttList, StateNode *sttNode,
+                               sortFunc sfn, boolean swapData);
+#define StateList_add(s, n) StateList_sortedAdd(s, n, NULL, false)
 
-StateNode *StateList_search(StateList *sttList,testFunc tst, void *data);
-//StateNode *StateList_searchNth(StateList *sttList,testFunc tst,void *data,USint n);
+StateNode *StateList_search(StateList *sttList, testFunc tst, void *data);
+// StateNode *StateList_searchNth(StateList *sttList,testFunc tst,void
+// *data,USint n);
 
 /*
  * IMPLEMENTATION FUNCTIONS
  */
 StateNode *StateList_searchByName(StateList *list, char *name);
-
 
 #endif

@@ -5,7 +5,7 @@
 /*
  * Adapted StateNode functions
  */
-void StateNode_free(StateNode *sttNode, boolean wipeData) {
+void StateNode_free(StateNode *sttNode, wipeDataFunc wipeData) {
   ListNode_free((ListNode *)sttNode, wipeData);
 }
 
@@ -21,7 +21,7 @@ StateNode *StateNode_attatch(StateNode *curStt, StateNode *newStt) {
  * Adapted StateList functions
  */
 
-void StateList_free(StateList *StateNode, boolean wipeData) {
+void StateList_free(StateList *StateNode, wipeDataFunc wipeData) {
   List_free((List *)StateNode, wipeData);
 }
 
