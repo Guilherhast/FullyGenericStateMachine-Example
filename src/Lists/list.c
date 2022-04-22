@@ -23,6 +23,7 @@ void ListNode_swapData(ListNode *a, ListNode *b) {
   a->dt = b->dt;
   b->dt = tmp;
 }
+
 ListNode *ListNode_attatch(ListNode *cur, ListNode *new) {
   // Is it the best way.
   // You could throw an error
@@ -96,6 +97,7 @@ ListNode *List_search(List *list, testFunc test, void *data) {
   // If cur is NULL or the loop does not find
   return cur;
 }
+// After a long time I realized that the above function is a macro for this
 ListNode *List_searchNth(List *list, testFunc test, void *data,
                          unsigned short int n) {
   ListNode *result = list;

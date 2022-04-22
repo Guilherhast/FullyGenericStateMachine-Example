@@ -2,87 +2,143 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../consts.h"
+#include "../../consts.h"
 #include "../state.h"
 
-void en(unsigned long int dt, void* data) {}
-void ex(unsigned long int dt, void* data) {}
-void up(unsigned long int dt, void* data) {}
+#define STR_ENTER "ENTERED"
+#define STR_EXIT "EXITED"
+#define STR_UPDATED "UPDATED"
+#define STR_EMPTY ""
 
-START_TEST(test_state_create) {
+void en(time_t dt, void *data) {
+  char *s = (char *)data;
+  strcpy(s,STR_ENTER);
+}
+void ex(time_t dt, void *data) {
+  char *s = (char *)data;
+  strcpy(s,STR_EXIT);
+}
+void up(time_t dt, void *data) {
+  char *s = (char *)data;
+  strcpy(s,STR_UPDATED);
+}
+void ss() { }
+
+START_TEST(test_State_create) {
   State *stt;
 
-  stt = State_create("Frist", NULL, &en, &up, &ex, NULL);
+  char *name = "StateName";
 
-  ck_assert_str_eq(stt->name, "Frist");
+  stt = State_create(name, NULL, &en, &up, &ex, &ss);
+
+  ck_assert_str_eq(stt->name, name);
+
+  ck_assert_int_eq(stt->lastSignalSent, 0);
+  ck_assert_int_eq(stt->lastTimeEntered, 0);
+  ck_assert_int_eq(stt->lastUpdated, 0);
 
   ck_assert_ptr_eq(stt->enter, &en);
   ck_assert_ptr_eq(stt->update, &up);
   ck_assert_ptr_eq(stt->exit, &ex);
+  ck_assert_ptr_eq(stt->sendSignal, &ss);
+}
+END_TEST
+START_TEST(test_State_enter) {
+  State *stt;
+  char *name = "StateName";
+  char test[8] = STR_EMPTY;
+
+  stt = State_create(name, NULL, &en, &up, &ex, &ss);
+
+  State_enter(stt, 0, test);
+
+  time_t now;
+  time(&now);
+
+  int d = difftime(now, stt->lastTimeEntered);
+
+  ck_assert_int_eq(d, 0);
+  ck_assert_str_eq(test,STR_ENTER);
+}
+END_TEST
+START_TEST(test_State_update) {
+  State *stt;
+  char *name = "StateName";
+  char test[8] = STR_EMPTY;
+
+  stt = State_create(name, NULL, &en, &up, &ex, &ss);
+
+  State_update(stt, 0, test);
+
+  time_t now;
+  time(&now);
+
+  int d = difftime(now, stt->lastUpdated);
+
+  ck_assert_int_eq(d, 0);
+  ck_assert_str_eq(test,STR_UPDATED);
 }
 END_TEST
 
-START_TEST(test_State_attatch) {
-  State *stt1, *stt2, *ptr;
+START_TEST(test_State_exit) {
+  State *stt;
+  char *name = "StateName";
+  char test[8] = STR_EMPTY;
 
-  stt1 = State_create("Frist", NULL, &en, &up, &ex, NULL);
-  stt2 = State_create("Second", NULL, &en, &up, &ex, NULL);
+  stt = State_create(name, NULL, &en, &up, &ex, &ss);
 
-  ptr = State_attatch(stt1, stt2);
+  State_exit(stt, 0, test);
 
-  ck_assert_ptr_eq(ptr, stt1);
-  ck_assert_ptr_eq(stt1->next, stt2);
+  ck_assert_str_eq(test,STR_EXIT);
 }
 END_TEST
+START_TEST(test_State_sendSignal) {
+  State *stt;
+  char *name = "StateName";
 
-START_TEST(test_State_listAdd) {
-  State *stt1, *stt2, *stt3, *stt4, *list;
+  stt = State_create(name, NULL, &en, &up, &ex, &ss);
 
-  list = NULL;
+  State_sendSignal(stt);
 
-  stt1 = State_create("Frist", NULL, &en, &up, &ex, NULL);
-  stt2 = State_create("Second", NULL, &en, &up, &ex, NULL);
-  stt3 = State_create("Third", NULL, &en, &up, &ex, NULL);
-  stt4 = State_create("Forth", NULL, &en, &up, &ex, NULL);
+  time_t now;
+  time(&now);
 
-  list = State_listAdd(list, stt1);
-  list = State_listAdd(list, stt2);
-  list = State_listAdd(list, stt3);
-  list = State_listAdd(list, stt4);
+  int d = difftime(now, stt->lastSignalSent);
 
-  ck_assert_ptr_eq(stt3->next, stt4);
-  ck_assert_ptr_eq(list, stt1);
-  ck_assert_ptr_eq(stt1->next, stt2);
-  ck_assert_ptr_eq(stt2->next, stt3);
-
-  /*
-  */
-
+  ck_assert_int_eq(d, 0);
 }
 END_TEST
+// TODO
+// After State_sendSignal
+// Should be 0
+// It is done sir!
 
-Suite *stateCondition_suite(void) {
+Suite *smc_state_suite(void) {
   Suite *s;
   TCase *tc_sm;
 
   s = suite_create("State Machine State");
   tc_sm = tcase_create("Smoke");
 
-  tcase_add_test(tc_sm, test_state_create);
-  tcase_add_test(tc_sm, test_State_attatch);
-  tcase_add_test(tc_sm, test_State_listAdd);
+  tcase_add_test(tc_sm, test_State_create);
+  tcase_add_test(tc_sm, test_State_enter);
+  tcase_add_test(tc_sm, test_State_update);
+  tcase_add_test(tc_sm, test_State_exit);
+  tcase_add_test(tc_sm, test_State_sendSignal);
 
   suite_add_tcase(s, tc_sm);
 
   return s;
 }
 
+#ifndef COMPLETE_TEST
+
 int main(void) {
   int no_failed = 0;
   Suite *s;
   SRunner *runner;
 
-  s = stateCondition_suite();
+  s = smc_state_suite();
   runner = srunner_create(s);
 
   srunner_run_all(runner, CK_NORMAL);
@@ -90,3 +146,4 @@ int main(void) {
   srunner_free(runner);
   return (no_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
+#endif
