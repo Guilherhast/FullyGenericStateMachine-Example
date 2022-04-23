@@ -41,9 +41,13 @@ alltests: stateMachine_bt smc_instances_bt
 
 bin_tests: $(TST_DIR) alltests exec_bin_tests
 
+count:
+	echo -n "Files count: " ; $(SAFE) find $(SRC_DIR) -type f | $(SAFE) wc -l
+	$(SAFE) find $(SRC_DIR) -type f  | $(SAFE) xargs wc -l | $(SAFE) sort -n
+
 exec_bin_tests:
 	echo -e  "\033[0;36m"
-	cd $(TST_DIR); for i in *.bin; do  echo $$i; $(SAFE) ./$$i;  done
+	$(SAFE) cd $(TST_DIR); for i in *.bin; do  echo $$i; $(SAFE) ./$$i;  done
 	echo -e "\033[0m"
 
 #Binary tests
