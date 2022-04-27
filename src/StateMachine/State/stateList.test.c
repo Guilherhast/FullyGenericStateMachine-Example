@@ -5,9 +5,9 @@
 #include "../../consts.h"
 #include "../state.h"
 
-void en(time_t dt, void *data) {}
-void ex(time_t dt, void *data) {}
-void up(time_t dt, void *data) {}
+void en( void *data) {}
+void ex( void *data) {}
+void up( void *data) {}
 void ss() {}
 
 START_TEST(test_StateNode_create) {
@@ -76,14 +76,13 @@ START_TEST(test_StateNode_attatch) {
 }
 END_TEST
 
-//No need for sorted add for now
+// No need for sorted add for now
 START_TEST(test_StateList_Add) {
   StateNode *nd1, *nd2, *nd3, *nd4;
   StateList *list = NULL;
 
   int s1, s2, s3, s4;
   void *stt1 = &s1, *stt2 = &s2, *stt3 = &s3, *stt4 = &s4;
-
 
   nd1 = StateNode_create(stt1, NULL);
   nd2 = StateNode_create(stt2, NULL);
@@ -106,7 +105,7 @@ START_TEST(test_StateList_Add) {
 }
 END_TEST
 
-//No need for search in smoke
+// No need for search in smoke
 START_TEST(test_StateList_searchByName) {
   StateNode *nd1, *nd2, *nd3, *nd4;
   StateNode *r1, *r2, *r3, *r4;
@@ -134,10 +133,10 @@ START_TEST(test_StateList_searchByName) {
   ck_assert_ptr_eq(r3->dt, nd3->dt);
   ck_assert_ptr_eq(r4->dt, nd4->dt);
 
-  ck_assert_str_eq(r1->dt->name,n1);
-  ck_assert_str_eq(r2->dt->name,n2);
-  ck_assert_str_eq(r3->dt->name,n3);
-  ck_assert_str_eq(r4->dt->name,n4);
+  ck_assert_str_eq(r1->dt->name, n1);
+  ck_assert_str_eq(r2->dt->name, n2);
+  ck_assert_str_eq(r3->dt->name, n3);
+  ck_assert_str_eq(r4->dt->name, n4);
 
   StateList_freeWipe(list);
 }

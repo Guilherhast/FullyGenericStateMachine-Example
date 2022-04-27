@@ -8,7 +8,7 @@ void State_free(void *vStt) {
   free(stt->name);
   free(stt);
 }
-State *State_create(char *name, StateCondition *stateConditionList,
+State *State_create(char *name, StateConditionList *sCondList,
                     stateChangeFunc enter, stateUpdateFunc update,
                     stateChangeFunc exit, stateSignalFunc sendSignal) {
 
@@ -26,7 +26,7 @@ State *State_create(char *name, StateCondition *stateConditionList,
 
   stt->name = str;
 
-  stt->stateConditionList = stateConditionList;
+  stt->stateConditionList = sCondList;
 
   stt->enter = enter;
   stt->update = update;
@@ -35,23 +35,23 @@ State *State_create(char *name, StateCondition *stateConditionList,
 
   return stt;
 }
-void State_enter(State *stt, time_t dt, void *data) {
+void State_enter(State *stt,  void *data) {
   time(&stt->lastTimeEntered);
 
   if (stt->enter) {
-    stt->enter(dt, data);
+    stt->enter(data);
   }
 }
-void State_update(State *stt, time_t dt, void *data) {
+void State_update(State *stt,  void *data) {
   time(&stt->lastUpdated);
 
   if (stt->enter) {
-    stt->update(dt, data);
+    stt->update(data);
   }
 }
-void State_exit(State *stt, time_t dt, void *data) {
+void State_exit(State *stt,  void *data) {
   if (stt->exit) {
-    stt->exit(dt, data);
+    stt->exit(data);
   }
 }
 void State_sendSignal(State *stt) {
@@ -59,7 +59,7 @@ void State_sendSignal(State *stt) {
   if (stt->sendSignal) {
     stt->sendSignal();
   } else {
-    fprintf(stderr, "Error: State has no signal. State: %s.\n", stt->name);
+    fprintf(stderr, "Error: The state '%s' has no signal.\n", stt->name);
   }
   time(&stt->lastSignalSent);
 }

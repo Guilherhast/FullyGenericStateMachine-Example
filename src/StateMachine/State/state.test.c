@@ -10,15 +10,15 @@
 #define STR_UPDATED "UPDATED"
 #define STR_EMPTY ""
 
-void en(time_t dt, void *data) {
+void en( void *data) {
   char *s = (char *)data;
   strcpy(s,STR_ENTER);
 }
-void ex(time_t dt, void *data) {
+void ex( void *data) {
   char *s = (char *)data;
   strcpy(s,STR_EXIT);
 }
-void up(time_t dt, void *data) {
+void up( void *data) {
   char *s = (char *)data;
   strcpy(s,STR_UPDATED);
 }
@@ -52,7 +52,7 @@ START_TEST(test_State_enter) {
 
   stt = State_create(name, NULL, &en, &up, &ex, &ss);
 
-  State_enter(stt, 0, test);
+  State_enter(stt, test);
 
   time_t now;
   time(&now);
@@ -72,7 +72,7 @@ START_TEST(test_State_update) {
 
   stt = State_create(name, NULL, &en, &up, &ex, &ss);
 
-  State_update(stt, 0, test);
+  State_update(stt, test);
 
   time_t now;
   time(&now);
@@ -93,7 +93,7 @@ START_TEST(test_State_exit) {
 
   stt = State_create(name, NULL, &en, &up, &ex, &ss);
 
-  State_exit(stt, 0, test);
+  State_exit(stt, test);
 
   ck_assert_str_eq(test,STR_EXIT);
 

@@ -1,6 +1,12 @@
 #ifndef STATE_H
 #define STATE_H
 
+/*
+ *Considere putting it in the
+ * States folder. You will use
+ * It diff in the folder
+ */
+
 #include <string.h>
 #include <time.h>
 
@@ -10,8 +16,8 @@
 #include "stateCondition.h"
 
 // Functions executed in state change (enter, exit)
-typedef void (*stateChangeFunc)(time_t dt, void *data);
-typedef void (*stateUpdateFunc)(time_t dt, void *data);
+typedef void (*stateChangeFunc)(void *data);
+typedef void (*stateUpdateFunc)(void *data);
 typedef void (*stateSignalFunc)();
 
 // Some typedefs
@@ -23,7 +29,7 @@ typedef struct StateNode StateList;
 struct State {
   char *name;
 
-  StateCondition *stateConditionList;
+  StateConditionList *stateConditionList;
 
   time_t lastTimeEntered;
   time_t lastUpdated;
@@ -46,13 +52,13 @@ struct StateNode {
  */
 void State_free(void *stt);
 
-State *State_create(char *name, StateCondition *stateConditionList,
+State *State_create(char *name, StateConditionList *sCondList,
                     stateChangeFunc enter, stateUpdateFunc update,
                     stateChangeFunc exit, stateSignalFunc sendSignal);
 
-void State_enter(State *stt, time_t dt, void *data);
-void State_exit(State *stt, time_t dt, void *data);
-void State_update(State *stt, time_t dt, void *data);
+void State_enter(State *stt, void *data);
+void State_exit(State *stt, void *data);
+void State_update(State *stt, void *data);
 void State_sendSignal(State *stt);
 
 void StateList_sendSignalByName(StateList *list, char *name);
@@ -86,12 +92,13 @@ StateList *StateList_sortedAdd(StateList *sttList, StateNode *sttNode,
 #define StateList_add(s, n) StateList_sortedAdd(s, n, NULL, false)
 
 StateNode *StateList_search(StateList *sttList, testFunc tst, void *data);
+#define StateList_searchByName(l, n) StateList_search(l, &nameEqual, n)
 // StateNode *StateList_searchNth(StateList *sttList,testFunc tst,void
 // *data,USint n);
 
 /*
  * IMPLEMENTATION FUNCTIONS
  */
-StateNode *StateList_searchByName(StateList *list, char *name);
-
+boolean nameEqual(void *vStt, void *vName);
+// StateNode *StateList_searchByName(StateList *list, char *name);
 #endif

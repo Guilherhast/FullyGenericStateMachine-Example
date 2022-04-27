@@ -52,9 +52,11 @@ boolean nameEqual(void *vStt, void *vName) {
 }
 
 //StateNode functions
-StateNode *StateList_searchByName(StateList *list, char *name) {
+/*
+StateNode *StateList_searchByName(StateList *list, char *name) {//Could be a macro
   return StateList_search(list, &nameEqual, name);
 }
+*/
 
 void StateList_sendSignalByName(StateList *list, char *name) {
   StateNode *stt;
