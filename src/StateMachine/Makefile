@@ -58,24 +58,37 @@ BIN_TEST_LSTT=$(OBJ_TEST_LSTT:.o=.bin)
 #State Machine files
 HDRS_SMC=stateMachine.h
 DIR_PART_SMC=Body
-SRC_PART_SMC=$(DIR_PART_SMC)/stateMachine.part.c
-SRC_TEST_SMC=$(SRC_PART_SMC:.part.c=.test.c)
+
+SRC_PART_SMC=$(DIR_PART_SMC)/stateMachine.c
+SRC_TEST_SMC=$(SRC_PART_SMC:.c=.test.c)
 OBJ_PART_SMC=$(TMPDIR)/$(notdir $(SRC_PART_SMC:.c=.o))
 OBJ_TEST_SMC=$(TMPDIR)/$(notdir $(SRC_TEST_SMC:.c=.o))
+
 BIN_TEST_SMC=$(OBJ_TEST_SMC:.o=.bin)
+
+SRC_PART_LSMC=$(DIR_PART_SMC)/stateMachineList.c
+SRC_TEST_LSMC=$(SRC_PART_LSMC:.c=.test.c)
+OBJ_PART_LSMC=$(TMPDIR)/$(notdir $(SRC_PART_LSMC:.c=.o))
+OBJ_TEST_LSMC=$(TMPDIR)/$(notdir $(SRC_TEST_LSMC:.c=.o))
+
+BIN_TEST_LSMC=$(OBJ_TEST_LSMC:.o=.bin)
 
 #Genral rules
 defualt: dirs test
 
 test: test_objs test_lists
 
-#test_objs: test_state_obj test_stateCondition_obj test_stateMachine_obj
-test_objs:  test_stateCondition_obj
+test_objs: test_state_obj test_stateCondition_obj test_stateMachine_obj
+#test_objs:  test_stateMachine_obj
 
-#test_lists: test_state_list test_stateCondition_list
-test_lists: test_stateCondition_list
+test_lists: test_state_list test_stateCondition_list test_stateMachine_list
+#test_lists: test_stateMachine_list
 
-bin_tests: $(BIN_TEST_SCOND) $(BIN_TEST_SMC) $(BIN_TEST_STT)
+list_bin_test: $(BIN_TEST_LSMC) $(BIN_TEST_LSCOND) $(BIN_TEST_LSTT)
+
+obj_bin_test: $(BIN_TEST_SMC) $(BIN_TEST_SCOND) $(BIN_TEST_STT)
+
+bin_tests:  obj_bin_test list_bin_test
 
 clean:
 	$(SAFE) make -C $(ROOTDIR) clean
@@ -154,19 +167,37 @@ $(OBJ_PART_LSTT): $(SRC_PART_LSTT) $(SRC_PART_STT) $(HDRS_LSTT)  dirs
 
 
 
-#State rules
+#State Machine rules
 test_stateMachine_obj: $(BIN_TEST_SMC)
 	echo -e  "\033[0;35m"
 	echo $(BIN_TEST_SMC)
 	$(SAFE) $(BIN_TEST_SMC)
 	echo -e "\033[0m"
 
-$(BIN_TEST_SMC): $(OBJ_PART_SMC)  $(OBJ_TEST_SMC)
-	$(SAFE) $(CC) $(OBJ_PART_SMC) $(OBJ_TEST_SMC) $(TST_LIBS) $(COV_LIBS) -o $@
+$(BIN_TEST_SMC): $(OBJ_PART_SMC)  $(OBJ_TEST_SMC) $(OBJ_PART_STT) $(OBJ_PART_LSTT) $(OBJ_PART_LSCOND) $(OBJ_PART_SCOND) $(DEP_LST)
+	$(SAFE) $(CC) $^ $(TST_LIBS) $(COV_LIBS) -o $@
 
 $(OBJ_TEST_SMC): $(SRC_TEST_SMC) $(HDRS_SMC) dirs
 	$(SAFE) gcc $(CFLAGS) $(PROFILE_FLAGS) $(SRC_TEST_SMC) -o $@
 
 $(OBJ_PART_SMC): $(SRC_PART_SMC) $(HDRS_SMC) dirs
 	$(SAFE) gcc $(CFLAGS) $(PROFILE_FLAGS) $(SRC_PART_SMC) -o  $@
+
+
+test_stateMachine_list: $(BIN_TEST_LSMC)
+	echo -e  "\033[0;35m"
+	echo $(BIN_TEST_LSMC)
+	$(SAFE) $(BIN_TEST_LSMC)
+	echo -e "\033[0m"
+
+#It is becomming too long
+#Find a way to reduce it
+$(BIN_TEST_LSMC): $(OBJ_PART_LSMC)  $(OBJ_TEST_LSMC) $(OBJ_PART_SMC) $(OBJ_PART_LSCOND) $(OBJ_PART_SCOND) $(OBJ_PART_STT) $(OBJ_PART_LSTT) $(DEP_LST)
+	$(SAFE) $(CC) $^ $(TST_LIBS) $(COV_LIBS) -o $@
+
+$(OBJ_TEST_LSMC): $(SRC_TEST_LSMC) $(HDRS_LSMC) dirs
+	$(SAFE) gcc $(CFLAGS) $(PROFILE_FLAGS) $(SRC_TEST_LSMC) -o $@
+
+$(OBJ_PART_LSMC): $(SRC_PART_LSMC) $(HDRS_LSMC) dirs
+	$(SAFE) gcc $(CFLAGS) $(PROFILE_FLAGS) $(SRC_PART_LSMC) -o  $@
 
