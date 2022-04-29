@@ -21,6 +21,7 @@ GCONV_FLAGS = -r . --html --html-details
 
 #Project parts
 DIRMAKE_SMC=$(SRC_DIR)/StateMachine
+DIRMAKE_LST=$(SRC_DIR)/Lists
 DIRMAKE_ISN=$(SRC_DIR)/Instances_STM
 DIRMAKE_NET=$(SRC_DIR)/Network
 
@@ -29,30 +30,53 @@ DIRALLMAKES=$(DIRMAKE_SMC)
 
 #$(TESTBINARIES)=$(shel find $(TST_DIR)/ -type f -name '*.test.bin')
 
+#All test bin
+ALLTESTBIN= list \
+			stateMachine \
+			stateMachineList \
+			state \
+			stateList \
+			stateCondition \
+			stateConditionList \
+
+
+
+ALLTESTPATH=$(addsuffix .test.bin,$(addprefix $(TST_DIR)/,$(ALLTESTBIN)))
+
 default: bin_tests
 
 clean:
-	rm -rf $(BUILD_DIR) $(TST_DIR)
+	$(SAFE) rm -rf $(BUILD_DIR) $(TST_DIR)
 
 $(TST_DIR):
-	mkdir -p $(TST_DIR)
+	$(SAFE) mkdir -p $(TST_DIR)
 
-alltests: stateMachine_bt smc_instances_bt
+#alltests: stateMachine_bt smc_instances_bt
+alltests: stateMachine_bt list_bt $(ALLTESTPATH)
 
 bin_tests: $(TST_DIR) alltests exec_bin_tests
 
+count:
+	echo -n "Files count: " ; $(SAFE) find $(SRC_DIR) -type f | $(SAFE) wc -l
+	$(SAFE) find $(SRC_DIR) -type f  | $(SAFE) xargs wc -l | $(SAFE) sort -n
+
 exec_bin_tests:
 	echo -e  "\033[0;36m"
-	cd $(TST_DIR); for i in *.bin; do  echo $$i; $(SAFE) ./$$i;  done
+	$(SAFE) cd $(TST_DIR); for i in *.bin; do  echo $$i; $(SAFE) ./$$i || exit 1;   done
 	echo -e "\033[0m"
 
 #Binary tests
+echoTests:
+	echo $(ALLTESTPATH)
 
 stateMachine_bt:
-	make -C $(DIRMAKE_SMC) bin_tests
+	$(SAFE) make -C $(DIRMAKE_SMC) bin_tests
 
 smc_instances_bt:
-	make -C $(DIRMAKE_ISN) bin_tests
+	$(SAFE) make -C $(DIRMAKE_ISN) bin_tests
 
 network_bt:
-	make -C $(DIRMAKE_NET) bin_tests
+	$(SAFE) make -C $(DIRMAKE_NET) bin_tests
+
+list_bt:
+	$(SAFE) make -C $(DIRMAKE_LST) bin_tests

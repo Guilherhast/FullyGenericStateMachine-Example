@@ -4,16 +4,22 @@
 #include "list.h"
 
 // State Node functions
-ListNode *ListNode_create(void *stt, ListNode *next) {
+ListNode *ListNode_create(void *dt, ListNode *next) {
   ListNode *node = malloc(sizeof(ListNode));
+  if (!node) {
+    fprintf(stderr, "Error: ListNode: Could not alloc space");
+    return NULL;
+  }
 
-  node->dt = stt;
+  node->dt = dt;
   node->next = next;
 
   return node;
 }
-void ListNode_Free(ListNode *node) {
-  free(node->dt);
+void ListNode_free(ListNode *node, wipeDataFunc wipeData) {
+  if (wipeData) {
+    wipeData(node->dt);
+  }
   free(node);
 }
 void ListNode_swapData(ListNode *a, ListNode *b) {
@@ -21,6 +27,7 @@ void ListNode_swapData(ListNode *a, ListNode *b) {
   a->dt = b->dt;
   b->dt = tmp;
 }
+
 ListNode *ListNode_attatch(ListNode *cur, ListNode *new) {
   // Is it the best way.
   // You could throw an error
@@ -38,12 +45,12 @@ ListNode *ListNode_attatch(ListNode *cur, ListNode *new) {
 }
 
 // List functions
-void List_Free(List *sttList) {
+void List_free(List *list, wipeDataFunc wipeData) {
   List *next;
-  while (sttList != NULL) {
-    next = sttList->next;
-    ListNode_Free(sttList);
-    sttList = next;
+  while (list != NULL) {
+    next = list->next;
+    ListNode_free(list, wipeData);
+    list = next;
   }
 }
 
@@ -94,6 +101,7 @@ ListNode *List_search(List *list, testFunc test, void *data) {
   // If cur is NULL or the loop does not find
   return cur;
 }
+// After a long time I realized that the above function is a macro for this
 ListNode *List_searchNth(List *list, testFunc test, void *data,
                          unsigned short int n) {
   ListNode *result = list;

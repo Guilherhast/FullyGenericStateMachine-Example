@@ -1,37 +1,104 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include <string.h>
+/*
+ *Considere putting it in the
+ * States folder. You will use
+ * It diff in the folder
+ */
 
-#include "consts.h"
+#include <string.h>
+#include <time.h>
+
+#include "../Lists/list.h"
+#include "../consts.h"
+
 #include "stateCondition.h"
 
 // Functions executed in state change (enter, exit)
-typedef void (*stateChangeFunc)(unsigned long int, void* data);
-typedef void (*stateUpdateFunc)(unsigned long int, void* data);
+typedef void (*stateChangeFunc)(void *data);
+typedef void (*stateUpdateFunc)(void *data);
+typedef void (*stateSignalFunc)();
+
+// Some typedefs
+typedef struct State State;
+typedef struct StateNode StateNode;
+typedef struct StateNode StateList;
 
 // Represents a single state
 struct State {
   char *name;
 
-  StateCondition *stateConditionList;
+  StateConditionList *stateConditionList;
+
+  time_t lastTimeEntered;
+  time_t lastUpdated;
+  time_t lastSignalSent;
 
   stateChangeFunc enter;
   stateUpdateFunc update;
   stateChangeFunc exit;
 
-  struct State *next;
+  stateSignalFunc sendSignal;
 };
 
-typedef struct State State;
+struct StateNode {
+  struct State *dt;
+  struct StateNode *next;
+};
 
-void State_free(State *stt);
-void State_listFree(State *stt);
+/*
+ * STATE FUNCTIONS
+ */
+void State_free(void *stt);
 
-State *State_create(char *name, StateCondition *stateConditionList,
+State *State_create(char *name, StateConditionList *sCondList,
                     stateChangeFunc enter, stateUpdateFunc update,
-                    stateChangeFunc exit, State *next);
-State *State_attatch(State *current, State *newState);
+                    stateChangeFunc exit, stateSignalFunc sendSignal);
 
-State *State_listAdd(State *list, State *newState);
+void State_enter(State *stt, void *data);
+void State_exit(State *stt, void *data);
+void State_update(State *stt, void *data);
+void State_sendSignal(State *stt);
+
+void StateList_sendSignalByName(StateList *list, char *name);
+
+/*
+ * STATENODE FUNCTIONS
+ *
+ * I could do all as macros but it will
+ * not allow me to check types.
+ * So I am using functions
+ */
+void StateNode_free(StateNode *sttNode, wipeDataFunc wipeData);
+#define StateNode_freeSafe(s) StateNode_free(s, NULL)
+#define StateNode_freeWipe(s) StateNode_free(s, State_free)
+
+StateNode *StateNode_create(State *stt, StateNode *next);
+#define StateNode_createFull(nm, cl, en, up, ex, ss, nxt)                      \
+  StateNode_create(State_create(nm, cl, en, up, ex, ss), nxt)
+
+StateNode *StateNode_attatch(StateNode *curStt, StateNode *newStt);
+
+/*
+ * STATELIST FUNCTIONS
+ */
+void StateList_free(StateList *sttNode, wipeDataFunc wipeData);
+#define StateList_freeSafe(s) StateList_free(s, NULL)
+#define StateList_freeWipe(s) StateList_free(s, State_free)
+
+StateList *StateList_sortedAdd(StateList *sttList, StateNode *sttNode,
+                               sortFunc sfn, boolean swapData);
+#define StateList_add(s, n) StateList_sortedAdd(s, n, NULL, false)
+
+StateNode *StateList_search(StateList *sttList, testFunc tst, void *data);
+#define StateList_searchByName(l, n) StateList_search(l, &nameEqual, n)
+// StateNode *StateList_searchNth(StateList *sttList,testFunc tst,void
+// *data,USint n);
+
+/*
+ * IMPLEMENTATION FUNCTIONS
+ */
+boolean nameEqual(void *vStt, void *vName);
+// StateNode *StateList_searchByName(StateList *list, char *name);
 #endif

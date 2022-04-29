@@ -13,5 +13,8 @@
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
 typedef unsigned short int boolean;
+typedef	unsigned long int ULint;
+typedef	unsigned short int USint;
+
 
 #endif

@@ -16,7 +16,7 @@ TMPDIR=$(MIRRORDIR)
 #ALLDIRS=$(TMPDIR)/StateCondition $(TMPDIR)/StateMachine $(TMPDIR)/State
 
 
-#State files
+#List files
 HDRS_LST=list.h
 DIR_LST=.
 
@@ -27,7 +27,7 @@ OBJ_TEST_LST=$(TMPDIR)/$(notdir $(SRC_TEST_LST:.c=.o))
 
 BIN_TEST_LST=$(OBJ_TEST_LST:.o=.bin)
 
-#Genral rules
+#General rules
 defualt: dirs test
 
 test: test_all
