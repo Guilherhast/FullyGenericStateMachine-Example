@@ -10,7 +10,7 @@ void State_free(void *vStt) {
 }
 State *State_create(char *name, StateConditionList *sCondList,
                     stateChangeFunc enter, stateUpdateFunc update,
-                    stateChangeFunc exit, stateSignalFunc sendSignal) {
+                    stateChangeFunc exit) {
 
   State *stt = malloc(sizeof(State));
   char *str = malloc(strlen(name) + 1);
@@ -31,7 +31,6 @@ State *State_create(char *name, StateConditionList *sCondList,
   stt->enter = enter;
   stt->update = update;
   stt->exit = exit;
-  stt->sendSignal = sendSignal;
 
   return stt;
 }
@@ -39,21 +38,22 @@ void State_enter(State *stt,  void *data) {
   time(&stt->lastTimeEntered);
 
   if (stt->enter) {
-    stt->enter(data);
+    stt->enter(stt,data);
   }
 }
 void State_update(State *stt,  void *data) {
   time(&stt->lastUpdated);
 
   if (stt->enter) {
-    stt->update(data);
+    stt->update(stt,data);
   }
 }
 void State_exit(State *stt,  void *data) {
   if (stt->exit) {
-    stt->exit(data);
+    stt->exit(stt,data);
   }
 }
+/*
 void State_sendSignal(State *stt) {
   time(&stt->lastSignalSent);
   if (stt->sendSignal) {
@@ -63,3 +63,4 @@ void State_sendSignal(State *stt) {
   }
   time(&stt->lastSignalSent);
 }
+*/

@@ -58,6 +58,7 @@ StateNode *StateList_searchByName(StateList *list, char *name) {//Could be a mac
 }
 */
 
+/*
 void StateList_sendSignalByName(StateList *list, char *name) {
   StateNode *stt;
   stt = StateList_searchByName(list, name);
@@ -67,3 +68,4 @@ void StateList_sendSignalByName(StateList *list, char *name) {
     fprintf(stderr, "Error: Inesistent state: %sttList.sttNode", name);
   }
 }
+*/

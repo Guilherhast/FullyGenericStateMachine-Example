@@ -15,15 +15,14 @@
 
 #include "stateCondition.h"
 
-// Functions executed in state change (enter, exit)
-typedef void (*stateChangeFunc)(void *data);
-typedef void (*stateUpdateFunc)(void *data);
-typedef void (*stateSignalFunc)();
-
 // Some typedefs
 typedef struct State State;
 typedef struct StateNode StateNode;
 typedef struct StateNode StateList;
+
+// Functions executed in state change (enter, exit)
+typedef void (*stateChangeFunc)(State* stt, void *data);
+typedef void (*stateUpdateFunc)(State* stt, void *data);
 
 // Represents a single state
 struct State {
@@ -39,7 +38,6 @@ struct State {
   stateUpdateFunc update;
   stateChangeFunc exit;
 
-  stateSignalFunc sendSignal;
 };
 
 struct StateNode {
@@ -54,7 +52,7 @@ void State_free(void *stt);
 
 State *State_create(char *name, StateConditionList *sCondList,
                     stateChangeFunc enter, stateUpdateFunc update,
-                    stateChangeFunc exit, stateSignalFunc sendSignal);
+                    stateChangeFunc exit);
 
 void State_enter(State *stt, void *data);
 void State_exit(State *stt, void *data);
@@ -75,8 +73,8 @@ void StateNode_free(StateNode *sttNode, wipeDataFunc wipeData);
 #define StateNode_freeWipe(s) StateNode_free(s, State_free)
 
 StateNode *StateNode_create(State *stt, StateNode *next);
-#define StateNode_createFull(nm, cl, en, up, ex, ss, nxt)                      \
-  StateNode_create(State_create(nm, cl, en, up, ex, ss), nxt)
+#define StateNode_createFull(nm, cl, en, up, ex,  nxt)                      \
+  StateNode_create(State_create(nm, cl, en, up, ex), nxt)
 
 StateNode *StateNode_attatch(StateNode *curStt, StateNode *newStt);
 

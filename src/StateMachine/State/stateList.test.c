@@ -5,10 +5,9 @@
 #include "../../consts.h"
 #include "../state.h"
 
-void en( void *data) {}
-void ex( void *data) {}
-void up( void *data) {}
-void ss() {}
+void en(State *stt,  void *data) {}
+void ex(State *stt,  void *data) {}
+void up(State *stt,  void *data) {}
 
 START_TEST(test_StateNode_create) {
   StateNode *nd;
@@ -36,7 +35,7 @@ START_TEST(test_StateNode_createFull) {
   int n;
   void *nxt = &n;
 
-  nd = StateNode_createFull(name, NULL, &en, &up, &ex, &ss, nxt);
+  nd = StateNode_createFull(name, NULL, &en, &up, &ex, nxt);
   stt = nd->dt;
 
   ck_assert_ptr_nonnull(nd);
@@ -51,7 +50,6 @@ START_TEST(test_StateNode_createFull) {
   ck_assert_ptr_eq(stt->enter, &en);
   ck_assert_ptr_eq(stt->update, &up);
   ck_assert_ptr_eq(stt->exit, &ex);
-  ck_assert_ptr_eq(stt->sendSignal, &ss);
 
   StateNode_freeWipe(nd);
 }
@@ -113,10 +111,10 @@ START_TEST(test_StateList_searchByName) {
   // Name of states
   char *n1 = "First", *n2 = "Second", *n3 = "Third", *n4 = "Forth";
 
-  nd1 = StateNode_createFull(n1, NULL, &en, &up, &ex, &ss, NULL);
-  nd2 = StateNode_createFull(n2, NULL, &en, &up, &ex, &ss, NULL);
-  nd3 = StateNode_createFull(n3, NULL, &en, &up, &ex, &ss, NULL);
-  nd4 = StateNode_createFull(n4, NULL, &en, &up, &ex, &ss, NULL);
+  nd1 = StateNode_createFull(n1, NULL, &en, &up, &ex,  NULL);
+  nd2 = StateNode_createFull(n2, NULL, &en, &up, &ex,  NULL);
+  nd3 = StateNode_createFull(n3, NULL, &en, &up, &ex,  NULL);
+  nd4 = StateNode_createFull(n4, NULL, &en, &up, &ex,  NULL);
 
   list = StateList_add(list, nd1);
   list = StateList_add(list, nd2);

@@ -61,9 +61,9 @@ START_TEST(test_stateMachine_testAndTransit) {
 
   // Creating the state list
   StateNode *initial =
-      StateNode_createFull("Initial", NULL, NULL, NULL, NULL, NULL, NULL);
+      StateNode_createFull("Initial", NULL, NULL, NULL, NULL, NULL);
   StateNode *next =
-      StateNode_createFull("Next", NULL, NULL, NULL, NULL, NULL, NULL);
+      StateNode_createFull("Next", NULL, NULL, NULL, NULL, NULL);
   StateNode_attatch(initial, next);
 
   Transition *trn = Transition_createTmp(next->dt, testTrans, NULL);

@@ -10,26 +10,25 @@
 #define STR_UPDATED "UPDATED"
 #define STR_EMPTY ""
 
-void en( void *data) {
+void en(State *stt, void *data) {
   char *s = (char *)data;
   strcpy(s,STR_ENTER);
 }
-void ex( void *data) {
+void ex(State *stt, void *data) {
   char *s = (char *)data;
   strcpy(s,STR_EXIT);
 }
-void up( void *data) {
+void up(State *stt, void *data) {
   char *s = (char *)data;
   strcpy(s,STR_UPDATED);
 }
-void ss() { }
 
 START_TEST(test_State_create) {
   State *stt;
 
   char *name = "StateName";
 
-  stt = State_create(name, NULL, &en, &up, &ex, &ss);
+  stt = State_create(name, NULL, &en, &up, &ex);
 
   ck_assert_str_eq(stt->name, name);
 
@@ -40,7 +39,6 @@ START_TEST(test_State_create) {
   ck_assert_ptr_eq(stt->enter, &en);
   ck_assert_ptr_eq(stt->update, &up);
   ck_assert_ptr_eq(stt->exit, &ex);
-  ck_assert_ptr_eq(stt->sendSignal, &ss);
 
   State_free(stt);
 }
@@ -50,7 +48,7 @@ START_TEST(test_State_enter) {
   char *name = "StateName";
   char test[8] = STR_EMPTY;
 
-  stt = State_create(name, NULL, &en, &up, &ex, &ss);
+  stt = State_create(name, NULL, &en, &up, &ex);
 
   State_enter(stt, test);
 
@@ -70,7 +68,7 @@ START_TEST(test_State_update) {
   char *name = "StateName";
   char test[8] = STR_EMPTY;
 
-  stt = State_create(name, NULL, &en, &up, &ex, &ss);
+  stt = State_create(name, NULL, &en, &up, &ex);
 
   State_update(stt, test);
 
@@ -91,7 +89,7 @@ START_TEST(test_State_exit) {
   char *name = "StateName";
   char test[8] = STR_EMPTY;
 
-  stt = State_create(name, NULL, &en, &up, &ex, &ss);
+  stt = State_create(name, NULL, &en, &up, &ex);
 
   State_exit(stt, test);
 
@@ -100,11 +98,12 @@ START_TEST(test_State_exit) {
   State_free(stt);
 }
 END_TEST
+/*
 START_TEST(test_State_sendSignal) {
   State *stt;
   char *name = "StateName";
 
-  stt = State_create(name, NULL, &en, &up, &ex, &ss);
+  stt = State_create(name, NULL, &en, &up, &ex);
 
   State_sendSignal(stt);
 
@@ -118,6 +117,7 @@ START_TEST(test_State_sendSignal) {
   State_free(stt);
 }
 END_TEST
+*/
 
 Suite *smc_state_suite(void) {
   Suite *s;
@@ -130,7 +130,7 @@ Suite *smc_state_suite(void) {
   tcase_add_test(tc_sm, test_State_enter);
   tcase_add_test(tc_sm, test_State_update);
   tcase_add_test(tc_sm, test_State_exit);
-  tcase_add_test(tc_sm, test_State_sendSignal);
+  //tcase_add_test(tc_sm, test_State_sendSignal);
 
   suite_add_tcase(s, tc_sm);
 
