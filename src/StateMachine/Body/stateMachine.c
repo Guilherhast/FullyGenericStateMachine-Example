@@ -34,8 +34,7 @@ StateMachine *StateMachine_create(unsigned int id, StateList *possibleStates,
     smc->currentState = smc->initialState = initialState;
   }
 
-  smc->stateTo = NULL;
-
+  smc->transition = NULL;
   smc->data = data;
 
   return smc;
@@ -46,25 +45,37 @@ void StateMachine_update(StateMachine *smc) {
   // If stateTo is already defined the
   // State machine will only transit in the next
   // update
-  smc->stateTo = StateMachine_check(smc);
+  smc->transition = StateMachine_check(smc);
   State_update(smc->currentState, smc->data);
 }
 
 void StateMachine_testAndTransit(StateMachine *smc) {
-  if (smc->stateTo) {
-    State_exit(smc->currentState, smc->data);
-    State_enter(smc->stateTo, smc->data);
-    smc->currentState = smc->stateTo;
-    smc->stateTo = NULL;
+  if (smc->transition) {
+    if (smc->transition->tFunc) {
+      smc->transition->tFunc(smc);
+    }
+    if (smc->transition->stateTo) {
+      State_exit(smc->currentState, smc->data);
+      State_enter(smc->transition->stateTo, smc->data);
+      smc->currentState = smc->transition->stateTo;
+    }
+    // To optimize for cpu you could:
+    // Put a transition object in the state machine
+    // Use it to store temporary transitions
+    if (smc->transition->temporary) {
+      Transition_free(smc->transition);
+    }
+    smc->transition = NULL;
   }
 }
 
 void StateMachine_setState(StateMachine *smc, char *sttName) {
-  StateNode *sttN = StateList_searchByName(smc->possibleStates, sttName);
-  smc->stateTo = sttN->dt;
+  StateNode *nextSttNode = StateList_searchByName(smc->possibleStates, sttName);
+  Transition *trn = Transition_createTmp(nextSttNode->dt, NULL, NULL);
+  smc->transition = trn;
 }
 
-State *StateMachine_check(StateMachine *smc) {
-  return StateConditionList_checkForNextState(
+Transition *StateMachine_check(StateMachine *smc) {
+  return StateConditionList_checkForTransition(
       smc->currentState->stateConditionList, smc->data);
 }

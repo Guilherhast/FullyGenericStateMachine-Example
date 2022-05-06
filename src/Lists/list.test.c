@@ -21,7 +21,10 @@ typedef struct testType testType;
 void intWipper(void *dt) { free(dt); }
 void subStructWipper(void *dt) { free(dt); }
 
-short int simpleSort(int *a, int *b) { return *a - *b; }
+short int simpleSort(void *va, void *vb) {
+  short int *a = (short int  *)va, *b=(short int *)vb;
+  return *a - *b;
+}
 boolean testInt(int *nodeData, int *data) { return *nodeData == *data; }
 boolean testEven(int *nodeData, int *data) { return (*nodeData % 2) == 0; }
 
@@ -73,8 +76,8 @@ START_TEST(test_ListNode_create) {
 
   void *dt = malloc(sizeof(int));
 
-  //Does this ausence of checking has
-  //potential to disaster?
+  // Does this ausence of checking has
+  // potential to disaster?
   int n;
   void *nxt = &n;
 
@@ -198,7 +201,7 @@ START_TEST(test_List_free) {
   list = List_add(list, nd3);
   list = List_add(list, nd4);
 
-  List_free(list,intWipper);
+  List_free(list, intWipper);
 }
 END_TEST
 

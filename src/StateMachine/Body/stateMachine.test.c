@@ -1,9 +1,14 @@
 #include <check.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../../consts.h"
 #include "../stateMachine.h"
+
+#define TESTOK "TESTOK"
+
+void testTrans(StateMachine *smc) { strcpy(smc->data,TESTOK); }
 
 START_TEST(test_stateMachine_create) {
   time_t now;
@@ -37,33 +42,42 @@ START_TEST(test_stateMachine_create) {
   ck_assert_ptr_eq(smc->possibleStates, sttNode);
   ck_assert_ptr_eq(smc->initialState, stt);
   ck_assert_ptr_eq(smc->currentState, stt);
-  ck_assert_ptr_eq(smc->stateTo, NULL);
+  ck_assert_ptr_eq(smc->transition, NULL);
 
   int *a = (int *)data;
 
   ck_assert_int_eq(a[0], 1);
   ck_assert_int_eq(a[1], 2);
   ck_assert_int_eq(a[2], 3);
+
+  StateMachine_free(smc);
 }
 END_TEST
 
 START_TEST(test_stateMachine_testAndTransit) {
   StateMachine *smc;
 
-  //Creating the state list
-  StateNode *initial = StateNode_createFull("Initial",NULL,NULL,NULL,NULL,NULL,NULL);
-  StateNode *next = StateNode_createFull("Next",NULL,NULL,NULL,NULL,NULL,NULL);
-  StateNode_attatch(initial,next);
+  char testStr[32];
 
-  smc = StateMachine_create(1, initial, NULL, NULL);
-  smc->stateTo = next->dt;
+  // Creating the state list
+  StateNode *initial =
+      StateNode_createFull("Initial", NULL, NULL, NULL, NULL, NULL, NULL);
+  StateNode *next =
+      StateNode_createFull("Next", NULL, NULL, NULL, NULL, NULL, NULL);
+  StateNode_attatch(initial, next);
 
-  ck_assert_ptr_eq(smc->stateTo,next->dt);
+  Transition *trn = Transition_createTmp(next->dt, testTrans, NULL);
+
+  smc = StateMachine_create(1, initial, NULL, testStr);
+  smc->transition = trn;
 
   StateMachine_testAndTransit(smc);
 
-  ck_assert_ptr_null(smc->stateTo);
-  ck_assert_ptr_eq(smc->currentState,next->dt);
+  ck_assert_ptr_null(smc->transition);
+  ck_assert_str_eq(smc->data,TESTOK);
+  ck_assert_ptr_eq(smc->currentState, next->dt);
+
+  StateMachine_free(smc);
 }
 END_TEST
 

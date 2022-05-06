@@ -56,14 +56,13 @@ void List_free(List *list, wipeDataFunc wipeData) {
 
 List *List_sortedAdd(List *list, ListNode *node, sortFunc sort,
                      boolean swapData) {
-
   // If the list is empty
   // Return the added state
   if (list == NULL) {
     node->next = NULL;
     return node;
   } else {
-    if (sort && sort(list, node) > 0) {
+    if (sort && sort(list->dt, node->dt) > 0) {
       // The new node comes before the first
       if (swapData) {
         // Swap data and add the node with old data in the end
@@ -78,7 +77,7 @@ List *List_sortedAdd(List *list, ListNode *node, sortFunc sort,
 
   ListNode *cur = list;
   while (cur->next) {
-    if (sort && sort(cur->next, node) > 0) {
+    if (sort && sort(cur->next->dt, node->dt) > 0) {
       break;
     }
     cur = cur->next;

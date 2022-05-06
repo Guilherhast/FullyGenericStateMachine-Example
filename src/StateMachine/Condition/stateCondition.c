@@ -12,19 +12,16 @@
 void StateCondition_free(void *vSttCond) {
   StateCondition *sttCond = (StateCondition *)vSttCond;
   // Free the name string but not the state.
-  free(sttCond->stateToName);
   free(sttCond);
 }
 
-StateCondition *StateCondition_create(checkerFunct check, State *sttPtr,
+StateCondition *StateCondition_create(checkerFunct check, Transition *transit,
                                       int priority) {
-
   StateCondition *sttCond = malloc(sizeof(StateCondition));
-  char *str = malloc(strlen(sttPtr->name) + 1);
 
   // Should have a stateTo and run for all data
-  if (!sttPtr) {
-    fprintf(stderr, "Error: State condition should point to a state.");
+  if (!transit) {
+    fprintf(stderr, "Error: State condition should point to a transition.");
     return NULL;
   }
   if (!check) {
@@ -32,20 +29,13 @@ StateCondition *StateCondition_create(checkerFunct check, State *sttPtr,
             "Error: State condition should have a valide chekc function.");
     return NULL;
   }
-  if (!(sttCond && str)) {
+  if (!(sttCond)) {
     fprintf(stderr, "Error: StateCondition: Could not alloc space");
     return NULL;
   }
 
-  // Is it needed?
-  // You may use the original data
-  strcpy(str, sttPtr->name);
-
-  sttCond->stateToName = str;
-  sttCond->stateToPtr = sttPtr;
-
+  sttCond->transition = transit;
   sttCond->check = check;
-
   sttCond->priority = priority;
 
   return sttCond;

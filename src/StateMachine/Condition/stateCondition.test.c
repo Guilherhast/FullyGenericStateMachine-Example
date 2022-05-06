@@ -2,42 +2,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../stateCondition.h"
 #include "../state.h"
+#include "../stateCondition.h"
 
 boolean cf_false(void *data) { return false; };
 boolean cf_true(void *data) { return true; };
 
-START_TEST(test_stateCondition_create) {
-  State stt;
-  stt.name = "test";
+void trnF(StateMachine *smc);
 
+START_TEST(test_stateCondition_create) {
+  Transition trn;
 
   StateCondition *sttCond;
-  sttCond = StateCondition_create(&cf_true,&stt, 1);
+
+  sttCond = StateCondition_create(&cf_true, &trn, 1);
 
   ck_assert_int_eq(sttCond->priority, 1);
-  ck_assert_ptr_eq(sttCond->stateToPtr,&stt);
-
-  ck_assert_str_eq(sttCond->stateToName, "test");
-  ck_assert_ptr_ne(sttCond->stateToName,&stt.name);
-
+  ck_assert_ptr_eq(sttCond->transition, &trn);
 
   StateCondition_free(sttCond);
 }
 END_TEST
 
 START_TEST(test_stateCondition_priorityComparator) {
-  State stt;
-  stt.name = "test";
-  int r11, r12, r13, r23, r31;
+  Transition trn;
 
+  int r11, r12, r13, r23, r31;
 
   void *sttCond1, *sttCond2, *sttCond3;
 
-  sttCond1 = StateCondition_create(&cf_true,&stt, 1);
-  sttCond2 = StateCondition_create(&cf_true,&stt, 2);
-  sttCond3 = StateCondition_create(&cf_true,&stt, 3);
+  sttCond1 = StateCondition_create(&cf_true, &trn, 1);
+  sttCond2 = StateCondition_create(&cf_true, &trn, 2);
+  sttCond3 = StateCondition_create(&cf_true, &trn, 3);
 
   r11 = priorityComparator(sttCond1, sttCond1);
   r12 = priorityComparator(sttCond1, sttCond2);
@@ -45,29 +41,27 @@ START_TEST(test_stateCondition_priorityComparator) {
   r23 = priorityComparator(sttCond2, sttCond3);
   r31 = priorityComparator(sttCond3, sttCond1);
 
-  ck_assert_int_eq(r11,0);
-  ck_assert_int_eq(r12,-1);
-  ck_assert_int_eq(r13,-2);
-  ck_assert_int_eq(r23,-1);
-  ck_assert_int_eq(r31,2);
+  ck_assert_int_eq(r11, 0);
+  ck_assert_int_eq(r12, -1);
+  ck_assert_int_eq(r13, -2);
+  ck_assert_int_eq(r23, -1);
+  ck_assert_int_eq(r31, 2);
 
   StateCondition_free(sttCond1);
 }
 END_TEST
 
 START_TEST(test_stateCondition_check) {
-  State stt1, stt2;
-  stt1.name = "State1";
-  stt2.name = "State2";
+  Transition trn1, trn2;
 
   StateCondition *sttCond1, *sttCond2;
   boolean tst_true, tst_false;
 
-  sttCond1 = StateCondition_create(&cf_true,&stt1, 1);
-  sttCond2 = StateCondition_create(&cf_false,&stt2, 2);
+  sttCond1 = StateCondition_create(&cf_true , &trn1, 1);
+  sttCond2 = StateCondition_create(&cf_false, &trn2, 2);
 
-  tst_true = StateCondition_check(sttCond1,NULL);
-  tst_false = StateCondition_check(sttCond2,NULL);
+  tst_true = StateCondition_check(sttCond1, NULL);
+  tst_false = StateCondition_check(sttCond2, NULL);
 
   ck_assert(tst_true);
   ck_assert(!tst_false);
@@ -76,7 +70,6 @@ START_TEST(test_stateCondition_check) {
   StateCondition_free(sttCond2);
 }
 END_TEST
-
 
 Suite *default_suite(void) {
   Suite *s;

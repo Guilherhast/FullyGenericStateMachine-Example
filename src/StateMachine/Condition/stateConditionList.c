@@ -60,13 +60,8 @@ StateConditionNode *StateConditionList_searchFulfilled(StateConditionList *list,
   return StateConditionList_search(list, &StateCondition_check, data);
 }
 
-State *StateConditionList_checkForNextState(StateConditionList *list,
+Transition *StateConditionList_checkForTransition(StateConditionList *list,
                                             void *data) {
   StateConditionNode *nd = StateConditionList_searchFulfilled(list, data);
-  return nd->dt->stateToPtr;
-}
-char *StateConditionList_checkForNextStateName(StateConditionList *list,
-                                            void *data) {
-  StateConditionNode *nd = StateConditionList_searchFulfilled(list, data);
-  return nd->dt->stateToName;
+  return nd->dt->transition;
 }

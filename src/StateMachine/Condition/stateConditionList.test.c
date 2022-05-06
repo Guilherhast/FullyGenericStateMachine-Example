@@ -14,10 +14,9 @@ START_TEST(test_StateConditionNode_create) {
   int n;
   void *nxt = &n;
 
-  State *stt = malloc(sizeof(State));
-  stt->name = "test";
+  Transition *trn = malloc(sizeof(Transition));
 
-  StateCondition *sttCond = StateCondition_create(cf_true, stt, 0);
+  StateCondition *sttCond = StateCondition_create(cf_true, trn, 0);
 
   nd = StateConditionNode_create(sttCond, nxt);
 
@@ -34,18 +33,17 @@ START_TEST(test_StateConditionNode_createFull) {
   StateConditionNode *nd;
   StateCondition *sttCond;
 
-  State *stt1 = malloc(sizeof(State));
-  stt1->name = "State1";
+  Transition *trn = malloc(sizeof(Transition));
 
   int n;
   void *nxt = &n;
 
-  nd = StateConditionNode_createFull(cf_true, stt1, 0, nxt);
+  nd = StateConditionNode_createFull(cf_true, trn, 2, nxt);
   sttCond = nd->dt;
 
-  ck_assert_int_eq(sttCond->priority, 0);
-  ck_assert_str_eq(sttCond->stateToName, "State1");
-  ck_assert_ptr_eq(sttCond->stateToPtr, stt1);
+  ck_assert_ptr_eq(sttCond->check, &cf_true);
+  ck_assert_int_eq(sttCond->priority, 2);
+  ck_assert_ptr_eq(sttCond->transition, trn);
 
   StateConditionNode_freeWipe(nd);
 }
@@ -76,17 +74,12 @@ START_TEST(test_StateConditionList_sortedAdd) {
   StateConditionNode *nd1, *nd2, *nd3, *nd4;
   StateConditionList *list = NULL;
 
-  State stt1, stt2, stt3, stt4;
+  Transition trn1, trn2, trn3, trn4;
 
-  stt1.name = "State1";
-  stt2.name = "State2";
-  stt3.name = "State3";
-  stt4.name = "State4";
-
-  nd1 = StateConditionNode_createFull(cf_true, &stt1, 1, NULL);
-  nd2 = StateConditionNode_createFull(cf_true, &stt2, 2, NULL);
-  nd3 = StateConditionNode_createFull(cf_true, &stt3, 3, NULL);
-  nd4 = StateConditionNode_createFull(cf_true, &stt4, 4, NULL);
+  nd1 = StateConditionNode_createFull(cf_true, &trn1, 1, NULL);
+  nd2 = StateConditionNode_createFull(cf_true, &trn2, 2, NULL);
+  nd3 = StateConditionNode_createFull(cf_true, &trn3, 3, NULL);
+  nd4 = StateConditionNode_createFull(cf_true, &trn4, 4, NULL);
 
   list = StateConditionList_add(list, nd1);
   list = StateConditionList_add(list, nd2);
@@ -104,33 +97,28 @@ START_TEST(test_StateConditionList_sortedAdd) {
 }
 END_TEST
 
-//Not using search in smoke.
-//Only ckeching for next state
+// Not using search in smoke.
+// Only ckeching for next state
 START_TEST(test_StateConditionList_checkForNextState) {
   StateConditionNode *nd1, *nd2, *nd3, *nd4;
   StateConditionList *list = NULL;
 
-  State stt1, stt2, stt3, stt4;
-  State *r;
+  Transition trn1, trn2, trn3, trn4;
+  Transition *r;
 
-  stt1.name = "State1";
-  stt2.name = "State2";
-  stt3.name = "State3";
-  stt4.name = "State4";
-
-  nd1 = StateConditionNode_createFull(cf_false, &stt1, 1, NULL);
-  nd2 = StateConditionNode_createFull(cf_false, &stt2, 2, NULL);
-  nd3 = StateConditionNode_createFull(cf_true, &stt3, 3, NULL);
-  nd4 = StateConditionNode_createFull(cf_false, &stt4, 4, NULL);
+  nd1 = StateConditionNode_createFull(cf_false, &trn1, 1, NULL);
+  nd2 = StateConditionNode_createFull(cf_false, &trn2, 2, NULL);
+  nd3 = StateConditionNode_createFull(cf_true, &trn3, 3, NULL);
+  nd4 = StateConditionNode_createFull(cf_false, &trn4, 4, NULL);
 
   list = StateConditionList_add(list, nd1);
   list = StateConditionList_add(list, nd2);
   list = StateConditionList_add(list, nd4); // Swapped on purpose
   list = StateConditionList_add(list, nd3);
 
-  r = StateConditionList_checkForNextState(list, NULL);
+  r = StateConditionList_checkForTransition(list, NULL);
 
-  ck_assert_ptr_eq(r,&stt3);
+  ck_assert_ptr_eq(r, &trn3);
 
   StateConditionList_freeWipe(list);
 }

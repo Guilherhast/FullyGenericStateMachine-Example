@@ -19,6 +19,17 @@ TMPDIR=$(MIRRORDIR)
 FOLDER_LST=../Lists
 DEP_LST=$(TMPDIR)/list.o
 
+#Transition  files
+HDRS_TRANS=transition.h
+DIR_TRANS=Transition
+
+SRC_PART_TRANS=$(DIR_TRANS)/transition.c
+SRC_TEST_TRANS=$(SRC_PART_TRANS:.c=.test.c)
+OBJ_PART_TRANS=$(TMPDIR)/$(notdir $(SRC_PART_TRANS:.c=.o))
+OBJ_TEST_TRANS=$(TMPDIR)/$(notdir $(SRC_TEST_TRANS:.c=.o))
+
+BIN_TEST_TRANS=$(OBJ_TEST_TRANS:.o=.bin)
+
 #State condition files
 HDRS_SCOND=stateCondition.h
 DIR_SCOND=Condition
@@ -36,6 +47,8 @@ OBJ_PART_LSCOND=$(TMPDIR)/$(notdir $(SRC_PART_LSCOND:.c=.o))
 OBJ_TEST_LSCOND=$(TMPDIR)/$(notdir $(SRC_TEST_LSCOND:.c=.o))
 
 BIN_TEST_LSCOND=$(OBJ_TEST_LSCOND:.o=.bin)
+
+#ALL_OBJ_SCOND=$(OBJ_PART_SCOND) $(OBJ_PART_LSCOND)
 
 #State files
 HDRS_STT=state.h
@@ -78,7 +91,7 @@ defualt: dirs test
 
 test: test_objs test_lists
 
-test_objs: test_state_obj test_stateCondition_obj test_stateMachine_obj
+test_objs: test_transition_obj test_stateCondition_obj test_state_obj test_stateMachine_obj
 #test_objs:  test_stateMachine_obj
 
 test_lists: test_state_list test_stateCondition_list test_stateMachine_list
@@ -86,7 +99,7 @@ test_lists: test_state_list test_stateCondition_list test_stateMachine_list
 
 list_bin_test: $(BIN_TEST_LSMC) $(BIN_TEST_LSCOND) $(BIN_TEST_LSTT)
 
-obj_bin_test: $(BIN_TEST_SMC) $(BIN_TEST_SCOND) $(BIN_TEST_STT)
+obj_bin_test: $(BIN_TEST_TRANS) $(BIN_TEST_SMC) $(BIN_TEST_SCOND) $(BIN_TEST_STT)
 
 bin_tests:  obj_bin_test list_bin_test
 
@@ -102,13 +115,30 @@ $(DEP_LST):
 	$(SAFE) make -C $(FOLDER_LST) $@
 
 #State condition rules
+test_transition_obj: $(BIN_TEST_TRANS)
+	echo -e  "\033[0;35m"
+	echo $(BIN_TEST_TRANS)
+	$(SAFE) $(BIN_TEST_TRANS)
+	echo -e "\033[0m"
+
+$(BIN_TEST_TRANS): $(OBJ_PART_TRANS)  $(OBJ_TEST_TRANS)
+	$(SAFE) $(CC) $^ $(TST_LIBS) $(COV_LIBS) -o $@
+
+$(OBJ_TEST_TRANS): $(SRC_TEST_TRANS) $(HDRS_TRANS) dirs
+	$(SAFE) gcc $(CFLAGS) $(PROFILE_FLAGS) $(SRC_TEST_TRANS) -o $@
+
+$(OBJ_PART_TRANS): $(SRC_TEST_TRANS) $(HDRS_TRANS) dirs
+	$(SAFE) gcc $(CFLAGS) $(PROFILE_FLAGS) $(SRC_PART_TRANS) -o $@
+
+
+#State condition rules
 test_stateCondition_obj: $(BIN_TEST_SCOND)
 	echo -e  "\033[0;35m"
 	echo $(BIN_TEST_SCOND)
 	$(SAFE) $(BIN_TEST_SCOND)
 	echo -e "\033[0m"
 
-$(BIN_TEST_SCOND): $(OBJ_PART_SCOND)  $(OBJ_TEST_SCOND)
+$(BIN_TEST_SCOND): $(OBJ_PART_SCOND)  $(OBJ_TEST_SCOND) $(OBJ_PART_TRANS)
 	$(SAFE) $(CC) $^ $(TST_LIBS) $(COV_LIBS) -o $@
 
 $(OBJ_TEST_SCOND): $(SRC_TEST_SCOND) $(HDRS_SCOND) dirs
@@ -123,7 +153,7 @@ test_stateCondition_list: $(BIN_TEST_LSCOND)
 	$(SAFE) $(BIN_TEST_LSCOND)
 	echo -e "\033[0m"
 
-$(BIN_TEST_LSCOND): $(OBJ_PART_LSCOND) $(OBJ_PART_SCOND) $(OBJ_TEST_LSCOND) $(DEP_LST)
+$(BIN_TEST_LSCOND): $(OBJ_PART_LSCOND) $(OBJ_PART_SCOND) $(OBJ_TEST_LSCOND) $(OBJ_PART_TRANS) $(DEP_LST)
 	$(SAFE) $(CC) $^ $(TST_LIBS) $(COV_LIBS) -o $@
 
 $(OBJ_TEST_LSCOND): $(SRC_TEST_LSCOND) $(HDRS_LSCOND) dirs
@@ -151,8 +181,7 @@ $(OBJ_PART_STT): $(SRC_PART_STT) $(HDRS_STT) dirs
 	$(SAFE) gcc $(CFLAGS) $(PROFILE_FLAGS) $(SRC_PART_STT) -o $@
 
 test_state_list: $(BIN_TEST_LSTT)
-	echo -e  "\033[0;35m"
-	echo $(BIN_TEST_LSTT)
+	echo -e  "\033[0;35m" echo $(BIN_TEST_LSTT)
 	$(SAFE) $(BIN_TEST_LSTT)
 	echo -e "\033[0m"
 
@@ -174,7 +203,7 @@ test_stateMachine_obj: $(BIN_TEST_SMC)
 	$(SAFE) $(BIN_TEST_SMC)
 	echo -e "\033[0m"
 
-$(BIN_TEST_SMC): $(OBJ_PART_SMC)  $(OBJ_TEST_SMC) $(OBJ_PART_STT) $(OBJ_PART_LSTT) $(OBJ_PART_LSCOND) $(OBJ_PART_SCOND) $(DEP_LST)
+$(BIN_TEST_SMC): $(OBJ_PART_SMC)  $(OBJ_TEST_SMC) $(OBJ_PART_STT) $(OBJ_PART_LSTT) $(OBJ_PART_LSCOND) $(OBJ_PART_SCOND) $(OBJ_PART_TRANS) $(DEP_LST)
 	$(SAFE) $(CC) $^ $(TST_LIBS) $(COV_LIBS) -o $@
 
 $(OBJ_TEST_SMC): $(SRC_TEST_SMC) $(HDRS_SMC) dirs
@@ -192,7 +221,7 @@ test_stateMachine_list: $(BIN_TEST_LSMC)
 
 #It is becomming too long
 #Find a way to reduce it
-$(BIN_TEST_LSMC): $(OBJ_PART_LSMC)  $(OBJ_TEST_LSMC) $(OBJ_PART_SMC) $(OBJ_PART_LSCOND) $(OBJ_PART_SCOND) $(OBJ_PART_STT) $(OBJ_PART_LSTT) $(DEP_LST)
+$(BIN_TEST_LSMC): $(OBJ_PART_LSMC)  $(OBJ_TEST_LSMC) $(OBJ_PART_SMC) $(OBJ_PART_LSCOND) $(OBJ_PART_SCOND) $(OBJ_PART_STT) $(OBJ_PART_LSTT) $(OBJ_PART_TRANS) $(DEP_LST)
 	$(SAFE) $(CC) $^ $(TST_LIBS) $(COV_LIBS) -o $@
 
 $(OBJ_TEST_LSMC): $(SRC_TEST_LSMC) $(HDRS_LSMC) dirs
