@@ -35,7 +35,7 @@ START_TEST(test_StateNode_createFull) {
   int n;
   void *nxt = &n;
 
-  nd = StateNode_createFull(name, NULL, &en, &up, &ex, nxt);
+  nd = StateNode_createFull(name, NULL, NULL,  &en, &up, &ex, nxt);
   stt = nd->dt;
 
   ck_assert_ptr_nonnull(nd);
@@ -111,10 +111,10 @@ START_TEST(test_StateList_searchByName) {
   // Name of states
   char *n1 = "First", *n2 = "Second", *n3 = "Third", *n4 = "Forth";
 
-  nd1 = StateNode_createFull(n1, NULL, &en, &up, &ex,  NULL);
-  nd2 = StateNode_createFull(n2, NULL, &en, &up, &ex,  NULL);
-  nd3 = StateNode_createFull(n3, NULL, &en, &up, &ex,  NULL);
-  nd4 = StateNode_createFull(n4, NULL, &en, &up, &ex,  NULL);
+  nd1 = StateNode_createFull(n1, NULL, NULL,  &en, &up, &ex,  NULL);
+  nd2 = StateNode_createFull(n2, NULL, NULL,  &en, &up, &ex,  NULL);
+  nd3 = StateNode_createFull(n3, NULL, NULL,  &en, &up, &ex,  NULL);
+  nd4 = StateNode_createFull(n4, NULL, NULL,  &en, &up, &ex,  NULL);
 
   list = StateList_add(list, nd1);
   list = StateList_add(list, nd2);

@@ -21,14 +21,15 @@ typedef struct StateNode StateNode;
 typedef struct StateNode StateList;
 
 // Functions executed in state change (enter, exit)
-typedef void (*stateChangeFunc)(State* stt, void *data);
-typedef void (*stateUpdateFunc)(State* stt, void *data);
+typedef void (*stateChangeFunc)(State *stt, void *data);
+typedef void (*stateUpdateFunc)(State *stt, void *data);
 
 // Represents a single state
 struct State {
   char *name;
 
   StateConditionList *stateConditionList;
+  TransitionList *transitions;
 
   time_t lastTimeEntered;
   time_t lastUpdated;
@@ -51,8 +52,8 @@ struct StateNode {
 void State_free(void *stt);
 
 State *State_create(char *name, StateConditionList *sCondList,
-                    stateChangeFunc enter, stateUpdateFunc update,
-                    stateChangeFunc exit);
+                    TransitionList *transitions, stateChangeFunc enter,
+                    stateUpdateFunc update, stateChangeFunc exit);
 
 void State_enter(State *stt, void *data);
 void State_exit(State *stt, void *data);
@@ -73,8 +74,8 @@ void StateNode_free(StateNode *sttNode, wipeDataFunc wipeData);
 #define StateNode_freeWipe(s) StateNode_free(s, State_free)
 
 StateNode *StateNode_create(State *stt, StateNode *next);
-#define StateNode_createFull(nm, cl, en, up, ex,  nxt)                      \
-  StateNode_create(State_create(nm, cl, en, up, ex), nxt)
+#define StateNode_createFull(nm, cl, tr, en, up, ex, nxt)                      \
+  StateNode_create(State_create(nm, cl, tr, en, up, ex), nxt)
 
 StateNode *StateNode_attatch(StateNode *curStt, StateNode *newStt);
 
@@ -90,13 +91,13 @@ StateList *StateList_sortedAdd(StateList *sttList, StateNode *sttNode,
 #define StateList_add(s, n) StateList_sortedAdd(s, n, NULL, false)
 
 StateNode *StateList_search(StateList *sttList, testFunc tst, void *data);
-#define StateList_searchByName(l, n) StateList_search(l, &nameEqual, n)
+#define StateList_searchByName(l, n) StateList_search(l, &State_nameEqual, n)
 // StateNode *StateList_searchNth(StateList *sttList,testFunc tst,void
 // *data,USint n);
 
 /*
  * IMPLEMENTATION FUNCTIONS
  */
-boolean nameEqual(void *vStt, void *vName);
+boolean State_nameEqual(void *vStt, void *vName);
 // StateNode *StateList_searchByName(StateList *list, char *name);
 #endif

@@ -4,6 +4,7 @@
 
 #include "../../consts.h"
 #include "../state.h"
+#include "../transition.h"
 
 #define STR_ENTER "ENTERED"
 #define STR_EXIT "EXITED"
@@ -12,23 +13,28 @@
 
 void en(State *stt, void *data) {
   char *s = (char *)data;
-  strcpy(s,STR_ENTER);
+  strcpy(s, STR_ENTER);
 }
 void ex(State *stt, void *data) {
   char *s = (char *)data;
-  strcpy(s,STR_EXIT);
+  strcpy(s, STR_EXIT);
 }
 void up(State *stt, void *data) {
   char *s = (char *)data;
-  strcpy(s,STR_UPDATED);
+  strcpy(s, STR_UPDATED);
 }
 
 START_TEST(test_State_create) {
   State *stt;
 
+  int c, t;
+  void *cl = &c, *tl = &t;
+
   char *name = "StateName";
 
-  stt = State_create(name, NULL, &en, &up, &ex);
+  stt = State_create(name, cl, tl, &en, &up, &ex);
+
+
 
   ck_assert_str_eq(stt->name, name);
 
@@ -40,6 +46,9 @@ START_TEST(test_State_create) {
   ck_assert_ptr_eq(stt->update, &up);
   ck_assert_ptr_eq(stt->exit, &ex);
 
+  ck_assert_ptr_eq(stt->stateConditionList, cl);
+  ck_assert_ptr_eq(stt->transitions, tl);
+
   State_free(stt);
 }
 END_TEST
@@ -48,7 +57,7 @@ START_TEST(test_State_enter) {
   char *name = "StateName";
   char test[8] = STR_EMPTY;
 
-  stt = State_create(name, NULL, &en, &up, &ex);
+  stt = State_create(name, NULL, NULL, &en, &up, &ex);
 
   State_enter(stt, test);
 
@@ -58,7 +67,7 @@ START_TEST(test_State_enter) {
   int d = difftime(now, stt->lastTimeEntered);
 
   ck_assert_int_eq(d, 0);
-  ck_assert_str_eq(test,STR_ENTER);
+  ck_assert_str_eq(test, STR_ENTER);
 
   State_free(stt);
 }
@@ -68,7 +77,7 @@ START_TEST(test_State_update) {
   char *name = "StateName";
   char test[8] = STR_EMPTY;
 
-  stt = State_create(name, NULL, &en, &up, &ex);
+  stt = State_create(name, NULL, NULL, &en, &up, &ex);
 
   State_update(stt, test);
 
@@ -78,7 +87,7 @@ START_TEST(test_State_update) {
   int d = difftime(now, stt->lastUpdated);
 
   ck_assert_int_eq(d, 0);
-  ck_assert_str_eq(test,STR_UPDATED);
+  ck_assert_str_eq(test, STR_UPDATED);
 
   State_free(stt);
 }
@@ -89,32 +98,32 @@ START_TEST(test_State_exit) {
   char *name = "StateName";
   char test[8] = STR_EMPTY;
 
-  stt = State_create(name, NULL, &en, &up, &ex);
+  stt = State_create(name, NULL, NULL, &en, &up, &ex);
 
   State_exit(stt, test);
 
-  ck_assert_str_eq(test,STR_EXIT);
+  ck_assert_str_eq(test, STR_EXIT);
 
   State_free(stt);
 }
 END_TEST
 /*
 START_TEST(test_State_sendSignal) {
-  State *stt;
-  char *name = "StateName";
+State *stt;
+char *name = "StateName";
 
-  stt = State_create(name, NULL, &en, &up, &ex);
+stt = State_create(name, NULL, &en, &up, &ex);
 
-  State_sendSignal(stt);
+State_sendSignal(stt);
 
-  time_t now;
-  time(&now);
+time_t now;
+time(&now);
 
-  int d = difftime(now, stt->lastSignalSent);
+int d = difftime(now, stt->lastSignalSent);
 
-  ck_assert_int_eq(d, 0);
+ck_assert_int_eq(d, 0);
 
-  State_free(stt);
+State_free(stt);
 }
 END_TEST
 */
@@ -130,7 +139,7 @@ Suite *smc_state_suite(void) {
   tcase_add_test(tc_sm, test_State_enter);
   tcase_add_test(tc_sm, test_State_update);
   tcase_add_test(tc_sm, test_State_exit);
-  //tcase_add_test(tc_sm, test_State_sendSignal);
+  // tcase_add_test(tc_sm, test_State_sendSignal);
 
   suite_add_tcase(s, tc_sm);
 

@@ -44,7 +44,7 @@ StateNode *StateList_searchNth(StateList *sttList, testFunc tst, void *data,
  */
 
 // Search functions
-boolean nameEqual(void *vStt, void *vName) {
+boolean State_nameEqual(void *vStt, void *vName) {
   State *stt = (State *)vStt;
   char *name = (char *)vName;
 

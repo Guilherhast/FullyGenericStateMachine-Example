@@ -32,6 +32,8 @@ START_TEST(test_stateMachine_create) {
   dInfo = difftime(smc->lastInfo, now);
   dChange = difftime(smc->lastStateChange, now);
 
+  ck_assert(smc->online);
+
   ck_assert_int_eq(dCreation, 0);
   ck_assert_int_eq(dUpdate, 0);
   ck_assert_int_eq(dInfo, 0);
@@ -61,12 +63,13 @@ START_TEST(test_stateMachine_testAndTransit) {
 
   // Creating the state list
   StateNode *initial =
-      StateNode_createFull("Initial", NULL, NULL, NULL, NULL, NULL);
+      StateNode_createFull("Initial", NULL,  NULL, NULL, NULL, NULL, NULL);
   StateNode *next =
-      StateNode_createFull("Next", NULL, NULL, NULL, NULL, NULL);
+      StateNode_createFull("Next", NULL, NULL, NULL,  NULL, NULL, NULL);
   StateNode_attatch(initial, next);
 
-  Transition *trn = Transition_createTmp(next->dt, testTrans, NULL);
+  //Transition *trn = Transition_createTmp(next->dt, testTrans, NULL);
+  Transition *trn = Transition_createShort(next->dt, testTrans, NULL);
 
   smc = StateMachine_create(1, initial, NULL, testStr);
   smc->transition = trn;

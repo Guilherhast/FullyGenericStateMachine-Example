@@ -18,6 +18,10 @@ TBIN_FILES=$(OT_FILES:.o=.bin)
 GCOV = gcovr
 GCONV_FLAGS = -r . --html --html-details
 
+#Colors
+COLOR_GREEN="\033[1;32m"
+COLOR_CYAN="\033[0;36m"
+COLOR_RESTORE="\033[0m"
 
 #Project parts
 DIRMAKE_SMC=$(SRC_DIR)/StateMachine
@@ -61,9 +65,13 @@ count:
 	$(SAFE) find $(SRC_DIR) -type f  | $(SAFE) xargs wc -l | $(SAFE) sort -n
 
 exec_bin_tests:
-	echo -e  "\033[0;36m"
-	$(SAFE) cd $(TST_DIR); for i in *.bin; do  echo $$i; $(SAFE) ./$$i || exit 1;   done
-	echo -e "\033[0m"
+	$(SAFE) cd $(TST_DIR);          \
+	   	for i in *.bin;             \
+	   	do  ls --color=auto -d $$i; \
+	   	echo  -e $(COLOR_CYAN);     \
+	   	$(SAFE) ./$$i || exit 1;    \
+	   	echo -e $(COLOR_RESTORE);   \
+		done
 
 #Binary tests
 echoTests:

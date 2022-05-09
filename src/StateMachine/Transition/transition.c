@@ -1,24 +1,41 @@
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "../transition.h"
+#include "../state.h"
 
-void Transition_free(Transition *trn){
-	free(trn);
+void Transition_free(void *VTrn) {
+  Transition *trn = (Transition *)VTrn;
+  free(trn->stateToName);
+  free(trn);
 }
 
-Transition *Transition_create(State *stateTo, transitionFunct tFunc,
-                              void *data, boolean temporary) {
+Transition *Transition_create(State *stateTo, char *stateToName,
+                              transitionFunct tFunc, void *data) {
   Transition *t = malloc(sizeof(Transition));
+
+  char *name = malloc(strlen(stateToName));
+  strcpy(name, stateToName);
 
   t->tFunc = tFunc;
   t->stateTo = stateTo;
+  t->stateToName = name;
 
   t->data = data;
-  t->temporary = temporary;
+  // t->temporary = temporary;
 
   if (!(t->stateTo || t->tFunc)) {
-    fprintf(stderr, "Error: Transition should have at least a function or a stateTo.");
+    fprintf(
+        stderr,
+        "Error: Transition should have at least a function or a stateTo.\n");
+    return NULL;
+  }
+  // There is a state
+  // And the name comparation is not = 0
+  if (stateTo && strcmp(stateTo->name, name)) {
+    fprintf(stderr,
+            "Error: Transition stateToName \"%s\" conflicting with "
+            "stateTo->name \"%s\"\n",
+            stateTo->name, name);
+    return NULL;
   }
 
   return t;

@@ -22,6 +22,8 @@ typedef struct StateMachineNode StateMachineList;
 struct StateMachine {
   unsigned int id;
 
+  boolean online;
+
   time_t creation;
   time_t lastUpdate;
 

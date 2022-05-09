@@ -20,6 +20,8 @@ StateMachine *StateMachine_create(unsigned int id, StateList *possibleStates,
 
   smc->id = id == 0 ? IDCOUNTER++ : id;
 
+  smc->online = true;
+
   time(&smc->creation);
   smc->lastUpdate = smc->creation;
   smc->lastStateChange = smc->creation;
@@ -62,17 +64,19 @@ void StateMachine_testAndTransit(StateMachine *smc) {
     // To optimize for cpu you could:
     // Put a transition object in the state machine
     // Use it to store temporary transitions
+    /*
     if (smc->transition->temporary) {
-      Transition_free(smc->transition);
+    Transition_free(smc->transition);
     }
+    */
     smc->transition = NULL;
   }
 }
 
 void StateMachine_setState(StateMachine *smc, char *sttName) {
-  StateNode *nextSttNode = StateList_searchByName(smc->possibleStates, sttName);
-  Transition *trn = Transition_createTmp(nextSttNode->dt, NULL, NULL);
-  smc->transition = trn;
+  TransitionNode *tn =
+      TransitionList_searchByName(smc->currentState->transitions, sttName);
+  smc->transition = tn->dt;
 }
 
 Transition *StateMachine_check(StateMachine *smc) {
