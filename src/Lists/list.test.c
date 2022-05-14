@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../TestUtils/testUtils.h"
 #include "./list.h"
 
 struct subStruct {
@@ -22,10 +23,12 @@ void intWipper(void *dt) { free(dt); }
 void subStructWipper(void *dt) { free(dt); }
 
 short int simpleSort(void *va, void *vb) {
-  short int *a = (short int  *)va, *b=(short int *)vb;
+  short int *a = (short int *)va, *b = (short int *)vb;
   return *a - *b;
 }
-boolean testInt(int *nodeData, int *data) { return *nodeData == *data; }
+boolean testInt(int *nodeData, int *data) {
+  return *nodeData == *data;
+}
 boolean testEven(int *nodeData, int *data) { return (*nodeData % 2) == 0; }
 
 // Pre-tests
@@ -71,6 +74,7 @@ START_TEST(test_testEven) {
 END_TEST
 
 // Tests
+// LISTNODE
 START_TEST(test_ListNode_create) {
   ListNode *nd;
 
@@ -156,6 +160,27 @@ START_TEST(test_ListNode_attatch) {
 }
 END_TEST
 
+START_TEST(test_ListNode_clone) {
+  ListNode *nd1, *nd2;
+
+  int d1;
+  void *dt1 = &d1;
+
+  nd1 = ListNode_create(dt1, NULL);
+  nd2 = ListNode_clone(nd1);
+
+  ck_assert_ptr_eq(nd1->dt, dt1);
+  ck_assert_ptr_eq(nd1->dt, nd2->dt);
+  ck_assert_ptr_eq(nd2->dt, dt1); // Redundant
+
+  ck_assert_ptr_null(nd2->next);
+
+  ListNode_freeSafe(nd1);
+  ListNode_freeSafe(nd2);
+}
+END_TEST
+
+// LISTS
 START_TEST(test_List_Add) {
   ListNode *nd1, *nd2, *nd3, *nd4;
   List *list = NULL;
@@ -180,7 +205,199 @@ START_TEST(test_List_Add) {
 
   ck_assert_ptr_null(nd4->next);
 
+  ck_assert_list_size(list, 4);
+
   ListNode_freeSafe(list);
+}
+END_TEST
+
+START_TEST(test_List_cat) {
+  ListNode *nd1, *nd2, *nd3, *nd4;
+  ListNode *nd5, *nd6, *nd7, *nd8;
+
+  List *list1 = NULL, *list2 = NULL, *listr = NULL;
+
+  int s1, s2, s3, s4;
+  void *dt1 = &s1, *dt2 = &s2, *dt3 = &s3, *dt4 = &s4;
+
+  nd1 = ListNode_create(dt1, NULL);
+  nd2 = ListNode_create(dt2, NULL);
+  nd4 = ListNode_create(dt4, NULL); // Inverted on purpose
+  nd3 = ListNode_create(dt3, NULL);
+
+  nd5 = ListNode_create(dt1, NULL);
+  nd6 = ListNode_create(dt2, NULL);
+  nd8 = ListNode_create(dt4, NULL); // Inverted on purpose
+  nd7 = ListNode_create(dt3, NULL);
+
+  list1 = List_add(list1, nd1);
+  list1 = List_add(list1, nd2);
+  list1 = List_add(list1, nd3);
+  list1 = List_add(list1, nd4);
+
+  list2 = List_add(list2, nd5);
+  list2 = List_add(list2, nd6);
+  list2 = List_add(list2, nd7);
+  list2 = List_add(list2, nd8);
+
+  listr = List_cat(list1, list2);
+
+  ck_assert_ptr_eq(list1, nd1);
+  ck_assert_ptr_eq(nd1->next, nd2);
+  ck_assert_ptr_eq(nd2->next, nd3);
+  ck_assert_ptr_eq(nd3->next, nd4);
+
+  ck_assert_ptr_eq(list2, nd5);
+  ck_assert_ptr_eq(nd4->next, nd5);
+  ck_assert_ptr_eq(nd5->next, nd6);
+  ck_assert_ptr_eq(nd6->next, nd7);
+  ck_assert_ptr_eq(nd7->next, nd8);
+
+  ck_assert_ptr_null(nd8->next);
+
+  ck_assert_list_size(list1, 8);
+  ck_assert_list_size(list2, 4);
+  ck_assert_list_size(listr, 8);
+
+  ListNode_freeSafe(listr);
+}
+END_TEST
+
+START_TEST(test_List_merge_noswap) {
+  ListNode *nd1, *nd2, *nd3, *nd4;
+  ListNode *nd5, *nd6, *nd7, *nd8;
+
+  void *sps = &simpleSort;
+
+  List *list1 = NULL, *list2 = NULL, *listr = NULL;
+
+  int s1 = 1, s2 = 2, s3 = 3, s4 = 4;
+  int s5 = 5, s6 = 6, s7 = 7, s8 = 8;
+
+  void *dt1 = &s1, *dt2 = &s2, *dt3 = &s3, *dt4 = &s4;
+  void *dt5 = &s5, *dt6 = &s6, *dt7 = &s7, *dt8 = &s8;
+
+  nd1 = ListNode_create(dt1, NULL);
+  nd2 = ListNode_create(dt2, NULL);
+  nd4 = ListNode_create(dt4, NULL); // Inverted on purpose
+  nd3 = ListNode_create(dt3, NULL);
+
+  nd5 = ListNode_create(dt5, NULL);
+  nd6 = ListNode_create(dt6, NULL);
+  nd7 = ListNode_create(dt7, NULL);
+  nd8 = ListNode_create(dt8, NULL); // Inverted on purpose
+
+  list1 = List_add(list1, nd1);
+  list1 = List_add(list1, nd3);
+  list1 = List_add(list1, nd5);
+  list1 = List_add(list1, nd7);
+
+  list2 = List_add(list2, nd2);
+  list2 = List_add(list2, nd4);
+  list2 = List_add(list2, nd6);
+  list2 = List_add(list2, nd8);
+
+  listr = List_merge(list2, list1, sps);
+
+  ck_assert_ptr_eq(listr, list1);
+  ck_assert_ptr_eq(list1, nd1);
+  ck_assert_ptr_eq(nd1->next, nd2);
+  ck_assert_ptr_eq(nd2->next, nd3);
+  ck_assert_ptr_eq(nd3->next, nd4);
+
+  ck_assert_ptr_eq(list2, nd2);
+  ck_assert_ptr_eq(nd4->next, nd5);
+  ck_assert_ptr_eq(nd5->next, nd6);
+  ck_assert_ptr_eq(nd6->next, nd7);
+  ck_assert_ptr_eq(nd7->next, nd8);
+
+  ck_assert_ptr_null(nd8->next);
+
+  ck_assert_list_size(listr, 8);
+
+  ListNode_freeSafe(listr);
+}
+END_TEST
+
+START_TEST(test_List_findAndClone) {
+  ListNode *nd1, *nd2, *nd3, *nd4;
+  ListNode *c0, *c1, *c2, *c3, *c4;
+  List *list = NULL;
+
+  void *ti = &testInt;
+
+  int a1 = 1, a2 = 2, a3 = 3, a4 = 4, a0 = 8;
+
+  int s1 = 1, s2 = 2, s3 = 3, s4 = 4;
+  void *dt1 = &s1, *dt2 = &s2, *dt3 = &s3, *dt4 = &s4;
+
+  nd1 = ListNode_create(dt1, NULL);
+  nd2 = ListNode_create(dt2, NULL);
+  nd4 = ListNode_create(dt4, NULL); // Inverted on purpose
+  nd3 = ListNode_create(dt3, NULL);
+
+  list = List_add(list, nd1);
+  list = List_add(list, nd2);
+  list = List_add(list, nd3);
+  list = List_add(list, nd4);
+
+  c0 = List_findAndClone(list, ti, &a0);
+  c1 = List_findAndClone(list, ti, &a1);
+  c2 = List_findAndClone(list, ti, &a2);
+  c3 = List_findAndClone(list, ti, &a3);
+  c4 = List_findAndClone(list, ti, &a4);
+
+  ck_assert_ptr_null(c0);
+
+  ck_assert_ptr_eq(c1->dt, nd1->dt);
+  ck_assert_ptr_eq(c2->dt, nd2->dt);
+  ck_assert_ptr_eq(c3->dt, nd3->dt);
+  ck_assert_ptr_eq(c4->dt, nd4->dt);
+
+  ListNode_freeSafe(list);
+  ListNode_freeSafe(c0);
+  ListNode_freeSafe(c1);
+  ListNode_freeSafe(c2);
+  ListNode_freeSafe(c3);
+  ListNode_freeSafe(c4);
+}
+END_TEST
+
+START_TEST(test_List_findAndCloneMany) {
+  ListNode *nd1, *nd2, *nd3, *nd4;
+  List *list = NULL;
+  List *cloned = NULL;
+
+  void *ti = &testInt;
+
+
+  int a2 = 2, a4 = 4;
+  int *dataArr[] = {&a2, &a4};
+
+  int s1 = 1, s2 = 2, s3 = 3, s4 = 4;
+  void *dt1 = &s1, *dt2 = &s2, *dt3 = &s3, *dt4 = &s4;
+
+  nd1 = ListNode_create(dt1, NULL);
+  nd2 = ListNode_create(dt2, NULL);
+  nd4 = ListNode_create(dt4, NULL); // Inverted on purpose
+  nd3 = ListNode_create(dt3, NULL);
+
+  list = List_add(list, nd1);
+  list = List_add(list, nd2);
+  list = List_add(list, nd3);
+  list = List_add(list, nd4);
+
+  cloned = List_findAndCloneMany(list, ti, NULL, 2, (void **)dataArr);
+
+  ck_assert_list_size(cloned, 2);
+
+  ck_assert_ptr_eq(cloned->dt, dt2);
+  ck_assert_ptr_eq(cloned->next->dt, dt4);
+
+  ck_assert_ptr_null(cloned->next->next);
+
+  ListNode_freeSafe(list);
+
 }
 END_TEST
 
@@ -225,6 +442,8 @@ START_TEST(test_List_sortedAdd_SwapFalse) {
   list = List_sortedAdd(list, nd4, sps, false);
   list = List_sortedAdd(list, nd3, sps, false);
 
+  ck_assert_list_size(list, 4);
+
   ck_assert_ptr_eq(list, nd1);
   ck_assert_ptr_eq(nd1->next, nd2);
   ck_assert_ptr_eq(nd2->next, nd3);
@@ -258,6 +477,8 @@ START_TEST(test_List_sortedAdd_SwapTrue) {
   list = List_sortedAdd(list, nd2, sps, true);
   list = List_sortedAdd(list, nd4, sps, true);
   list = List_sortedAdd(list, nd3, sps, true);
+
+  ck_assert_list_size(list, 4);
 
   ck_assert_ptr_eq(list, nd1);
   ck_assert_ptr_eq(nd1->next, nd2);
@@ -357,7 +578,7 @@ Suite *smc_state_list_suite(void) {
   Suite *s;
   TCase *tc_sm;
 
-  s = suite_create("State Machine State List");
+  s = suite_create("List");
   tc_sm = tcase_create("Smoke");
 
   // Pre
@@ -370,9 +591,14 @@ Suite *smc_state_list_suite(void) {
   tcase_add_test(tc_sm, test_ListNode_create_typecast);
   tcase_add_test(tc_sm, test_ListNode_swapData);
   tcase_add_test(tc_sm, test_ListNode_attatch);
+  tcase_add_test(tc_sm, test_ListNode_clone);
 
   // List
   tcase_add_test(tc_sm, test_List_Add);
+  tcase_add_test(tc_sm, test_List_cat);
+  tcase_add_test(tc_sm, test_List_findAndClone);
+  tcase_add_test(tc_sm, test_List_findAndCloneMany);
+  tcase_add_test(tc_sm, test_List_merge_noswap);
   tcase_add_test(tc_sm, test_List_free);
   tcase_add_test(tc_sm, test_List_sortedAdd_SwapFalse);
   tcase_add_test(tc_sm, test_List_sortedAdd_SwapTrue);

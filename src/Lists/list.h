@@ -21,21 +21,33 @@ void ListNode_swapData(ListNode *a, ListNode *b);
 ListNode *ListNode_create(void *stt, ListNode *next);
 
 void ListNode_free(ListNode *node, wipeDataFunc wipeData);
-#define ListNode_freeSafe(n) ListNode_free(n,NULL)
+#define ListNode_freeSafe(n) ListNode_free(n, NULL)
 //#define ListNode_freeWipe(n) ListNode_free(n,true)//Useless now
 
 ListNode *ListNode_attatch(List *current, List *newState);
 
+ListNode *ListNode_clone(ListNode *node);
+
 /* LIST FUNCTIONS */
 // Free all nodes of list
 void List_free(List *list, wipeDataFunc wipeData);
-#define List_freeSafe(l) List_free(l,NULL)
+#define List_freeSafe(l) List_free(l, NULL)
 //#define List_freeWipe(l) List_free(l,true)
 
 // Add new node to list
 List *List_sortedAdd(List *list, ListNode *node, sortFunc sort, boolean swap);
 #define List_add(l, n) List_sortedAdd(l, n, NULL, false)
+
+List *List_cat(List *list1, List *list2);
+List *List_merge(List *list1, List *list2, sortFunc sort);
+
 ListNode *List_search(List *list, testFunc test, void *data);
 ListNode *List_searchNth(List *list, testFunc test, void *data,
                          unsigned short int n);
+
+#define List_findAndClone(l, t, d) ListNode_clone(List_search(l, t, d))
+
+List *List_findAndCloneMany(List *list, testFunc test, sortFunc sort,  USint n,
+                             void **data); // TODO
+
 #endif
