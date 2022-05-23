@@ -69,7 +69,7 @@ TransitionNode *TransitionNode_create(Transition *trn, TransitionNode *next);
   TransitionNode_create(Transition_create(s, nm, f, d), nxt)
 
 #define TransitionNode_createFullFromState(s, d, n)                            \
-  TransitionNode_createFull(s, s->name, NULL, d)
+  TransitionNode_createFull(s, s->name, NULL, d, n)
 #define TransitionNode_createFullFromFunc(nm, f, d, nxt)                          \
   TransitionNode_createFull(NULL, n, f, d)
 #define TransitionNode_createFullShort(s, f, d, n)                             \

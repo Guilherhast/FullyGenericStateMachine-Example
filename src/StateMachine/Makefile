@@ -1,5 +1,10 @@
 #SAFE=echo
 
+#Watch command
+WATCHCMD=test
+WATCHDIR=.
+FNDARGS=-name 'Makefile' -o -name '*.[hc]'
+
 CC=$(shell which gcc)
 LSS=ls --color=auto -d
 
@@ -105,7 +110,7 @@ test_objs: test_transition_obj test_stateCondition_obj test_state_obj test_state
 test_lists: test_transition_list test_state_list test_stateCondition_list test_stateMachine_list
 #test_lists: test_stateMachine_list
 
-list_bin_test: $(BIN_TEST_LSMC) $(BIN_TEST_LSCOND) $(BIN_TEST_LSTT)
+list_bin_test: $(BIN_TEST_LSMC) $(BIN_TEST_LSCOND) $(BIN_TEST_LSTT) $(BIN_TEST_LTRANS)
 
 obj_bin_test: $(BIN_TEST_TRANS) $(BIN_TEST_SMC) $(BIN_TEST_SCOND) $(BIN_TEST_STT)
 
@@ -116,6 +121,10 @@ clean:
 
 dirs:
 	$(SAFE) mkdir -p $(TMPDIR)
+
+watch:
+	find $(WATCHDIR) $(FNDARGS) | entr -ncc make $(WATCHCMD)
+
 
 #Dependencies Rules
 

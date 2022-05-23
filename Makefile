@@ -2,6 +2,11 @@
 
 #SAFE=echo
 
+#Watch command
+WATCHCMD=bin_tests
+WATCHDIR=.
+FNDARGS=-name 'Makefile' -o -name '*.[hc]'
+
 
 #Directories
 SRC_DIR=src
@@ -52,6 +57,9 @@ default: bin_tests
 clean:
 	$(SAFE) rm -rf $(BUILD_DIR) $(TST_DIR)
 
+watch:
+	find $(WATCHDIR) $(FNDARGS) | entr -ncc make $(WATCHCMD)
+
 $(TST_DIR):
 	$(SAFE) mkdir -p $(TST_DIR)
 
@@ -65,12 +73,12 @@ count:
 	$(SAFE) find $(SRC_DIR) -type f  | $(SAFE) xargs wc -l | $(SAFE) sort -n
 
 exec_bin_tests:
-	$(SAFE) cd $(TST_DIR);          \
-	   	for i in *.bin;             \
-	   	do  ls --color=auto -d $$i; \
-	   	echo  -e $(COLOR_CYAN);     \
-	   	$(SAFE) ./$$i || exit 1;    \
-	   	echo -e $(COLOR_RESTORE);   \
+	$(SAFE) cd $(TST_DIR);				\
+	   	for i in *.bin; do				\
+			ls --color=auto -d $$i;		\
+		   	echo  -e $(COLOR_CYAN);     \
+		   	$(SAFE) ./$$i || exit 1;    \
+		   	echo -e $(COLOR_RESTORE);   \
 		done
 
 #Binary tests
