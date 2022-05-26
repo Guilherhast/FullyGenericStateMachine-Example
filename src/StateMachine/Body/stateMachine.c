@@ -75,8 +75,15 @@ void StateMachine_testAndTransit(StateMachine *smc) {
 
 void StateMachine_setState(StateMachine *smc, char *sttName) {
   TransitionNode *tn =
-      TransitionList_searchByName(smc->currentState->transitions, sttName);
+      TransitionList_searchRealByName(smc->currentState->transitions, sttName);
   smc->transition = tn->dt;
+}
+void StateMachine_triggerState(StateMachine *smc, char *sttName) {
+  TransitionNode *tn = TransitionList_searchTriggerByName(
+      smc->currentState->transitions, sttName);
+  if (tn && tn->dt->tFunc) {
+    tn->dt->tFunc(smc);
+  }
 }
 
 Transition *StateMachine_check(StateMachine *smc) {

@@ -9,7 +9,9 @@ void Transition_free(void *VTrn) {
 }
 
 Transition *Transition_create(State *stateTo, char *stateToName,
-                              transitionFunct tFunc, void *data) {
+                              transitionFunct tFunc, boolean isTrigger,
+                              void *data) {
+
   Transition *t = malloc(sizeof(Transition));
 
   char *name = malloc(strlen(stateToName));
@@ -19,9 +21,15 @@ Transition *Transition_create(State *stateTo, char *stateToName,
   t->stateTo = stateTo;
   t->stateToName = name;
 
+  t->isTrigger = isTrigger;
+
   t->data = data;
   // t->temporary = temporary;
 
+  if (t->isTrigger && t->stateTo) {
+    fprintf(stderr, "Error: Trigger transitions should have no stateTo.\n");
+    return NULL;
+  }
   if (!(t->stateTo || t->tFunc)) {
     fprintf(
         stderr,

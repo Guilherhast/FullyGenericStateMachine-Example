@@ -45,10 +45,10 @@ START_TEST(test_StateMachine_idMatch) {
 
   StateMachine *smc = StateMachine_create(5, stt, NULL, NULL);
 
-  id= 5;
+  id = 5;
   ck_assert(idMatch(smc, p));
 
-  id= 3;
+  id = 3;
   ck_assert(!idMatch(smc, p));
 
   StateMachine_free(smc);

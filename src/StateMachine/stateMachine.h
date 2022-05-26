@@ -54,15 +54,17 @@ void StateMachine_free(void *smc);
 StateMachine *StateMachine_create(unsigned int id, StateList *possibleStates,
                                   State *initialState, void *data);
 
-//void *StateMachine_getData(StateMachine *smc);
+// void *StateMachine_getData(StateMachine *smc);
 
 void StateMachine_update(StateMachine *smc); // Maybe it will check too
 void StateMachine_changeState(StateMachine *smc);
 void StateMachine_testAndTransit(StateMachine *smc);
 void StateMachine_setState(StateMachine *smc, char *sttName);
+void StateMachine_triggerState(StateMachine *smc, char *sttName);
+
 Transition *StateMachine_check(StateMachine *smc);
 
-boolean idMatch(void* a, void* b);
+boolean idMatch(void *a, void *b);
 /*
  * STATEMACHINENODE FUNCTIONS
  */
@@ -88,12 +90,15 @@ void StateMachineList_free(StateMachineList *list, wipeDataFunc wipeData);
 #define StateMachineList_freeSafe(s) StateMachineList_free(s, NULL)
 #define StateMachineList_freeWipe(s) StateMachineList_free(s, StateMachine_free)
 
-StateMachineList *StateMachineList_sortedAdd(StateMachineList *list, StateMachineNode *node,
-                               sortFunc sfn, boolean swapData);
+StateMachineList *StateMachineList_sortedAdd(StateMachineList *list,
+                                             StateMachineNode *node,
+                                             sortFunc sfn, boolean swapData);
 #define StateMachineList_add(s, n) StateMachineList_sortedAdd(s, n, NULL, false)
 
-StateMachineNode *StateMachineList_search(StateMachineList *list, testFunc tst, void *data);
-#define StateMachineList_searchById(l,i) StateMachineList_search(l,&idMatch,i)
+StateMachineNode *StateMachineList_search(StateMachineList *list, testFunc tst,
+                                          void *data);
+#define StateMachineList_searchById(l, i)                                      \
+  StateMachineList_search(l, &idMatch, i)
 
 StateMachine *StateMachineList_update(StateMachineList *list);
 

@@ -26,7 +26,7 @@ struct Transition {
 
   void *data;
 
-  // boolean temporary;
+  boolean isTrigger;
 };
 
 struct TransitionNode {
@@ -40,12 +40,24 @@ struct TransitionNode {
 void Transition_free(void *trn);
 
 Transition *Transition_create(State *stateTo, char *stateToName,
-                              transitionFunct tFunc, void *data);
+                              transitionFunct tFunc, boolean isTrigger,
+                              void *data);
 
-#define Transition_createFromState(s, d) Transition_create(s, s->name, NULL, d)
-#define Transition_createFromFunc(n, f, d) Transition_create(NULL, n, f, d)
-#define Transition_createShort(s, f, d) Transition_create(s, s->name, f, d)
+#define Transition_createRealFromState(s, d)                                   \
+  Transition_create(s, s->name, NULL, false, d)
+#define Transition_createRealFromFunc(n, f, d)                                 \
+  Transition_create(NULL, n, f, false, d)
+#define Transition_createRealShort(s, f, d)                                    \
+  Transition_create(s, s->name, f, false, d)
 
+#define Transition_createTriggerFromState(s, d)                                \
+  Transition_create(s, s->name, NULL, true, d)
+
+#define Transition_createTriggerFromFunc(n, f, d)                              \
+  Transition_create(NULL, n, f, true, d)
+
+#define Transition_createTriggerShort(n, f, d)                                 \
+  Transition_create(NULL, n, f, true, d)
 /*
 Transition *Transition_create(State *stateTo, transitionFunct tFunc,
 void *data, boolean temporary);
@@ -65,15 +77,22 @@ void TransitionNode_free(TransitionNode *trnNode, wipeDataFunc wipeData);
 
 TransitionNode *TransitionNode_create(Transition *trn, TransitionNode *next);
 
-#define TransitionNode_createFull(s, nm, f, d, nxt)                            \
-  TransitionNode_create(Transition_create(s, nm, f, d), nxt)
+// Real transition macros
+#define TransitionNode_createFullReal(s, nm, f, d, nxt)                        \
+  TransitionNode_create(Transition_create(s, nm, f, false, d), nxt)
 
-#define TransitionNode_createFullFromState(s, d, n)                            \
-  TransitionNode_createFull(s, s->name, NULL, d, n)
-#define TransitionNode_createFullFromFunc(nm, f, d, nxt)                          \
-  TransitionNode_createFull(NULL, n, f, d)
-#define TransitionNode_createFullShort(s, f, d, n)                             \
-  TransitionNode_createFull(s, s->name, f, d)
+#define TransitionNode_createFullRealFromState(s, d, n)                        \
+  TransitionNode_createFullReal(s, s->name, NULL, d, n)
+
+#define TransitionNode_createFullRealFromFunc(nm, f, d, nxt)                   \
+  TransitionNode_createFullReal(NULL, n, f, d, nxt)
+
+#define TransitionNode_createFullRealShort(s, f, d, n)                         \
+  TransitionNode_createFullReal(s, s->name, f, d, n)
+
+// Trigger transition macros
+#define TransitionNode_createFullTrigger(nm, f, d, nxt)                        \
+  TransitionNode_create(Transition_create(NULL, nm, f, true, d), nxt)
 
 TransitionNode *TransitionNode_attatch(TransitionNode *curStt,
                                        TransitionNode *newStt);
@@ -86,17 +105,19 @@ void TransitionList_free(TransitionList *trnList, wipeDataFunc wipeData);
 #define TransitionList_freeSafe(s) TransitionList_free(s, NULL)
 #define TransitionList_freeWipe(s) TransitionList_free(s, &Transition_free)
 
-
 TransitionList *TransitionList_sortedAdd(TransitionList *trnList,
                                          TransitionNode *trnNode, sortFunc sfn,
                                          boolean swapData);
-#define TransitionList_add(t,n) TransitionList_sortedAdd(t,n,NULL,false)
+#define TransitionList_add(t, n) TransitionList_sortedAdd(t, n, NULL, false)
 
 TransitionNode *TransitionList_search(TransitionList *trnList, testFunc tst,
                                       void *data);
 
-#define TransitionList_searchByName(t, d)                                      \
-  TransitionList_search(t, &Transition_nameEqual, d)
+#define TransitionList_searchTriggerByName(t, d)                               \
+  TransitionList_search(t, &Transition_triggerNameEqual, d)
+
+#define TransitionList_searchRealByName(t, d)                                  \
+  TransitionList_search(t, &Transition_realNameEqual, d)
 
 TransitionNode *TransitionList_searchNth(TransitionList *trnList, testFunc tst,
                                          void *data, unsigned short int n);
@@ -104,6 +125,8 @@ TransitionNode *TransitionList_searchNth(TransitionList *trnList, testFunc tst,
 /*
  * Search functions
  */
-boolean Transition_nameEqual(void *vStt, void *vName);
+boolean Transition_nameEqual(void *vStt, void *vName, boolean searchTrigger);
+boolean Transition_realNameEqual(void *vStt, void *vName);
+boolean Transition_triggerNameEqual(void *vStt, void *vName);
 
 #endif

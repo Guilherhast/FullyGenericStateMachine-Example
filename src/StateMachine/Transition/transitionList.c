@@ -1,5 +1,6 @@
-#include "../transition.h"
 #include "../../Lists/list.h"
+#include "../transition.h"
+#include <stdio.h>
 
 /*
  * Adapted StateConditionNode functions
@@ -9,8 +10,7 @@ void TransitionNode_free(TransitionNode *trnNode, wipeDataFunc wipeData) {
   ListNode_free((ListNode *)trnNode, wipeData);
 }
 
-TransitionNode *TransitionNode_create(Transition *trn,
-                                          TransitionNode *next) {
+TransitionNode *TransitionNode_create(Transition *trn, TransitionNode *next) {
   return (TransitionNode *)ListNode_create(trn, (ListNode *)next);
 }
 
@@ -50,9 +50,21 @@ TransitionNode *TransitionList_searchNth(TransitionList *trnList, testFunc tst,
 
 // Search functions
 // StateConditionNode functions
-boolean Transition_nameEqual(void *vStt, void *vName) {
+boolean Transition_triggerNameEqual(void *vStt, void *vName) {
+  return Transition_nameEqual(vStt, vName, true);
+}
+boolean Transition_realNameEqual(void *vStt, void *vName) {
+  return Transition_nameEqual(vStt, vName, false);
+}
+boolean Transition_nameEqual(void *vStt, void *vName, boolean searchTrigger) {
+  if (!(vStt && vName)) {
+    return false;
+  }
   Transition *trn = (Transition *)vStt;
   char *name = (char *)vName;
 
+  if (searchTrigger != trn->isTrigger) {
+    return false;
+  }
   return (strcmp(trn->stateToName, name) == 0);
 }
