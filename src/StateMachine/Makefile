@@ -128,7 +128,7 @@ watch:
 
 #Dependencies Rules
 
-$(DEP_LST):
+$(DEP_LST): $(shell find $(FOLDER_LST) -type f)
 	$(SAFE) make -C $(FOLDER_LST) $@
 
 #State condition rules

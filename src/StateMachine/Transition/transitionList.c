@@ -20,6 +20,10 @@ TransitionNode *TransitionNode_attatch(TransitionNode *curStt,
                                             (ListNode *)newStt);
 }
 
+TransitionNode *TransitionNode_clone(TransitionNode *nd) {
+  return (TransitionNode *)ListNode_clone((ListNode *)nd);
+}
+
 /*
  * Adapted StateConditionList functions
  */
@@ -35,6 +39,11 @@ TransitionList *TransitionList_sortedAdd(TransitionList *scondList,
                                           (ListNode *)trnNode, sfn, swapData);
 }
 
+TransitionList *TransitionList_cat(TransitionList *list1,
+                                   TransitionList *list2) {
+  return (TransitionList *)List_cat((List *)list1, (List *)list2);
+}
+
 TransitionNode *TransitionList_search(TransitionList *scondList, testFunc tst,
                                       void *data) {
   return (TransitionNode *)List_search((List *)scondList, tst, data);
@@ -44,6 +53,13 @@ TransitionNode *TransitionList_searchNth(TransitionList *trnList, testFunc tst,
   return (TransitionNode *)List_searchNth((List *)trnList, tst, data, n);
 }
 
+TransitionList *TransitionList_findAndCloneMany(TransitionList *list,
+                                                testFunc test, sortFunc sort,
+                                                USint n, void **data) {
+
+  return (TransitionList *)List_findAndCloneMany((List *)list, test, sort, n,
+                                                 data);
+}
 /*
  * Original StateConditionList functions  (find a better name)
  */

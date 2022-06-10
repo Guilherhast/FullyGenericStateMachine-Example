@@ -22,7 +22,8 @@ DEP_HDR_LST=$(DIR_LST)/$(HDR_LST)
 
 #List files
 DIR_TUT=.
-SRC_PART_TUT=$(DIR_TUT)/testUtils.c
+SRC_HDR_TUT=$(DIR_TUT)/testUtils.h
+SRC_PART_TUT=$(SRC_HDR_TUT:.h=.c)
 OBJ_PART_TUT=$(TMPDIR)/$(notdir $(SRC_PART_TUT:.c=.o))
 
 #General rules
@@ -39,6 +40,6 @@ $(TMPDIR):
 	$(SAFE) make -C $(ROOTDIR) test
 
 #List rules
-$(OBJ_PART_TUT): $(SRC_PART_TUT) $(DEP_HDR_LST) dirs
+$(OBJ_PART_TUT): $(SRC_PART_TUT) $(SRC_HDR_TUT) $(DEP_HDR_LST) dirs
 	$(SAFE) gcc $(CFLAGS) $(PROFILE_FLAGS) $(SRC_PART_TUT) -o $@
 

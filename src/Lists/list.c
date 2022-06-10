@@ -7,7 +7,7 @@
 ListNode *ListNode_create(void *dt, ListNode *next) {
   ListNode *node = malloc(sizeof(ListNode));
   if (!node) {
-    fprintf(stderr, "Error: ListNode: Could not alloc space");
+    fprintf(stderr, "Error: ListNode: Could not alloc space\n");
     return NULL;
   }
 
@@ -106,6 +106,10 @@ List *List_cat(List *list1, List *list2) {
   if (!list1) {
     return list2;
   }
+  if (!list2) {
+    return list1;
+  }
+
   List *cur = list1;
   while (cur->next) {
     cur = cur->next;
@@ -176,7 +180,7 @@ List *List_findAndCloneMany(List *list, testFunc test, sortFunc sort, USint n,
                             void **data) {
   if (!(list && test && n && data)) {
     fprintf(stderr,
-            "Error: List_findAndCloneMany: Can't receive NULL parameters.");
+            "Error: List_findAndCloneMany: Can't receive NULL parameters.\n");
     return NULL;
   }
 

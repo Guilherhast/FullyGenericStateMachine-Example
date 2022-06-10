@@ -97,6 +97,10 @@ TransitionNode *TransitionNode_create(Transition *trn, TransitionNode *next);
 TransitionNode *TransitionNode_attatch(TransitionNode *curStt,
                                        TransitionNode *newStt);
 
+TransitionNode *TransitionNode_clone(TransitionNode *nd);
+
+#define TransitionList_findAndClone(l, t, d)                                   \
+  TransitionNode_clone(TransitionList_search(l, t, d))
 /*
  * TRANSITIONLIST FUNCTIONS
  */
@@ -110,6 +114,9 @@ TransitionList *TransitionList_sortedAdd(TransitionList *trnList,
                                          boolean swapData);
 #define TransitionList_add(t, n) TransitionList_sortedAdd(t, n, NULL, false)
 
+TransitionList *TransitionList_cat(TransitionList *list1,
+                                   TransitionList *list2);
+
 TransitionNode *TransitionList_search(TransitionList *trnList, testFunc tst,
                                       void *data);
 
@@ -121,6 +128,16 @@ TransitionNode *TransitionList_search(TransitionList *trnList, testFunc tst,
 
 TransitionNode *TransitionList_searchNth(TransitionList *trnList, testFunc tst,
                                          void *data, unsigned short int n);
+
+TransitionList *TransitionList_findAndCloneMany(TransitionList *list,
+                                                testFunc test, sortFunc sort,
+                                                USint n, void **data);
+
+#define TransitionList_realFindAndCloneManyByName(l, n, d)                     \
+  TransitionList_findAndCloneMany(l, Transition_realNameEqual, NULL, n, d)
+
+#define TransitionList_triggerFindAndCloneManyByName(l, n, d)                  \
+  TransitionList_findAndCloneMany(l, Transition_triggerNameEqual, NULL, n, d)
 
 /*
  * Search functions

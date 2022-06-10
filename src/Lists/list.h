@@ -47,7 +47,7 @@ ListNode *List_searchNth(List *list, testFunc test, void *data,
 
 #define List_findAndClone(l, t, d) ListNode_clone(List_search(l, t, d))
 
-List *List_findAndCloneMany(List *list, testFunc test, sortFunc sort,  USint n,
-                             void **data); // TODO
+List *List_findAndCloneMany(List *list, testFunc test, sortFunc sort, USint n,
+                            void **data);
 
 #endif

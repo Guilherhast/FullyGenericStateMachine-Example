@@ -50,7 +50,7 @@ $(TMPDIR):
 	$(SAFE) make -C $(ROOTDIR) test
 
 #Dependencies
-$(DEP_TUT):
+$(DEP_TUT): $(shell find $(FOLDER_TUT) -type f )
 	$(SAFE) make -C $(FOLDER_TUT)
 
 #List rules
