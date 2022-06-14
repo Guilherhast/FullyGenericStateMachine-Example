@@ -4,7 +4,11 @@
 
 #include "gate.h"
 
-START_TEST(test_network_create) {}
+START_TEST(test_network_create) {
+  StateMachineList *gateList = GateStateMachine_create();
+
+  ck_assert_ptr_nonnull(gateList);
+}
 END_TEST
 
 Suite *default_suite(void) {

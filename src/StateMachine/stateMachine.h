@@ -17,10 +17,11 @@
 typedef struct StateMachine StateMachine;
 typedef struct StateMachineNode StateMachineNode;
 typedef struct StateMachineNode StateMachineList;
+typedef unsigned int SMCID;
 
 // Represents a state machine
 struct StateMachine {
-  unsigned int id;
+  SMCID id;
 
   boolean online;
 
