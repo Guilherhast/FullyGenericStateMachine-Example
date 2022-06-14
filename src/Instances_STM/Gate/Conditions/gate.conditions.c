@@ -1,12 +1,6 @@
 #include "../gate.h"
 #include <time.h>
 
-// Send signals
-void Closed_sendSignal() { printf("Sending close signal\n"); }
-void Open_sendSignal() { printf("Sending open signal\n"); }
-void Lock_sendSignal() { printf("Sending lock signal\n"); }
-void Interrupted_sendSignal() { printf("Sending interrupt signal\n"); }
-
 // General functions
 boolean timeOutCheck(time_t triggerTime, float tolerance) {
   time_t curr;
@@ -22,21 +16,23 @@ boolean timeOutCheckOnlyTime(time_t triggerTime, float tolerance) {
 }
 
 // State functions
-boolean State_open_timeOutCheck(void *data) {
+boolean openState_timeOutCheck(void *data) {
   data_smc_gate *smc_data = (data_smc_gate *)data;
   if (smc_data->ignoreAutoTriggers) {
     return false;
   }
   return timeOutCheckOnlyTime(smc_data->auto_open_time, CHECK_LOCK_TOLERANCE);
 }
-boolean State_lock_timeOutCheck(void *data) {
+
+boolean lockState_timeOutCheck(void *data) {
   data_smc_gate *smc_data = (data_smc_gate *)data;
   if (smc_data->ignoreAutoTriggers) {
     return false;
   }
   return timeOutCheckOnlyTime(smc_data->auto_lock_time, CHECK_LOCK_TOLERANCE);
 }
-boolean State_unlock_timeOutCheck(void *data) {
+
+boolean unlockState_timeOutCheck(void *data) {
   data_smc_gate *smc_data = (data_smc_gate *)data;
   if (smc_data->ignoreAutoTriggers) {
     return false;
@@ -45,39 +41,29 @@ boolean State_unlock_timeOutCheck(void *data) {
                               CHECK_UNLOCK_TOLERANCE);
 }
 
-// State Conditions
-StateConditionList *conditions_stt_closed_create(State *sttLock,
-                                                 State *sttOpening) {
+void GateConditions_addConditionFromName(StateList *sttList, char *sttName,
+                                         char *trnName, checkerFunct check,
+                                         USint priority) {
+  StateNode *sttNode = StateList_searchByName(sttList, sttName);
 
-  // Closed to locked
-  // Closed to open
-  StateConditionNode *lockCond = StateConditionNode_createFull(
-                         &State_lock_timeOutCheck, sttLock, 1, NULL),
-                     *openCond = StateConditionNode_createFull(
-                         &State_open_timeOutCheck, sttOpening, 1, NULL);
+  TransitionNode *trnNode =
+      TransitionList_searchTriggerByName(sttNode->dt->transitions, trnName);
 
-  StateConditionList *list = NULL;
+  StateConditionNode *cndNode =
+      StateConditionNode_createFull(check, trnNode->dt, priority, NULL);
 
-  list = StateConditionList_add(list, lockCond);
-  list = StateConditionList_add(list, openCond);
-
-  return list;
+  sttNode->dt->stateConditionList =
+      StateConditionList_add(sttNode->dt->stateConditionList, cndNode);
 }
 
-StateConditionList *conditions_stt_locked_create(State *sttClosed) {
-  // Locked to
-  return StateConditionNode_createFull(&State_unlock_timeOutCheck, sttClosed, 1,
-                                       NULL);
-}
-
-// Factory to create state checks for the closed state
-StateConditionList *conditions_stt_locked_create(State *sttLock,
-                                                 State *sttUnlock) {
-
-  StateConditionNode *unlockCond = StateCondition_create(
-                         &State_unlock_timeOutCheck, sttUnlock, 1, NULL),
-                     * = StateCondition_create(&State_unlock_timeOutCheck,
-                                               sttUnlock, 1, temp);
-
-  return list;
+void GateConditions_addAll(StateList *sttList) {
+  // Close -> Open
+  GateConditions_addConditionFromName(sttList, NAME_CLOSED, NAME_OPENNING,
+                                      openState_timeOutCheck, 1);
+  // Close -> Lock
+  GateConditions_addConditionFromName(sttList, NAME_CLOSED, NAME_LOCKED,
+                                      lockState_timeOutCheck, 2);
+  // Lock -> Close
+  GateConditions_addConditionFromName(sttList, NAME_LOCKED, NAME_CLOSED,
+                                      unlockState_timeOutCheck, 1);
 }

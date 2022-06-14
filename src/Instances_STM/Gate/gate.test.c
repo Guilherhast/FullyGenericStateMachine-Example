@@ -4,7 +4,11 @@
 
 #include "gate.h"
 
-START_TEST(test_network_create) {}
+START_TEST(test_gate_createAll) {
+  StateMachineList *gateList = GateStateMachine_createAll();
+
+  ck_assert_ptr_nonnull(gateList);
+}
 END_TEST
 
 Suite *default_suite(void) {
@@ -14,7 +18,7 @@ Suite *default_suite(void) {
   s = suite_create("Gate");
   tc_sm = tcase_create("Smoke");
 
-  tcase_add_test(tc_sm, test_network_create);
+  tcase_add_test(tc_sm, test_gate_createAll);
 
   suite_add_tcase(s, tc_sm);
 

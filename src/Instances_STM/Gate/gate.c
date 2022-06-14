@@ -1,27 +1,29 @@
 #include "gate.h"
 
-// Receive gate smc
-void SmcGate_SwitchToState(StateMachine *gate_smc, State *stt) {
-  if (stt == NULL) {
-    return;
-  }
-  // Watch out for the state not being in state list
-  data_smc_gate *smc_data = (data_smc_gate *)gate_smc->data;
-  smc_data->triggeredInternally = true;
-  gate_smc->stateTo = stt;
-}
-void SmcGate_SwitchToStateByName(StateMachine *gate_smc, char *sttName) {
-  SmcGate_SwitchToState(gate_smc,
-                        State_searchByName(gate_smc->possibleStates, sttName));
+time_t createDaylyTimer(USint hour, USint min) {
+  struct tm timer;
+
+  timer.tm_hour = hour;
+  timer.tm_min = min;
+
+  return mktime(&timer);
 }
 
-StateMachine *SmcGate_create() {
-  // Creating linked list of states
+StateMachineList *GateStateMachine_createAll() {
+  const int nGates = 2;
 
-  // Initialize auto lock and auto unlock time
-  // Also auto open
+  time_t open1 = createDaylyTimer(6, 30);
+  time_t open2 = createDaylyTimer(7, 0);
 
-  // When the state machine make a test
-  // If it is true ( put the internally triggered flag)
-  return NULL;
+  time_t lock = createDaylyTimer(22, 0);
+  time_t unlock = createDaylyTimer(6, 0);
+
+  SMCID ids[] = {1, 2};
+
+  // Creating gates with the different openning time,
+  // but with the same lock and unlock time
+  data_smc_gate *data[] = {gateData_allocAndInitNOIG(open1, lock, unlock),
+                           gateData_allocAndInitNOIG(open2, lock, unlock)};
+
+  return GateSMCS_createList(nGates, ids, data);
 }

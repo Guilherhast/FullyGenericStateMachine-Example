@@ -4,9 +4,9 @@
 
 #include "../gate.h"
 
-boolean State_open_timeOutCheck(unsigned long int u, void *data);
-boolean State_lock_timeOutCheck(unsigned long int u, void *data);
-boolean State_unlock_timeOutCheck(unsigned long int u, void *data);
+boolean openState_timeOutCheck(void *data);
+boolean lockState_timeOutCheck(void *data);
+boolean unlockState_timeOutCheck(void *data);
 
 START_TEST(test_timeOutCheck) {
   time_t now, few_secs_ago, many_secs_ago, secs_from_now;
@@ -61,29 +61,29 @@ START_TEST(test_State_checks) {
   // If it does not ignore all them will trigger
   data.auto_lock_time = data.auto_unlock_time = data.auto_open_time = now;
 
-  //Checking all states not ignoring triggers
+  // Checking all states not ignoring triggers
   data.ignoreAutoTriggers = false;
 
-  boolean stt_unlock_true = State_unlock_timeOutCheck(0,&data);
-  boolean stt_lock_true = State_lock_timeOutCheck(0,&data);
-  boolean stt_open_true = State_open_timeOutCheck(0,&data);
+  boolean stt_unlock_true = unlockState_timeOutCheck(&data);
+  boolean stt_lock_true = lockState_timeOutCheck(&data);
+  boolean stt_open_true = openState_timeOutCheck(&data);
 
-  //Checking all states ignoring triggers
+  // Checking all states ignoring triggers
   data.ignoreAutoTriggers = true;
 
-  boolean stt_unlock_false = State_unlock_timeOutCheck(0,&data);
-  boolean stt_lock_false = State_lock_timeOutCheck(0,&data);
-  boolean stt_open_false = State_open_timeOutCheck(0,&data);
+  boolean stt_unlock_false = unlockState_timeOutCheck(&data);
+  boolean stt_lock_false = lockState_timeOutCheck(&data);
+  boolean stt_open_false = openState_timeOutCheck(&data);
 
+  ck_assert(stt_unlock_true);
+  ck_assert(stt_lock_true);
+  ck_assert(stt_open_true);
 
- ck_assert(stt_unlock_true);
- ck_assert(stt_lock_true);
- ck_assert(stt_open_true);
-
- ck_assert(!stt_unlock_false);
- ck_assert(!stt_lock_false);
- ck_assert(!stt_open_false);
-
+  ck_assert(!stt_unlock_false);
+  ck_assert(!stt_lock_false);
+  ck_assert(!stt_open_false);
+  /*
+   */
 }
 END_TEST
 

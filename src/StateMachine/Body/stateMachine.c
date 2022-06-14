@@ -61,14 +61,6 @@ void StateMachine_testAndTransit(StateMachine *smc) {
       State_enter(smc->transition->stateTo, smc->data);
       smc->currentState = smc->transition->stateTo;
     }
-    // To optimize for cpu you could:
-    // Put a transition object in the state machine
-    // Use it to store temporary transitions
-    /*
-    if (smc->transition->temporary) {
-    Transition_free(smc->transition);
-    }
-    */
     smc->transition = NULL;
   }
 }
