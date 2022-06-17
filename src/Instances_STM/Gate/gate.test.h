@@ -7,7 +7,6 @@
 #define TESTSTR "TESTEDOK"
 #define NAME_TEST "TEST"
 
-
 // State functions
 StateList *GateStateList_baseFactory();
 
@@ -17,6 +16,5 @@ TransitionList *GateTransitions_createTriggerTmp();
 
 #define dummyState(n)                                                          \
   StateNode_createFull(n, NULL, NULL, NULL, NULL, NULL, NULL)
-
 
 #endif

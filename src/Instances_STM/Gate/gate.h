@@ -113,5 +113,5 @@ StateMachineList *GateSMCS_createList(USint n, SMCID *IDS,
 /*
  * Gate Declarations
  */
-StateMachineList *GateStateMachine_create();
+StateMachineList *GateStateMachine_createAll();
 #endif

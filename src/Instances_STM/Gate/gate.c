@@ -9,7 +9,7 @@ time_t createDaylyTimer(USint hour, USint min) {
   return mktime(&timer);
 }
 
-StateMachineList *GateStateMachine_create() {
+StateMachineList *GateStateMachine_createAll() {
   const int nGates = 2;
 
   time_t open1 = createDaylyTimer(6, 30);
@@ -20,6 +20,8 @@ StateMachineList *GateStateMachine_create() {
 
   SMCID ids[] = {1, 2};
 
+  // Creating gates with the different openning time,
+  // but with the same lock and unlock time
   data_smc_gate *data[] = {gateData_allocAndInitNOIG(open1, lock, unlock),
                            gateData_allocAndInitNOIG(open2, lock, unlock)};
 
