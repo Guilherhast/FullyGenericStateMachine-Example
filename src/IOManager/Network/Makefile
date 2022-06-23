@@ -23,7 +23,7 @@ BTNET=$(OTSCOND:.o=.bin)
 
 
 #Genral rules
-defualt: dirs test
+default: dirs test
 
 test: test_network
 
