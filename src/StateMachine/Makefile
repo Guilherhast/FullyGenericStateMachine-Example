@@ -100,7 +100,7 @@ OBJ_TEST_LSMC=$(TMPDIR)/$(notdir $(SRC_TEST_LSMC:.c=.o))
 BIN_TEST_LSMC=$(OBJ_TEST_LSMC:.o=.bin)
 
 #Genral rules
-defualt: dirs test
+default: dirs test
 
 test: test_objs test_lists
 

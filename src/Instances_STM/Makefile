@@ -9,7 +9,7 @@ ALLDIRS+=$(DIRMAKE_GATE)
 
 
 #Rules
-defualt: test
+default: test
 
 test: gate_tests
 

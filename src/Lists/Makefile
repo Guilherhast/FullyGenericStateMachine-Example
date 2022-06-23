@@ -33,7 +33,7 @@ OBJ_TEST_LST=$(TMPDIR)/$(notdir $(SRC_TEST_LST:.c=.o))
 BIN_TEST_LST=$(OBJ_TEST_LST:.o=.bin)
 
 #General rules
-defualt: dirs test
+default: dirs test
 
 test: test_all
 

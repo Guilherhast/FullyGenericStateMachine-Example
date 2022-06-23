@@ -27,7 +27,7 @@ SRC_PART_TUT=$(SRC_HDR_TUT:.h=.c)
 OBJ_PART_TUT=$(TMPDIR)/$(notdir $(SRC_PART_TUT:.c=.o))
 
 #General rules
-defualt: dirs objs
+default: dirs objs
 
 objs:  $(OBJ_PART_TUT)
 
