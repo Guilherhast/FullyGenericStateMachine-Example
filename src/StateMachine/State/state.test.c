@@ -11,17 +11,20 @@
 #define STR_UPDATED "UPDATED"
 #define STR_EMPTY ""
 
-void en(State *stt, void *data) {
+void* en(State *stt, void *data) {
   char *s = (char *)data;
   strcpy(s, STR_ENTER);
+  return s;
 }
-void ex(State *stt, void *data) {
+void* ex(State *stt, void *data) {
   char *s = (char *)data;
   strcpy(s, STR_EXIT);
+  return s;
 }
-void up(State *stt, void *data) {
+void* up(State *stt, void *data) {
   char *s = (char *)data;
   strcpy(s, STR_UPDATED);
+  return s;
 }
 
 START_TEST(test_State_create) {
@@ -52,6 +55,7 @@ START_TEST(test_State_create) {
   State_free(stt);
 }
 END_TEST
+
 START_TEST(test_State_enter) {
   State *stt;
   char *name = "StateName";
@@ -59,7 +63,8 @@ START_TEST(test_State_enter) {
 
   stt = State_create(name, NULL, NULL, &en, &up, &ex);
 
-  State_enter(stt, test);
+  void* r;
+  r = State_enter(stt, test);
 
   time_t now;
   time(&now);
@@ -67,11 +72,13 @@ START_TEST(test_State_enter) {
   int d = difftime(now, stt->lastTimeEntered);
 
   ck_assert_int_eq(d, 0);
+  ck_assert_ptr_eq(r,test);
   ck_assert_str_eq(test, STR_ENTER);
 
   State_free(stt);
 }
 END_TEST
+
 START_TEST(test_State_update) {
   State *stt;
   char *name = "StateName";
@@ -79,7 +86,8 @@ START_TEST(test_State_update) {
 
   stt = State_create(name, NULL, NULL, &en, &up, &ex);
 
-  State_update(stt, test);
+  void* r;
+  r = State_update(stt, test);
 
   time_t now;
   time(&now);
@@ -87,6 +95,7 @@ START_TEST(test_State_update) {
   int d = difftime(now, stt->lastUpdated);
 
   ck_assert_int_eq(d, 0);
+  ck_assert_ptr_eq(r,test);
   ck_assert_str_eq(test, STR_UPDATED);
 
   State_free(stt);
@@ -100,33 +109,15 @@ START_TEST(test_State_exit) {
 
   stt = State_create(name, NULL, NULL, &en, &up, &ex);
 
-  State_exit(stt, test);
+  void* r;
+  r = State_exit(stt, test);
 
   ck_assert_str_eq(test, STR_EXIT);
+  ck_assert_ptr_eq(r,test);
 
   State_free(stt);
 }
 END_TEST
-/*
-START_TEST(test_State_sendSignal) {
-State *stt;
-char *name = "StateName";
-
-stt = State_create(name, NULL, &en, &up, &ex);
-
-State_sendSignal(stt);
-
-time_t now;
-time(&now);
-
-int d = difftime(now, stt->lastSignalSent);
-
-ck_assert_int_eq(d, 0);
-
-State_free(stt);
-}
-END_TEST
-*/
 
 Suite *smc_state_suite(void) {
   Suite *s;
@@ -139,7 +130,6 @@ Suite *smc_state_suite(void) {
   tcase_add_test(tc_sm, test_State_enter);
   tcase_add_test(tc_sm, test_State_update);
   tcase_add_test(tc_sm, test_State_exit);
-  // tcase_add_test(tc_sm, test_State_sendSignal);
 
   suite_add_tcase(s, tc_sm);
 

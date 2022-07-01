@@ -21,8 +21,8 @@ typedef struct StateNode StateNode;
 typedef struct StateNode StateList;
 
 // Functions executed in state change (enter, exit)
-typedef void (*stateChangeFunc)(State *stt, void *data);
-typedef void (*stateUpdateFunc)(State *stt, void *data);
+typedef void* (*stateChangeFunc)(State *stt, void *data);
+typedef void* (*stateUpdateFunc)(State *stt, void *data);
 
 // Represents a single state
 struct State {
@@ -55,12 +55,9 @@ State *State_create(char *name, StateConditionList *sCondList,
                     TransitionList *transitions, stateChangeFunc enter,
                     stateUpdateFunc update, stateChangeFunc exit);
 
-void State_enter(State *stt, void *data);
-void State_exit(State *stt, void *data);
-void State_update(State *stt, void *data);
-void State_sendSignal(State *stt);
-
-void StateList_sendSignalByName(StateList *list, char *name);
+void* State_enter(State *stt, void *data);
+void* State_exit(State *stt, void *data);
+void* State_update(State *stt, void *data);
 
 /*
  * STATENODE FUNCTIONS

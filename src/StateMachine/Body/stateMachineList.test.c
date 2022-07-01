@@ -5,6 +5,8 @@
 #include "../../consts.h"
 #include "../stateMachine.h"
 
+void* mgrF(void *d1, void *d2){return NULL;}
+
 START_TEST(test_StateMachineNode_create) {
   StateMachineNode *nd;
 
@@ -28,7 +30,7 @@ START_TEST(test_StateMachineNode_createFull) {
   int n, s;
   void *nxt = &n, *stt = &s;
 
-  nd = StateMachineNode_createFull(1, stt, NULL, NULL, nxt);
+  nd = StateMachineNode_createFull(1, stt, NULL, mgrF, NULL, nxt);
 
   ck_assert_ptr_nonnull(nd->dt);
   ck_assert_ptr_eq(nd->next, nxt);
@@ -43,7 +45,7 @@ START_TEST(test_StateMachine_idMatch) {
 
   unsigned int id, *p = &id;
 
-  StateMachine *smc = StateMachine_create(5, stt, NULL, NULL);
+  StateMachine *smc = StateMachine_create(5, stt, NULL, mgrF, NULL);
 
   id = 5;
   ck_assert(idMatch(smc, p));
@@ -65,10 +67,10 @@ START_TEST(test_StateMachineList_searchById) {
 
   unsigned int id = 3, *p = &id;
 
-  nd1 = StateMachineNode_createFull(1, stt, NULL, NULL, nxt);
-  nd2 = StateMachineNode_createFull(2, stt, NULL, NULL, nxt);
-  nd3 = StateMachineNode_createFull(3, stt, NULL, NULL, nxt);
-  nd4 = StateMachineNode_createFull(4, stt, NULL, NULL, nxt);
+  nd1 = StateMachineNode_createFull(1, stt, NULL, mgrF , NULL, nxt);
+  nd2 = StateMachineNode_createFull(2, stt, NULL, mgrF , NULL, nxt);
+  nd3 = StateMachineNode_createFull(3, stt, NULL, mgrF , NULL, nxt);
+  nd4 = StateMachineNode_createFull(4, stt, NULL, mgrF , NULL, nxt);
 
   list = StateMachineList_add(list, nd1);
   list = StateMachineList_add(list, nd2);
@@ -94,6 +96,8 @@ Suite *smc_stateMachine_list_suite(void) {
   tcase_add_test(tc_sm, test_StateMachineNode_createFull);
   tcase_add_test(tc_sm, test_StateMachine_idMatch);
   tcase_add_test(tc_sm, test_StateMachineList_searchById);
+  /*
+  */
 
   suite_add_tcase(s, tc_sm);
 

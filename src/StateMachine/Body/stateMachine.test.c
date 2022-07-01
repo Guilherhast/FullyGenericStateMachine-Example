@@ -10,7 +10,32 @@
 #define INITIAL "INITIAL"
 #define NEXT "NEXT"
 
-void testTrans(StateMachine *smc) { strcpy(smc->data, TESTOK); }
+void *testTrans(StateMachine *smc) {
+  strcpy(smc->data, TESTOK);
+  char *bff = malloc(64 * sizeof(char));
+  bff[0] = 'T';
+  bff[1] = '\0';
+  return bff;
+}
+
+void *chA(State *stt, void *data) { return "A"; }
+void *chB(State *stt, void *data) { return "B"; }
+void *upA(State *stt, void *data) { return "U"; }
+void *upB(State *stt, void *data) { return "V"; }
+
+void *mgrStr(void *str1, void *str2) {
+  if (!str2) {
+    return str1;
+  }
+  if (!str1) {
+    return str2;
+  }
+  strcat(str1, str2);
+
+  return str1;
+}
+
+const void *fmgr = &mgrStr;
 
 START_TEST(test_stateMachine_create) {
   time_t now;
@@ -25,7 +50,7 @@ START_TEST(test_stateMachine_create) {
   int data[] = {1, 2, 3};
 
   time(&now);
-  smc = StateMachine_create(1, sttNode, NULL, data);
+  smc = StateMachine_create(1, sttNode, NULL, fmgr, data);
 
   int dCreation, dUpdate, dInfo, dChange;
 
@@ -48,6 +73,8 @@ START_TEST(test_stateMachine_create) {
   ck_assert_ptr_eq(smc->currentState, stt);
   ck_assert_ptr_eq(smc->transition, NULL);
 
+  ck_assert_ptr_eq(smc->merger, fmgr);
+
   int *a = (int *)data;
 
   ck_assert_int_eq(a[0], 1);
@@ -56,32 +83,38 @@ START_TEST(test_stateMachine_create) {
 
   StateMachine_free(smc);
 }
+
 END_TEST
 
 START_TEST(test_stateMachine_testAndTransit) {
   StateMachine *smc;
 
+  void *r;
   char testStr[32];
 
   // Creating the state list
   StateNode *initial =
-      StateNode_createFull(INITIAL, NULL, NULL, NULL, NULL, NULL, NULL);
+      StateNode_createFull(INITIAL, NULL, NULL, NULL, NULL, chA, NULL);
   StateNode *next =
-      StateNode_createFull(NEXT, NULL, NULL, NULL, NULL, NULL, NULL);
+      StateNode_createFull(NEXT, NULL, NULL, chB, NULL, NULL, NULL);
+
   StateNode_attatch(initial, next);
 
-  // Transition *trn = Transition_createTmp(next->dt, testTrans, NULL);
   Transition *trn = Transition_createRealShort(next->dt, testTrans, NULL);
 
-  smc = StateMachine_create(1, initial, NULL, testStr);
+  smc = StateMachine_create(1, initial, NULL, fmgr, testStr);
   smc->transition = trn;
 
-  StateMachine_testAndTransit(smc);
+
+  r = StateMachine_testAndTransit(smc);
+
+  ck_assert_str_eq((char *)r,"TAB");
 
   ck_assert_ptr_null(smc->transition);
   ck_assert_str_eq(smc->data, TESTOK);
   ck_assert_ptr_eq(smc->currentState, next->dt);
 
+  free(r);
   StateMachine_free(smc);
 }
 END_TEST
@@ -89,9 +122,10 @@ END_TEST
 START_TEST(test_stateMachine_triggerState) {
   StateMachine *smc;
 
+  void *r;
+
   char testStr[32];
 
-  // Transition *trn = Transition_createTmp(next->dt, testTrans, NULL);
   TransitionNode *nd =
       TransitionNode_createFullTrigger(NEXT, testTrans, NEXT, NULL);
 
@@ -105,17 +139,17 @@ START_TEST(test_stateMachine_triggerState) {
   // FIXME:
   // This ID management is bad.
   // If you pass the id it id will maybe repeat
-  smc = StateMachine_create(1, initial, NULL, testStr);
-  // smc->transition = trn;
+  smc = StateMachine_create(1, initial, NULL, fmgr, testStr);
 
-  StateMachine_triggerState(smc, NEXT);
+  r = StateMachine_triggerState(smc, NEXT);
+
+  ck_assert_str_eq((char*) r , "T");
 
   ck_assert_ptr_null(smc->transition);
   ck_assert_str_eq(smc->data, TESTOK);
 
+  free(r);
   StateMachine_free(smc);
-  /*
-   */
 }
 END_TEST
 
@@ -129,10 +163,7 @@ Suite *default_suite(void) {
   tcase_add_test(tc_sm, test_stateMachine_create);
   tcase_add_test(tc_sm, test_stateMachine_testAndTransit);
   tcase_add_test(tc_sm, test_stateMachine_triggerState);
-  /*
-  tcase_add_test(tc_sm, test_stateMachine_attatch);
-  tcase_add_test(tc_sm, test_stateMachine_listAdd);
-  */
+
   suite_add_tcase(s, tc_sm);
   return s;
 }

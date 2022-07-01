@@ -24,7 +24,6 @@ Transition *Transition_create(State *stateTo, char *stateToName,
   t->isTrigger = isTrigger;
 
   t->data = data;
-  // t->temporary = temporary;
 
   if (t->isTrigger && t->stateTo) {
     fprintf(stderr, "Error: Trigger transitions should have no stateTo.\n");
@@ -37,7 +36,7 @@ Transition *Transition_create(State *stateTo, char *stateToName,
     return NULL;
   }
   // There is a state
-  // And the name comparation is not = 0
+  // And the names are different
   if (stateTo && strcmp(stateTo->name, name)) {
     fprintf(stderr,
             "Error: Transition stateToName \"%s\" conflicting with "

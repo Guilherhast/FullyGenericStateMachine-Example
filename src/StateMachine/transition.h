@@ -16,7 +16,7 @@ typedef struct TransitionNode TransitionNode;
 typedef struct TransitionNode TransitionList;
 
 // It may also receive data
-typedef void (*transitionFunct)(StateMachine *);
+typedef void* (*transitionFunct)(StateMachine *);
 
 struct Transition {
   transitionFunct tFunc;
