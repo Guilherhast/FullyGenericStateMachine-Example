@@ -35,33 +35,25 @@ State *State_create(char *name, StateConditionList *sCondList,
 
   return stt;
 }
-void State_enter(State *stt, void *data) {
+void* State_enter(State *stt, void *data) {
   time(&stt->lastTimeEntered);
 
   if (stt->enter) {
-    stt->enter(stt, data);
+    return stt->enter(stt, data);
   }
+  return NULL;
 }
-void State_update(State *stt, void *data) {
+void* State_update(State *stt, void *data) {
   time(&stt->lastUpdated);
 
   if (stt->enter) {
-    stt->update(stt, data);
+    return stt->update(stt, data);
   }
+  return NULL;
 }
-void State_exit(State *stt, void *data) {
+void* State_exit(State *stt, void *data) {
   if (stt->exit) {
-    stt->exit(stt, data);
+    return stt->exit(stt, data);
   }
+  return NULL;
 }
-/*
-void State_sendSignal(State *stt) {
-time(&stt->lastSignalSent);
-if (stt->sendSignal) {
-stt->sendSignal();
-} else {
-fprintf(stderr, "Error: The state '%s' has no signal.\n", stt->name);
-}
-time(&stt->lastSignalSent);
-}
-*/

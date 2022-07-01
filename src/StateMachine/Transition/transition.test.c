@@ -5,7 +5,7 @@
 #include "../state.h"
 #include "../stateCondition.h"
 
-void trnFunc(StateMachine *smc) {}
+void *trnFunc(StateMachine *smc) { return smc; }
 
 START_TEST(test_transition_create) {
   int d;
@@ -19,8 +19,6 @@ START_TEST(test_transition_create) {
 
   trnReal = Transition_create(stt, stt->name, &trnFunc, false, data);
   trnTrigger = Transition_create(NULL, name, &trnFunc, true, data);
-  // trn = Transition_create(stt, &trnFunc, data, true);
-  // ck_assert(trn->temporary);
 
   // Checks for realTransition
   ck_assert_ptr_eq(trnReal->stateTo, stt);
@@ -68,9 +66,6 @@ START_TEST(test_transition_createError) {
   trn3 = Transition_create(stt, "Other state", &trnFunc, false, data);
   trn4 = Transition_create(stt, name, &trnFunc, true, data);
 
-  // trn = Transition_create(stt, &trnFunc, data, true);
-  // ck_assert(trn->temporary);
-
   ck_assert_ptr_null(trn1);
   ck_assert_ptr_null(trn2);
   ck_assert_ptr_null(trn3);
@@ -80,42 +75,6 @@ START_TEST(test_transition_createError) {
 }
 END_TEST
 
-/*
-START_TEST(test_transition_createTmp) {
-int s, d;
-
-Transition *trn;
-
-void *stt = &s, *data = &d;
-trn = Transition_createTmp(stt, &trnFunc, data);
-
-ck_assert(trn->temporary);
-ck_assert_ptr_eq(trn->stateTo, stt);
-ck_assert_ptr_eq(trn->data, data);
-ck_assert_ptr_eq(trn->tFunc, &trnFunc);
-
-Transition_free(trn);
-}
-END_TEST
-
-START_TEST(test_transition_createPrm) {
-int s, d;
-
-Transition *trn;
-
-void *stt = &s, *data = &d;
-trn = Transition_createPrm(stt, &trnFunc, data);
-
-ck_assert(!trn->temporary);
-ck_assert_ptr_eq(trn->stateTo, stt);
-ck_assert_ptr_eq(trn->data, data);
-ck_assert_ptr_eq(trn->tFunc, &trnFunc);
-
-Transition_free(trn);
-}
-END_TEST
-
-*/
 Suite *default_suite(void) {
   Suite *s;
   TCase *tc_sm;
@@ -125,15 +84,13 @@ Suite *default_suite(void) {
 
   tcase_add_test(tc_sm, test_transition_create);
   tcase_add_test(tc_sm, test_transition_createError);
-  /*
-  tcase_add_test(tc_sm, test_transition_createTmp);
-  tcase_add_test(tc_sm, test_transition_createPrm);
-  */
 
   suite_add_tcase(s, tc_sm);
 
   return s;
 }
+
+#ifndef COMPLETE_TEST
 
 int main(void) {
   int no_failed = 0;
@@ -148,3 +105,5 @@ int main(void) {
   srunner_free(runner);
   return (no_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
+
+#endif

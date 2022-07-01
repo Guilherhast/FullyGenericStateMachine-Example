@@ -13,6 +13,7 @@
 #include "state.h"
 
 // Some typedefs
+typedef void *(*dataMerger)(void *oldData, void *newData);
 
 typedef struct StateMachine StateMachine;
 typedef struct StateMachineNode StateMachineNode;
@@ -40,6 +41,8 @@ struct StateMachine {
   Transition *transition;
 
   StateList *possibleStates;
+
+  dataMerger merger;
 };
 
 struct StateMachineNode {
@@ -53,15 +56,16 @@ struct StateMachineNode {
 void StateMachine_free(void *smc);
 
 StateMachine *StateMachine_create(unsigned int id, StateList *possibleStates,
-                                  State *initialState, void *data);
+                                  State *initialState, dataMerger merger,
+                                  void *data);
 
 // void *StateMachine_getData(StateMachine *smc);
 
-void StateMachine_update(StateMachine *smc); // Maybe it will check too
-void StateMachine_changeState(StateMachine *smc);
-void StateMachine_testAndTransit(StateMachine *smc);
-void StateMachine_setState(StateMachine *smc, char *sttName);
-void StateMachine_triggerState(StateMachine *smc, char *sttName);
+void *StateMachine_triggerState(StateMachine *smc, char *sttName);
+void *StateMachine_setState(StateMachine *smc, char *sttName);
+
+void *StateMachine_testAndTransit(StateMachine *smc);
+void *StateMachine_update(StateMachine *smc); // Maybe it will check too
 
 Transition *StateMachine_check(StateMachine *smc);
 
@@ -76,8 +80,8 @@ void StateMachineNode_free(StateMachineNode *smcNode, wipeDataFunc wipeData);
 
 StateMachineNode *StateMachineNode_create(StateMachine *smc,
                                           StateMachineNode *next);
-#define StateMachineNode_createFull(id, ps, is, dt, nxt)                       \
-  StateMachineNode_create(StateMachine_create(id, ps, is, dt), nxt)
+#define StateMachineNode_createFull(id, ps, is, mg, dt, nxt)                       \
+  StateMachineNode_create(StateMachine_create(id, ps, is, mg, dt), nxt)
 
 StateMachineNode *StateMachineNode_attatch(StateMachineNode *curSmc,
                                            StateMachineNode *newSmc);

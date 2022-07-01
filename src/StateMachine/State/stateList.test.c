@@ -5,9 +5,9 @@
 #include "../../consts.h"
 #include "../state.h"
 
-void en(State *stt,  void *data) {}
-void ex(State *stt,  void *data) {}
-void up(State *stt,  void *data) {}
+void* en(State *stt,  void *data) {return data;}
+void* ex(State *stt,  void *data) {return data;}
+void* up(State *stt,  void *data) {return data;}
 
 START_TEST(test_StateNode_create) {
   StateNode *nd;

@@ -50,22 +50,3 @@ boolean State_nameEqual(void *vStt, void *vName) {
 
   return (strcmp(stt->name, name) == 0);
 }
-
-//StateNode functions
-/*
-StateNode *StateList_searchByName(StateList *list, char *name) {//Could be a macro
-  return StateList_search(list, &nameEqual, name);
-}
-*/
-
-/*
-void StateList_sendSignalByName(StateList *list, char *name) {
-  StateNode *stt;
-  stt = StateList_searchByName(list, name);
-  if (stt) {
-    State_sendSignal(stt->dt);
-  } else {
-    fprintf(stderr, "Error: Inesistent state: %sttList.sttNode", name);
-  }
-}
-*/
