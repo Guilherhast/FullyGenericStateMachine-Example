@@ -16,8 +16,8 @@ StateMachine *StateMachine_create(unsigned int id, StateList *possibleStates,
     fprintf(stderr, "Can't create a stateMachine without a state\n");
     return NULL;
   }
-  if (data && !merger) {
-    fprintf(stderr, "Can't create a stateMachine with data without a merger\n");
+  if (!merger) {
+    fprintf(stderr, "Can't create a stateMachine without a merger\n");
     return NULL;
   }
 
