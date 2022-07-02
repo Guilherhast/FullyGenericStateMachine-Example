@@ -1,50 +1,58 @@
 #include "../gate.h"
 #include "gate.States.h"
-#include <string.h>
 
 // Transition Functions
 // ENTER TRANSITIONS
-void State_enterBase(char *msg, void *data) { printf("%s\n", msg); }
+
+/*
+void *stt_str2ptr(char *msg, void *data) {
+  int size = strlen(msg);
+  char *tmp = malloc(sizeof(char) * ++size);
+  strcpy(tmp, msg);
+  return tmp;
+}
+*/
+
 // One liners
-void LockedState_enter(State *stt, void *data) {
-  State_enterBase("ACTION: Gate locked.", data);
+void *LockedState_enter(State *stt, void *data) {
+  return stt_str2ptr("ACTION: Gate locked.\n", data);
 }
-void ClosedState_enter(State *stt, void *data) {
-  State_enterBase("ACTION: Gate closed.", data);
+void *ClosedState_enter(State *stt, void *data) {
+  return stt_str2ptr("ACTION: Gate closed.\n", data);
 }
-void ClosingState_enter(State *stt, void *data) {
-  State_enterBase("ACTION: Gate started closing.", data);
+void *ClosingState_enter(State *stt, void *data) {
+  return stt_str2ptr("ACTION: Gate started closing.\n", data);
 }
-void ForcedClosingState_enter(State *stt, void *data) {
-  State_enterBase("WARNNING: Forced gate closing.", data);
+void *ForcedClosingState_enter(State *stt, void *data) {
+  return stt_str2ptr("WARNNING: Forced gate closing.\n", data);
 }
-void IntclosingState_enter(State *stt, void *data) {
-  State_enterBase("WARNNING: Gate closing procces intrrupted!", data);
+void *IntclosingState_enter(State *stt, void *data) {
+  return stt_str2ptr("WARNNING: Gate closing procces intrrupted!\n", data);
 }
-void OpenningState_enter(State *stt, void *data) {
-  State_enterBase("ACTION: Openning gate.", data);
+void *OpenningState_enter(State *stt, void *data) {
+  return stt_str2ptr("ACTION: Openning gate.\n", data);
 }
-void ForcedOpenningState_enter(State *stt, void *data) {
-  State_enterBase("WARNNING: Forced gate Openning.", data);
+void *ForcedOpenningState_enter(State *stt, void *data) {
+  return stt_str2ptr("WARNNING: Forced gate Openning.\n", data);
 }
-void IntOpenningState_enter(State *stt, void *data) {
-  State_enterBase("WARNNING: Gate openning procces intrrupted!", data);
+void *IntOpenningState_enter(State *stt, void *data) {
+  return stt_str2ptr("WARNNING: Gate openning procces intrrupted!\n", data);
 }
-void OpenState_enter(State *stt, void *data) {
+void *OpenState_enter(State *stt, void *data) {
   data_smc_gate *smc_data = (data_smc_gate *)data;
-  State_enterBase("ACTION: Gate fully open.", data);
+  return stt_str2ptr("ACTION: Gate fully open.\n", data);
 
   // Update last warnning time
   time(&smc_data->last_open_warnning);
 }
 
 // EXIT TRANSITIONS
-void IntOpenningState_exit(State *stt, void *data) {
-  printf("WARNNING: Gate unblocked.");
+void* IntOpenningState_exit(State *stt, void *data) {
+  return stt_str2ptr("WARNNING: Gate unblocked.\n",data);
 }
 
 // Update Functions
-void OpenState_update(State *stt, void *data) {
+void* OpenState_update(State *stt, void *data) {
   // Update clock.
   // If takes too long send warnning.
   data_smc_gate *smc_data = (data_smc_gate *)data;
@@ -57,12 +65,13 @@ void OpenState_update(State *stt, void *data) {
     // Has not warnned yet
     // Has warnned long ago
     if (difftime(smc_data->last_open_warnning, curr) > OPEN_WARNNING_INTERVAL) {
-      printf("WARNNING: Time opened exeeded limit.\n");
-      // Store las warnning time
+      // Store last warnning time
       data_smc_gate *smc_data = (data_smc_gate *)data;
       time(&smc_data->last_open_warnning);
+      return stt_str2ptr("WARNNING: Time opened exeeded limit\n",data);
     }
   }
+  return NULL;
 }
 
 // Factories
@@ -81,7 +90,8 @@ StateList *GateStateList_baseFactory() {
   gs_fastCreate(list, NAME_OPEN, OpenState_enter, NULL, NULL);
   gs_fastCreate(list, NAME_FCDOPENNING, OpenState_enter, NULL, NULL);
   gs_fastCreate(list, NAME_INOPENNING, IntOpenningState_enter, NULL, IONGSE);
-  gs_fastCreate(list, NAME_OPENNING, OpenningState_enter, OpenState_update, NULL);
+  gs_fastCreate(list, NAME_OPENNING, OpenningState_enter, OpenState_update,
+                NULL);
 
   // To create acelerating and desacelerating states
   /*

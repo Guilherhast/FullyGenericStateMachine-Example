@@ -1,6 +1,21 @@
 #include "../gate.h"
 #include "gate.body.h"
 
+void *strMerger(void *d1, void *d2) {
+  if (!d1) {
+    return d2;
+  }
+  if (!d2) {
+    return d1;
+  }
+
+  int s1 = strlen((char *)d1), s2 = strlen((char *)d2);
+
+  char *str = malloc(sizeof(char) * (1 + s1 + s2));
+
+  return str;
+}
+
 data_smc_gate *gateData_allocAndInit(boolean ignoreAutoTriggers,
                                      time_t lock_time, time_t unlock_time,
                                      time_t open_time) {
@@ -28,14 +43,12 @@ data_smc_gate *gateData_allocAndInit(boolean ignoreAutoTriggers,
 //	auto_unlock_time
 //	auto_open_time
 StateMachineNode *GateSMC_create(SMCID id, data_smc_gate *data) {
-  StateMachineNode *gateNode = NULL;
-
   // After you have made it there is no need to clone
   // States depends on data so one list will work for all
   StateList *sttL = GateStateList_createAll();
   State *iStt = Sl_searchByNameReturnData(sttL, NAME_CLOSED);
 
-  return StateMachineNode_createFull(id, sttL, iStt, data, NULL);
+  return StateMachineNode_createFull(id, sttL, iStt, strMerger, data, NULL);
 }
 
 StateMachineList *GateSMCS_createList(USint n, SMCID *IDS,
