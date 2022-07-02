@@ -82,8 +82,7 @@ START_TEST(test_GateBody_setState) {
 
   StateMachine_setState(smc, NAME_OPENNING);
 
-  ck_assert_str_eq(smc->currentState->name, NAME_CLOSED);
-  ck_assert_str_eq(smc->transition->stateToName, NAME_OPENNING);
+  ck_assert_str_eq(smc->currentState->name, NAME_OPENNING);
 
   free(dt);
   StateMachineNode_freeSafe(g);

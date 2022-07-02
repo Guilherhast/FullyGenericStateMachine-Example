@@ -44,10 +44,6 @@ Suite *default_suite(void) {
   tc_sm = tcase_create("Smoke");
 
   tcase_add_test(tc_sm, test_GateTransitions_createList);
-  /*
-  tcase_add_test(tc_sm, test_State_EnterBase);
-  tcase_add_test(tc_sm, test_State_Open_enter);
-  */
 
   suite_add_tcase(s, tc_sm);
 

@@ -7,39 +7,33 @@
 static TransitionList *tmpRealList = NULL;
 static TransitionList *tmpTriggerList = NULL;
 
-typedef char Signal;
-void SendSignal(Signal *name) {
-  //
-  printf("Sending signal: %s\n", name);
-}
-
 // Transition Functions
-void LockedState_sendSignal(StateMachine *smc) {
-  SendSignal(smc->transition->stateToName);
+void* LockedState_sendSignal(StateMachine *smc) {
+  return trn_str2ptr(smc->transition->stateToName);
 }
-void ClosedState_sendSignal(StateMachine *smc) {
-  SendSignal(smc->transition->stateToName);
+void* ClosedState_sendSignal(StateMachine *smc) {
+  return trn_str2ptr(smc->transition->stateToName);
 }
-void ClosingState_sendSignal(StateMachine *smc) {
-  SendSignal(smc->transition->stateToName);
+void* ClosingState_sendSignal(StateMachine *smc) {
+  return trn_str2ptr(smc->transition->stateToName);
 }
-void ForcedClosingState_sendSignal(StateMachine *smc) {
-  SendSignal(smc->transition->stateToName);
+void* ForcedClosingState_sendSignal(StateMachine *smc) {
+  return trn_str2ptr(smc->transition->stateToName);
 }
-void IntClosingState_sendSignal(StateMachine *smc) {
-  SendSignal(smc->transition->stateToName);
+void* IntClosingState_sendSignal(StateMachine *smc) {
+  return trn_str2ptr(smc->transition->stateToName);
 }
-void OpenningState_sendSignal(StateMachine *smc) {
-  SendSignal(smc->transition->stateToName);
+void* OpenningState_sendSignal(StateMachine *smc) {
+  return trn_str2ptr(smc->transition->stateToName);
 }
-void ForcedOpenningState_sendSignal(StateMachine *smc) {
-  SendSignal(smc->transition->stateToName);
+void* ForcedOpenningState_sendSignal(StateMachine *smc) {
+  return trn_str2ptr(smc->transition->stateToName);
 }
-void IntOpenningState_sendSignal(StateMachine *smc) {
-  SendSignal(smc->transition->stateToName);
+void* IntOpenningState_sendSignal(StateMachine *smc) {
+  return trn_str2ptr(smc->transition->stateToName);
 }
-void OpenState_sendSignal(StateMachine *smc) {
-  SendSignal(smc->transition->stateToName);
+void* OpenState_sendSignal(StateMachine *smc) {
+  return trn_str2ptr(smc->transition->stateToName);
 }
 
 boolean GateTransitions_initializationCheck() {
@@ -96,7 +90,6 @@ void GateTransitions_addTransitionsFromList(StateList *sttList, char *sttName,
         sttN->dt->transitions, TransitionList_realFindAndCloneManyByName(
                                    tmpRealList, n, (void **)names));
   }
-
 }
 
 TransitionList *GateTransitions_createTriggerTmp() {

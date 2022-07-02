@@ -1,6 +1,8 @@
 #ifndef GATE_H
 #define GATE_H
 
+#define MAXMSG 256
+
 #define NAME_LOCKED "Locked"
 #define NAME_CLOSED "Closed"
 #define NAME_CLOSING "Closing"
@@ -50,6 +52,15 @@ typedef struct data_smc_gate {
 #define SECS_IN_DAY (60 * 60 * 24)
 #define MIL 1000
 #define MILIS_IN_DAY (MIL * SECS_IN_DAY)
+
+/*
+ *
+ * Common functions
+ *
+ */
+void *stt_str2ptr(char *msg, void *data);
+void *trn_str2ptr(char *msg);
+
 // Functions for checking condition transitions
 boolean timeOutCheck(time_t triggerTime, float tolerance);
 boolean timeOutCheckOnlyTime(time_t triggerTime, float tolerance);

@@ -27,15 +27,21 @@ FOLDER_TST=$(realpath ../../TestUtils)
 DEP_TST=$(TMPDIR)/testUtils.o
 
 FOLDER_SMC=$(realpath ../../StateMachine)
+
 DEP_SMC_COND=$(TMPDIR)/stateCondition.o
 DEP_SMC_CONDL=$(TMPDIR)/stateConditionList.o
+
 DEP_SMC_STT=$(TMPDIR)/state.o
 DEP_SMC_STTL=$(TMPDIR)/stateList.o
+
 DEP_SMC_TRN=$(TMPDIR)/transition.o
 DEP_SMC_TRNL=$(TMPDIR)/transitionList.o
+
 DEP_SMC_BDY=$(TMPDIR)/stateMachine.o
 DEP_SMC_BDYL=$(TMPDIR)/stateMachineList.o
 
+
+#Assembled dependencies
 DEP_ALL_BASE=$(DEP_SMC_STT) $(DEP_SMC_STTL) $(DEP_SMC_TRN) $(DEP_SMC_TRNL) $(DEP_LST)
 
 DEP_ALL_TRN=$(DEP_ALL_BASE) $(DEP_TST)
@@ -45,6 +51,10 @@ DEP_ALL_BDY=$(DEP_ALL_STT) $(DEP_SMC_BDY) $(DEP_SMC_BDYL)
 DEP_ALL_GAT=$(DEP_ALL_BDY)
 
 HDR_GATE=gate.h
+
+#Gate Common
+SRC_PART_GCMM=gate.common.c
+OBJ_PART_GCMM=$(TMPDIR)/$(notdir $(SRC_PART_GCMM:.c=.o))
 
 #Gate files
 SRC_PART_GAT=gate.c
@@ -138,7 +148,9 @@ $(DEP_SMC_BDY): $(shell find $(FOLDER_SMC) -type f )
 $(DEP_SMC_BDYL): $(shell find $(FOLDER_SMC) -type f )
 	$(SAFE) make -C $(FOLDER_SMC) $@
 
-
+#Gate common
+$(OBJ_PART_GCMM): $(SRC_PART_GCMM)
+	$(SAFE) $(CC) $(CFLAGS) $(PROFILE_FLAGS) $< -o $@
 
 #Gate rules
 gate_test: $(BIN_TEST_GAT)
@@ -146,13 +158,17 @@ gate_test: $(BIN_TEST_GAT)
 	$(SAFE) $(BIN_TEST_GAT)
 	echo -e "\033[0m"
 
-$(BIN_TEST_GAT): $(OBJ_PART_GAT)  $(OBJ_TEST_GAT) $(OBJ_PART_GBDY) $(OBJ_PART_GSTT) $(OBJ_PART_GTRN) $(OBJ_PART_GCOND) $(DEP_ALL_GAT)
+$(BIN_TEST_GAT): $(OBJ_PART_GAT)  $(OBJ_TEST_GAT) $(OBJ_PART_GBDY) $(OBJ_PART_GSTT) $(OBJ_PART_GTRN) $(OBJ_PART_GCOND) $(OBJ_PART_GCMM) $(DEP_ALL_GAT)
 	$(SAFE) $(CC) $^ $(TST_LIBS) $(COV_LIBS) -o $@
 
 $(OBJ_TEST_GAT): $(SRC_TEST_GAT) $(HDR_GATE) dirs
 	$(SAFE) $(CC) $(CFLAGS) $(PROFILE_FLAGS) $< -o $@
 
 $(OBJ_PART_GAT): $(SRC_PART_GAT) $(HDR_GATE) dirs
+	$(SAFE) $(CC) $(CFLAGS) $(PROFILE_FLAGS) $< -o $@
+
+#Commmon
+$(OBJ_PART_GTRN): $(SRC_PART_GTRN) $(HDR_GATE) dirs
 	$(SAFE) $(CC) $(CFLAGS) $(PROFILE_FLAGS) $< -o $@
 
 #Gate Transition rules
@@ -162,7 +178,7 @@ gtrn_test: $(BIN_TEST_GTRN)
 	$(SAFE) $(BIN_TEST_GTRN)
 	echo -e "\033[0m"
 
-$(BIN_TEST_GTRN): $(OBJ_PART_GTRN) $(OBJ_TEST_GTRN) $(DEP_ALL_TRN)
+$(BIN_TEST_GTRN): $(OBJ_PART_GTRN) $(OBJ_TEST_GTRN) $(OBJ_PART_GCMM) $(DEP_ALL_TRN)
 	$(SAFE) $(CC) $^ $(TST_LIBS) $(COV_LIBS) -o $@
 
 $(OBJ_TEST_GTRN): $(SRC_TEST_GTRN) $(HDR_GATE) dirs
@@ -186,7 +202,6 @@ $(OBJ_TEST_GCOND): $(SRC_TEST_GCOND) $(HDR_GATE) dirs
 $(OBJ_PART_GCOND): $(SRC_PART_GCOND) $(HDR_GATE) dirs
 	$(SAFE) $(CC) $(CFLAGS) $(PROFILE_FLAGS) $< -o $@
 
-
 #Gate States rules
 gstt_test: $(BIN_TEST_GSTT)
 	ls -d --color=auto $(BIN_TEST_GTRN)
@@ -194,7 +209,7 @@ gstt_test: $(BIN_TEST_GSTT)
 	$(SAFE) $(BIN_TEST_GSTT)
 	echo -e "\033[0m"
 
-$(BIN_TEST_GSTT): $(OBJ_PART_GSTT) $(OBJ_TEST_GSTT) $(OBJ_PART_GTRN) $(OBJ_PART_GCOND) $(DEP_ALL_STT)
+$(BIN_TEST_GSTT): $(OBJ_PART_GSTT) $(OBJ_TEST_GSTT) $(OBJ_PART_GTRN) $(OBJ_PART_GCOND) $(OBJ_PART_GCMM) $(DEP_ALL_STT)
 	$(SAFE) $(CC) $^ $(TST_LIBS) $(COV_LIBS) -o $@
 
 $(OBJ_TEST_GSTT): $(SRC_TEST_GSTT) $(HDR_GATE) dirs
@@ -210,7 +225,7 @@ gbdy_test: $(BIN_TEST_GBDY)
 	$(SAFE) $(BIN_TEST_GBDY)
 	echo -e "\033[0m"
 
-$(BIN_TEST_GBDY): $(OBJ_PART_GBDY) $(OBJ_TEST_GBDY) $(OBJ_PART_GSTT) $(OBJ_PART_GTRN) $(OBJ_PART_GCOND) $(DEP_ALL_BDY)
+$(BIN_TEST_GBDY): $(OBJ_PART_GBDY) $(OBJ_TEST_GBDY) $(OBJ_PART_GSTT) $(OBJ_PART_GTRN) $(OBJ_PART_GCOND) $(OBJ_PART_GCMM) $(DEP_ALL_BDY)
 	$(SAFE) $(CC) $^ $(TST_LIBS) $(COV_LIBS) -o $@
 
 $(OBJ_TEST_GBDY): $(SRC_TEST_GBDY) $(HDR_GATE) dirs
