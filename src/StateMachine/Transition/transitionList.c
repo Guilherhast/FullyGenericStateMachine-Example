@@ -2,6 +2,7 @@
 #include "../transition.h"
 #include <stdio.h>
 
+
 /*
  * Adapted StateConditionNode functions
  */

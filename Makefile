@@ -30,6 +30,8 @@ DIRMAKE_ISN=$(SRC_DIR)/Instances_STM
 
 DIRMAKE_IOM=$(SRC_DIR)/IOManager
 
+DIRMAKE_IOM=$(SRC_DIR)/StrUtils
+
 DIRMAKE_NET=$(SRC_DIR)/Network
 #DIRMAKE_TUT=$(SRC_DIR)/TestUtils
 
@@ -46,7 +48,6 @@ ALLTESTBIN= list \
 			stateList \
 			stateCondition \
 			stateConditionList \
-
 
 
 ALLTESTPATH=$(addsuffix .test.bin,$(addprefix $(TST_DIR)/,$(ALLTESTBIN)))
@@ -95,6 +96,10 @@ smc_instances_bt: $(shell find $(DIRMAKE_ISN) -type f )
 
 io_manager_bt: $(shell find $(DIRMAKE_IOM) -type f )
 	$(SAFE) make -C $(DIRMAKE_IOM) bin_tests
+
+str_utils_bt: $(shell find $(DIRMAKE_STRU) -type f )
+	$(SAFE) make -C $(DIRMAKE_STRU) bin_tests
+
 
 network_bt: $(shell find $(DIRMAKE_SMC) -type f )
 	$(SAFE) make -C $(DIRMAKE_NET) bin_tests
