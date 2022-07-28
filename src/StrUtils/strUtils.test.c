@@ -7,9 +7,48 @@
 #define LINEIN "getinfo 1990"
 #define LINEOUT "Machine online"
 
+START_TEST(test_cmdr_strToIdList) {
+  unsigned int *a;
+
+  // NULL TEST
+  a = strToIdList(NULL);
+  ck_assert_ptr_null(a);
+
+  // No ids
+  a = strToIdList("                ");
+  ck_assert_ptr_null(a);
+
+  // No ids
+  a = strToIdList("Wrong string test");
+  ck_assert_ptr_null(a);
+
+  //
+  a = strToIdList("10 5");
+  ck_assert_ptr_nonnull(a);
+  ck_assert_uint_eq(a[0], 10);
+  ck_assert_uint_eq(a[1], 5);
+  ck_assert_uint_eq(a[2], 0);
+
+  free(a);
+
+  a = strToIdList("10 5 65535 42 next 4 5 1000");
+  ck_assert_ptr_nonnull(a);
+  ck_assert_uint_eq(a[0], 10);
+  ck_assert_uint_eq(a[1], 5);
+  ck_assert_uint_eq(a[2], 65535);
+  ck_assert_uint_eq(a[3], 42);
+  ck_assert_uint_eq(a[4], 4);
+  ck_assert_uint_eq(a[5], 5);
+  ck_assert_uint_eq(a[6], 1000);
+  ck_assert_uint_eq(a[7], 0);
+
+  free(a);
+}
+END_TEST
+
 START_TEST(test_cp_word) {
   //
-  char tst[] = "Get info 2120 1337";
+  char tst[] = "GET INFO 2120 1337";
 
   char tmp[MAXSTR];
   char *nxt = tst;
@@ -86,6 +125,7 @@ Suite *smc_state_list_suite(void) {
   s = suite_create("strUtils");
   tc_sm = tcase_create("Smoke");
 
+  tcase_add_test(tc_sm, test_cmdr_strToIdList);
   tcase_add_test(tc_sm, test_cp_word);
   tcase_add_test(tc_sm, test_reverse);
   tcase_add_test(tc_sm, test_itoa);

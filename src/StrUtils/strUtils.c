@@ -1,5 +1,41 @@
 #include "strUtils.h"
 
+unsigned int *strToIdList(char *str) {
+  if (!str) {
+    return NULL;
+  }
+
+  unsigned int n = 0;
+  unsigned int values[MAXDEVICES];
+
+  char bff[MAXSTR];
+  char *nxt = str;
+
+  do {
+    nxt = cp_word(nxt, bff);
+    values[n] = atoi(bff);
+    if (values[n] == 0) {
+      // fprintf(stderr, "Error: StateMachine id can't be NULL\n");
+      n--;
+    }
+    n++;
+  } while (nxt != NULL && n < MAXDEVICES);
+
+  if (n == 0) {
+    return NULL;
+  }
+
+  unsigned int *r = malloc(sizeof(USint) + 1);
+
+  r[n] = values[n] = 0;
+
+  while (n--) {
+    r[n] = values[n];
+  }
+
+  return r;
+}
+
 void reverse(char *s) {
   int l = strlen(s) - 1;
   int i = 0;
@@ -32,10 +68,19 @@ void itoa(int n, char s[]) {
   reverse(s);
 }
 
+char *str_toUpper(char *str) {
+  while (*str != '\0') {
+    *str = toupper(*str);
+  }
+  return str;
+}
+
 // Copy a word from in to out
 // Returns a pointer to the next word in in
 // Or NULL if there is none
-boolean isDivisor(char c) { return c == '\n' || c == '\0' || c == ' '; }
+boolean isDivisor(char c) {
+  return c == '\n' || c == '\0' || c == '\t' || c == ' ';
+}
 char *cp_word(char *in, char *out) {
   int n = 0;
 
@@ -45,9 +90,12 @@ char *cp_word(char *in, char *out) {
   strncpy(out, in, n);
   out[n] = '\0';
 
+  /*
+  str_toUpper(out);
   for (int i = 0; i < n; i++) {
-    out[i] = toupper(out[i]);
+  out[i] = toupper(out[i]);
   }
+  */
 
   if (in[n] != '\0') {
     return &in[++n];

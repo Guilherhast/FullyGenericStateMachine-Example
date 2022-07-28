@@ -15,10 +15,10 @@ TransitionNode *TransitionNode_create(Transition *trn, TransitionNode *next) {
   return (TransitionNode *)ListNode_create(trn, (ListNode *)next);
 }
 
-TransitionNode *TransitionNode_attatch(TransitionNode *curStt,
-                                       TransitionNode *newStt) {
-  return (TransitionNode *)ListNode_attatch((ListNode *)curStt,
-                                            (ListNode *)newStt);
+TransitionNode *TransitionNode_attatch(TransitionNode *curTrn,
+                                       TransitionNode *newTrn) {
+  return (TransitionNode *)ListNode_attatch((ListNode *)curTrn,
+                                            (ListNode *)newTrn);
 }
 
 TransitionNode *TransitionNode_clone(TransitionNode *nd) {
@@ -67,17 +67,17 @@ TransitionList *TransitionList_findAndCloneMany(TransitionList *list,
 
 // Search functions
 // StateConditionNode functions
-boolean Transition_triggerNameEqual(void *vStt, void *vName) {
-  return Transition_nameEqual(vStt, vName, true);
+boolean Transition_triggerNameEqual(void *vTrn, void *vName) {
+  return Transition_nameEqual(vTrn, vName, true);
 }
-boolean Transition_realNameEqual(void *vStt, void *vName) {
-  return Transition_nameEqual(vStt, vName, false);
+boolean Transition_realNameEqual(void *vTrn, void *vName) {
+  return Transition_nameEqual(vTrn, vName, false);
 }
-boolean Transition_nameEqual(void *vStt, void *vName, boolean searchTrigger) {
-  if (!(vStt && vName)) {
+boolean Transition_nameEqual(void *vTrn, void *vName, boolean searchTrigger) {
+  if (!(vTrn && vName)) {
     return false;
   }
-  Transition *trn = (Transition *)vStt;
+  Transition *trn = (Transition *)vTrn;
   char *name = (char *)vName;
 
   if (searchTrigger != trn->isTrigger) {

@@ -84,7 +84,11 @@ void *StateMachine_update(StateMachine *smc) {
 void *StateMachine_setState(StateMachine *smc, char *sttName) {
   TransitionNode *tn =
       TransitionList_searchRealByName(smc->currentState->transitions, sttName);
-  smc->transition = tn->dt;
+  if (tn) {
+    smc->transition = tn->dt;
+  } else {
+    fprintf(stderr, "Error: Can't find transition for state '%s'\n", sttName);
+  }
   return StateMachine_testAndTransit(smc);
 }
 
