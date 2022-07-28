@@ -16,9 +16,9 @@ ALLDIRS+=$(DIRMAKE_GATE)
 #Rules
 default: test
 
-test: gate_tests
+test: gate_tests inm_tests
 
-bin_tests: gate_bin_tests
+bin_tests: gate_bin_tests inm_bin_tests
 
 clean:
 	make -C ../../ clean

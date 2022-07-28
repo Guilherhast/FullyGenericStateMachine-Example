@@ -105,10 +105,9 @@ START_TEST(test_stateMachine_testAndTransit) {
   smc = StateMachine_create(1, initial, NULL, fmgr, testStr);
   smc->transition = trn;
 
-
   r = StateMachine_testAndTransit(smc);
 
-  ck_assert_str_eq((char *)r,"TAB");
+  ck_assert_str_eq((char *)r, "TAB");
 
   ck_assert_ptr_null(smc->transition);
   ck_assert_str_eq(smc->data, TESTOK);
@@ -130,11 +129,10 @@ START_TEST(test_stateMachine_triggerState) {
       TransitionNode_createFullTrigger(NEXT, testTrans, NEXT, NULL);
 
   // Creating the state list
-  StateNode *initial =
-      StateNode_createFull(INITIAL, NULL, nd, NULL, NULL, NULL, NULL);
   StateNode *next =
       StateNode_createFull(NEXT, NULL, NULL, NULL, NULL, NULL, NULL);
-  StateNode_attatch(initial, next);
+  StateNode *initial =
+      StateNode_createFull(INITIAL, NULL, nd, NULL, NULL, NULL, next);
 
   // FIXME:
   // This ID management is bad.
@@ -143,12 +141,35 @@ START_TEST(test_stateMachine_triggerState) {
 
   r = StateMachine_triggerState(smc, NEXT);
 
-  ck_assert_str_eq((char*) r , "T");
+  ck_assert_str_eq((char *)r, "T");
 
   ck_assert_ptr_null(smc->transition);
   ck_assert_str_eq(smc->data, TESTOK);
 
   free(r);
+  StateMachine_free(smc);
+}
+END_TEST
+
+START_TEST(test_stateMachine_setState) { //
+  StateMachine *smc;
+
+  char testStr[32];
+
+  // Creating the state list
+  StateNode *next =
+      StateNode_createFull(NEXT, NULL, NULL, NULL, NULL, NULL, NULL);
+
+  TransitionNode *nd =
+      TransitionNode_createFullRealFromState(next->dt, NULL, NULL);
+  StateNode *initial =
+      StateNode_createFull(INITIAL, NULL, nd, NULL, NULL, NULL, next);
+
+  smc = StateMachine_create(1, initial, NULL, fmgr, testStr);
+  StateMachine_setState(smc, NEXT);
+
+  ck_assert_str_eq(smc->currentState->name, NEXT);
+
   StateMachine_free(smc);
 }
 END_TEST
@@ -163,6 +184,7 @@ Suite *default_suite(void) {
   tcase_add_test(tc_sm, test_stateMachine_create);
   tcase_add_test(tc_sm, test_stateMachine_testAndTransit);
   tcase_add_test(tc_sm, test_stateMachine_triggerState);
+  tcase_add_test(tc_sm, test_stateMachine_setState);
 
   suite_add_tcase(s, tc_sm);
   return s;
