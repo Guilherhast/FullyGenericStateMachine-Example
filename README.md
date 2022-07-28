@@ -10,6 +10,8 @@ gcc
 
 check
 
+entr
+
 
 ### Related docs
 

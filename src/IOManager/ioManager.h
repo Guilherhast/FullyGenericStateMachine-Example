@@ -17,7 +17,7 @@ struct ioData {
   char *str;
 };
 
-void IOManager_getNext(ioData *data);
+char *IOManager_getNext();
 
 #define IOManager_getNextAlloc()                                               \
   ({                                                                           \
@@ -26,9 +26,16 @@ void IOManager_getNext(ioData *data);
     lcl_ioData;                                                                \
   })
 
+#define IOManager_genData() malloc(sizeof(ioData));
+
 void IOManager_answer(ioData *data);
-void IOManager_update(ioData *data);
-void IOManager_updateAll(ioData *data);
+void IOManager_update(ioData *data, char* str);
+void IOManager_updateCur(char *str);
+void IOManager_updateAll(char *data);
+
+char *IOManager_extractStr(ioData *data);
+
+void IOManager_checkForNew();
 
 void IOManager_setStreams(FILE *in, FILE *out);
 FILE *IOManager_getInput();
