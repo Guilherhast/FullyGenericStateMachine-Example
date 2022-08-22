@@ -1,20 +1,7 @@
 #include "../gate.h"
 #include "gate.body.h"
 
-void *strMerger(void *d1, void *d2) {
-  if (!d1) {
-    return d2;
-  }
-  if (!d2) {
-    return d1;
-  }
-
-  int s1 = strlen((char *)d1), s2 = strlen((char *)d2);
-
-  char *str = malloc(sizeof(char) * (1 + s1 + s2));
-
-  return str;
-}
+void *strMerger  = StateMachine_strMerger;
 
 data_smc_gate *gateData_allocAndInit(boolean ignoreAutoTriggers,
                                      time_t lock_time, time_t unlock_time,

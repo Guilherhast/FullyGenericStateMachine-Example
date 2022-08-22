@@ -67,6 +67,8 @@ void *StateMachine_setState(StateMachine *smc, char *sttName);
 void *StateMachine_testAndTransit(StateMachine *smc);
 void *StateMachine_update(StateMachine *smc); // Maybe it will check too
 
+void *StateMachine_strMerger(void *str1, void *str2);
+
 Transition *StateMachine_check(StateMachine *smc);
 
 boolean idMatch(void *a, void *b);

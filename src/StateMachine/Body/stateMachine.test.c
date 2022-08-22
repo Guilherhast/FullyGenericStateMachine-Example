@@ -18,24 +18,28 @@ void *testTrans(StateMachine *smc) {
   return bff;
 }
 
-void *chA(State *stt, void *data) { return "A"; }
-void *chB(State *stt, void *data) { return "B"; }
-void *upA(State *stt, void *data) { return "U"; }
-void *upB(State *stt, void *data) { return "V"; }
-
-void *mgrStr(void *str1, void *str2) {
-  if (!str2) {
-    return str1;
-  }
-  if (!str1) {
-    return str2;
-  }
-  strcat(str1, str2);
-
-  return str1;
+void *chA(State *stt, void *data) {
+  char *r = malloc(sizeof(char) * 2);
+  strcpy(r, "A");
+  return r;
+}
+void *chB(State *stt, void *data) {
+  char *r = malloc(sizeof(char) * 2);
+  strcpy(r, "B");
+  return r;
+}
+void *upA(State *stt, void *data) {
+  char *r = malloc(sizeof(char) * 2);
+  strcpy(r, "U");
+  return r;
+}
+void *upB(State *stt, void *data) {
+  char *r = malloc(sizeof(char) * 2);
+  strcpy(r, "V");
+  return r;
 }
 
-const void *fmgr = &mgrStr;
+const void *fmgr = &StateMachine_strMerger;
 
 START_TEST(test_stateMachine_create) {
   time_t now;
@@ -168,6 +172,7 @@ START_TEST(test_stateMachine_setState) { //
   smc = StateMachine_create(1, initial, NULL, fmgr, testStr);
   StateMachine_setState(smc, NEXT);
 
+  ck_assert_ptr_eq(smc->currentState,next->dt);
   ck_assert_str_eq(smc->currentState->name, NEXT);
 
   StateMachine_free(smc);

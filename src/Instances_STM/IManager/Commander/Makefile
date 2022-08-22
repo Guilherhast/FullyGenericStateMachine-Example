@@ -79,18 +79,20 @@ $(TMPDIR):
 	$(SAFE) make -C $(ROOTDIR) test
 
 #Dependencies
-
 $(DEP_STRU): $(shell find $(FOLDER_STRU) -type f )
 	$(SAFE) make -C $(FOLDER_STRU) $@
 
+$(DEP_LST): $(shell find $(FOLDER_LST) -type f )
+	$(SAFE) make -C $(FOLDER_LST) $@
+
 $(DEP_TUT): $(shell find $(FOLDER_TUT) -type f )
-	$(SAFE) make -C $(FOLDER_TUT)
+	$(SAFE) make -C $(FOLDER_TUT) $@
 
-$(DEP_CMDR): $(shell find $(FOLDER_CMDR) -type f )
-	$(SAFE) make -C $(FOLDER_CMDR)
+$(DEP_CMDR): $(shell find $(FOLDER_CMD) -type f )
+	$(SAFE) make -C $(FOLDER_CMD) $@
 
-$(DEP_CMDL): $(shell find $(FOLDER_CMDL) -type f )
-	$(SAFE) make -C $(FOLDER_CMDL)
+$(DEP_CMDL): $(shell find $(FOLDER_CMD) -type f )
+	$(SAFE) make -C $(FOLDER_CMD) $@
 
 $(DEP_SMC_TRN): $(shell find $(FOLDER_SMC) -type f )
 	$(SAFE) make -C $(FOLDER_SMC) $@
@@ -117,13 +119,16 @@ $(DEP_SMC_BDYL): $(shell find $(FOLDER_SMC) -type f )
 	$(SAFE) make -C $(FOLDER_SMC) $@
 
 #Commander inst
+watch: $(SRC_TEST_CMDR) $(SRC_PART_CMDR) $(HDRS_CMDR) Makefile
+	find $(DIR_CMDR) $(FNDARGS) | entr -ncc make $(WATCHCMD)
+
 test_cmdr_inst: $(BIN_TEST_CMDRI)
 	ls --color=auto -d  $(BIN_TEST_CMDRI)
 	echo -ne  "\033[0;35m"
 	$(SAFE) $(BIN_TEST_CMDRI)
 	echo -ne "\033[0m"
 
-$(BIN_TEST_CMDRI): $(OBJ_PART_CMDRI) $(OBJ_PART_CMDR) $(OBJ_TEST_CMDRI) $(DEP_STRU) $(DEP_TUT) $(DEP_ALL_SMC)
+$(BIN_TEST_CMDRI): $(OBJ_PART_CMDRI) $(OBJ_TEST_CMDRI) $(DEP_STRU) $(DEP_TUT) $(DEP_ALL_SMC) $(DEP_CMDR) $(DEP_CMDL)
 	$(SAFE) $(CC) $^  $(TST_LIBS) $(COV_LIBS) -o $@
 
 $(OBJ_TEST_CMDRI): $(SRC_TEST_CMDRI) $(HDRS_CMDRI) dirs

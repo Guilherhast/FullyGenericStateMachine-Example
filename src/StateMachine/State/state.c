@@ -35,6 +35,7 @@ State *State_create(char *name, StateConditionList *sCondList,
 
   return stt;
 }
+
 void* State_enter(State *stt, void *data) {
   time(&stt->lastTimeEntered);
 

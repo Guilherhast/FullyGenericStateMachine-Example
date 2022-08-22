@@ -64,7 +64,7 @@ END_TEST
 
 START_TEST(test_Commander_exec) {
   int t;
-  void *l = &t;
+  void *fake_list = &t;
   char str[] = "abcd";
 
   char name[] = "Command name";
@@ -72,7 +72,7 @@ START_TEST(test_Commander_exec) {
 
   sampleFuncTimesRun = 0;
 
-  void *r = Command_exec(cmd, l, str);
+  void *r = Command_exec(cmd, fake_list, str);
 
   ck_assert_ptr_eq(r, &str[3]);
   ck_assert_int_eq(sampleFuncTimesRun, 1);
