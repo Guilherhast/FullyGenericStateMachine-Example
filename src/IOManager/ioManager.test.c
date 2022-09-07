@@ -68,41 +68,6 @@ START_TEST(test_ioManager_getNext) {
 }
 END_TEST
 
-/*
-START_TEST(test_ioManager_answer) {
-  before(LINEIN);
-
-  // Preparing to call the function
-  ioData *data = malloc(sizeof(ioData));
-
-  data->size = strlen(LINEOUT);
-  data->str = malloc(sizeof(char) * data->size);
-
-  strcpy(data->str, LINEOUT);
-
-  // Calling the function
-  IOManager_answer(data);
-
-  // Preparing to read the data
-  FILE *out = IOManager_getOutput();
-  rewind(out);
-
-  char *line = NULL;
-  size_t size = 0;
-  USint len = getline(&line, &size, out);
-
-  cleanNewLine(line, &len);
-
-  ck_assert_str_eq(line, data->str);
-
-
-  free(data->str);
-  free(data);
-  after();
-}
-END_TEST
-*/
-
 
 START_TEST(test_ioManager_update) {
   before(LINEIN);

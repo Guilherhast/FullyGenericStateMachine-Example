@@ -59,7 +59,7 @@ test_iom: $(BIN_TEST_IOM)
 	$(SAFE) $(BIN_TEST_IOM)
 	echo -e "\033[0m"
 
-$(BIN_TEST_IOM): $(OBJ_PART_IOM)  $(OBJ_TEST_IOM) 
+$(BIN_TEST_IOM): $(OBJ_PART_IOM)  $(OBJ_TEST_IOM)
 	$(SAFE) $(CC) $^  $(TST_LIBS) $(COV_LIBS) -o $@
 
 $(OBJ_TEST_IOM): $(SRC_TEST_IOM) $(HDRS_IOM) dirs

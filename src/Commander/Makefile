@@ -89,6 +89,9 @@ $(TMPDIR):
 $(DEP_STRU): $(shell find $(FOLDER_STRU) -type f )
 	$(SAFE) make -C $(FOLDER_STRU) $@
 
+$(DEP_LST): $(shell find $(FOLDER_LST) -type f )
+	$(SAFE) make -C $(FOLDER_LST)
+
 $(DEP_TUT): $(shell find $(FOLDER_TUT) -type f )
 	$(SAFE) make -C $(FOLDER_TUT)
 
