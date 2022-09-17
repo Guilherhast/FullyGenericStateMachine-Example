@@ -50,6 +50,29 @@ StateMachineNode *StateMachineList_searchNth(StateMachineList *sttList,
  * Original StateMachineList functions  (find a better name)
  */
 
+void *StateMachineList_updateAll(StateMachineList *smcs, dataMerger *mgr) {
+  if (!smcs) {
+    return NULL;
+  }
+  if (!mgr && !(mgr = &smcs->dt->merger)) {
+    return NULL;
+  }
+
+  char *r, *tmp;
+  r = malloc(sizeof(char) * MAXSTR);
+
+  strcpy(r, "");
+  for (; smcs; smcs = smcs->next) {
+    tmp = StateMachine_update(smcs->dt);
+
+    if (tmp) {
+      strcat(r, tmp);
+      free(tmp);
+    }
+  }
+  return r;
+}
+
 // Search functions
 boolean idMatch(void *vSmc, void *vId) {
   StateMachine *smc = (StateMachine *)vSmc;

@@ -3,6 +3,8 @@
 
 #define SIGNAL_WAIT_INTERVAL 5
 
+#define MAXSTR 256
+
 #include <stdarg.h>
 #include <string.h>
 #include <time.h>
@@ -107,7 +109,7 @@ StateMachineNode *StateMachineList_search(StateMachineList *list, testFunc tst,
 #define StateMachineList_searchById(l, i)                                      \
   StateMachineList_search(l, &idMatch, i)
 
-StateMachine *StateMachineList_update(StateMachineList *list);
+void *StateMachineList_updateAll(StateMachineList *list, dataMerger *mgr);
 
 /*
  *IMPLEMENTATION FUNCTIONS

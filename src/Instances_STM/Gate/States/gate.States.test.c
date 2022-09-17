@@ -29,20 +29,24 @@ START_TEST(test_GateStateList_transitions) {
 
   ck_assert_list_size((List *)list, 9);
 
-  // FIXME:
-  // Too messy
+  //State nodes
   StateNode *stt_LOCKED = StateList_searchByName(list, NAME_LOCKED);
   StateNode *stt_CLOSED = StateList_searchByName(list, NAME_CLOSED);
+
   StateNode *stt_FORCEDOPENNING =
       StateList_searchByName(list, NAME_FORCEDOPENNING);
+
   StateNode *stt_OPENNING = StateList_searchByName(list, NAME_OPENNING);
   StateNode *stt_INTERRUPTEDOPENNING =
       StateList_searchByName(list, NAME_INTERRUPTEDOPENNING);
+
   StateNode *stt_FORCEDCLOSING =
       StateList_searchByName(list, NAME_FORCEDCLOSING);
+
   StateNode *stt_CLOSING = StateList_searchByName(list, NAME_CLOSING);
   StateNode *stt_INTERRUPTEDCLOSING =
       StateList_searchByName(list, NAME_INTERRUPTEDCLOSING);
+
   StateNode *stt_OPEN = StateList_searchByName(list, NAME_OPEN);
 
   // Real

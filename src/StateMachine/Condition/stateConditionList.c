@@ -61,7 +61,10 @@ StateConditionNode *StateConditionList_searchFulfilled(StateConditionList *list,
 }
 
 Transition *StateConditionList_checkForTransition(StateConditionList *list,
-                                            void *data) {
+                                                  void *data) {
   StateConditionNode *nd = StateConditionList_searchFulfilled(list, data);
-  return nd->dt->transition;
+  if (nd) {
+    return nd->dt->transition;
+  }
+  return NULL;
 }

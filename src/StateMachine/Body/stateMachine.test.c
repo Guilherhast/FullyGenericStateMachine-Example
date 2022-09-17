@@ -10,6 +10,8 @@
 #define INITIAL "INITIAL"
 #define NEXT "NEXT"
 
+boolean retTrue(void *t) { return true; }
+
 void *testTrans(StateMachine *smc) {
   strcpy(smc->data, TESTOK);
   char *bff = malloc(64 * sizeof(char));
@@ -28,6 +30,7 @@ void *chB(State *stt, void *data) {
   strcpy(r, "B");
   return r;
 }
+
 void *upA(State *stt, void *data) {
   char *r = malloc(sizeof(char) * 2);
   strcpy(r, "U");
@@ -122,6 +125,41 @@ START_TEST(test_stateMachine_testAndTransit) {
 }
 END_TEST
 
+START_TEST(test_stateMachine_update) {
+  StateMachine *smc;
+
+  void *r;
+  char testStr[32];
+
+  // Creating the state list
+  StateNode *next =
+      StateNode_createFull(NEXT, NULL, NULL, chB, upB, NULL, NULL);
+  StateNode *initial =
+      StateNode_createFull(INITIAL, NULL, NULL, NULL, upA, chA, next);
+
+  // Creating a condition and a transition it needs
+  Transition *trn = Transition_createRealShort(next->dt, testTrans, NULL);
+  StateConditionNode *cnd =
+      StateConditionNode_createFull(retTrue, trn, 0, NULL);
+
+  initial->dt->stateConditionList = cnd;
+
+  smc = StateMachine_create(1, initial, NULL, fmgr, testStr);
+  smc->transition = trn;
+
+  r = StateMachine_update(smc);
+
+  ck_assert_str_eq((char *)r, "TABV");
+
+  ck_assert_ptr_null(smc->transition);
+  ck_assert_str_eq(smc->data, TESTOK);
+  ck_assert_ptr_eq(smc->currentState, next->dt);
+
+  free(r);
+  StateMachine_free(smc);
+}
+END_TEST
+
 START_TEST(test_stateMachine_triggerState) {
   StateMachine *smc;
 
@@ -140,7 +178,8 @@ START_TEST(test_stateMachine_triggerState) {
 
   // FIXME:
   // This ID management is bad.
-  // If you pass the id it id will maybe repeat
+  // If you pass the id it id will may repeat
+  // Check before passing it
   smc = StateMachine_create(1, initial, NULL, fmgr, testStr);
 
   r = StateMachine_triggerState(smc, NEXT);
@@ -172,7 +211,7 @@ START_TEST(test_stateMachine_setState) { //
   smc = StateMachine_create(1, initial, NULL, fmgr, testStr);
   StateMachine_setState(smc, NEXT);
 
-  ck_assert_ptr_eq(smc->currentState,next->dt);
+  ck_assert_ptr_eq(smc->currentState, next->dt);
   ck_assert_str_eq(smc->currentState->name, NEXT);
 
   StateMachine_free(smc);
@@ -190,6 +229,7 @@ Suite *default_suite(void) {
   tcase_add_test(tc_sm, test_stateMachine_testAndTransit);
   tcase_add_test(tc_sm, test_stateMachine_triggerState);
   tcase_add_test(tc_sm, test_stateMachine_setState);
+  tcase_add_test(tc_sm, test_stateMachine_update);
 
   suite_add_tcase(s, tc_sm);
   return s;

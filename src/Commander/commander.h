@@ -33,18 +33,9 @@ struct CommandNode {
 // Commander functions
 void Command_free(void *cmd);
 Command *Command_create(char *name, cmdrFunc func, CommandList *list);
-void *Command_exec(Command *cmd, StateMachineList *list, char *str);
+void *Command_exec(Command *cmd, List *list, char *str);
 
-char *Commander_run(StateMachineList *smcList, char *cmdIn);
-char *Commander_updateAll();
 boolean Command_nameEqual(void *vCmd, void *vName2);
-
-char *Commander_get(StateMachineList *smcList, char *cmdIn);
-char *Commander_getInfo(StateMachineList *smcList, char *cmdIn);
-char *Commander_getDevices(StateMachineList *smcList, char *cmdIn);
-
-char *Commander_set(StateMachineList *smcList, char *cmdIn);
-char *Commander_setState(StateMachineList *smcList, char *cmdIn);
 
 /*
  * Commander Node FUNCTIONS
@@ -101,8 +92,7 @@ CommandNode *CommandList_search(CommandList *cmdList, testFunc tst, void *data);
 CommandNode *CommandList_searchNth(CommandList *cmdList, testFunc tst,
                                    void *data, unsigned short int n);
 
-void *CommandList_deepRun(CommandList *cmdList, StateMachineList *smcList,
-                          char *str);
+void *CommandList_deepRun(CommandList *cmdList, List *list, char *str);
 /*
 void *CommandList_deepRun(CommandList *cmdList, testFunc tst, void *data);
 #define CommandList_deepRunByName(t, d)                                     \

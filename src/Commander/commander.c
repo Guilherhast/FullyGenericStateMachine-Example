@@ -34,7 +34,7 @@ Command *Command_create(char *name, cmdrFunc func, CommandList *list) {
   return cmd;
 }
 
-void *Command_exec(Command *cmd, StateMachineList *list, char *str) {
+void *Command_exec(Command *cmd, List *list, char *str) {
   if (cmd->func) {
     return cmd->func(list, str);
   } else {

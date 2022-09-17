@@ -116,8 +116,7 @@ Transition *StateMachine_check(StateMachine *smc) {
       smc->currentState->stateConditionList, smc->data);
 }
 
-
-//Help functions
+// Help functions
 void *StateMachine_strMerger(void *str1, void *str2) {
   char *tmp = "";
   if (!str1) {
