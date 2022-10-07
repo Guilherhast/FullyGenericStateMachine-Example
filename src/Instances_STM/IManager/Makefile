@@ -23,7 +23,7 @@ DIR_INM=.
 FOLDER_IOM=$(realpath ../../IOManager)
 DEP_IOM=$(TMPDIR)/ioManager.o
 
-FOLDER_CMD=$(realpath Commander)
+FOLDER_CMD=$(realpath ../../Commander)
 DEP_CMD=$(TMPDIR)/commander.o
 
 #Assembled dependencies
@@ -39,7 +39,7 @@ OBJ_TEST_INM=$(TMPDIR)/$(notdir $(SRC_TEST_INM:.c=.o))
 BIN_TEST_INM=$(OBJ_TEST_INM:.o=.bin)
 
 #FOLDERS
-DIRMAKE_CMDR=Commander
+DIRMAKE_CMDR=Commander_inst
 ALLDIRS+=$(DIRMAKE_CMDR)
 
 
