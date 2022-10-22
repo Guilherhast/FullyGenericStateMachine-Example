@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "../stateMachine.h"
+#include "stateMachine.h"
 
 int IDCOUNTER = 0;
 

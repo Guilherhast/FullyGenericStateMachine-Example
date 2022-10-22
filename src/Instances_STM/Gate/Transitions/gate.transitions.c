@@ -1,5 +1,5 @@
 #include "../gate.h"
-#include "./gate.Transitions.h"
+#include "./gate.transitions.h"
 
 // Send signal may be in the StateMachine
 // Signal may be an struct

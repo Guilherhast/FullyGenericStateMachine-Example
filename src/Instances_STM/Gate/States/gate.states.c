@@ -1,5 +1,5 @@
 #include "../gate.h"
-#include "gate.States.h"
+#include "gate.states.h"
 
 // Transition Functions
 // ENTER TRANSITIONS

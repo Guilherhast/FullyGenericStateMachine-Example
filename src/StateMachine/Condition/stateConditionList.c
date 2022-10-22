@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../stateCondition.h"
+#include "stateCondition.h"
 
 /*
  * Adapted StateConditionNode functions

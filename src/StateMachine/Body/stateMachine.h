@@ -9,10 +9,10 @@
 #include <string.h>
 #include <time.h>
 
-#include "../consts.h"
-#include "stateCondition.h"
+#include "../../consts.h"
+#include "../Condition/stateCondition.h"
 
-#include "state.h"
+#include "../State/state.h"
 
 // Some typedefs
 typedef void *(*dataMerger)(void *oldData, void *newData);

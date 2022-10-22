@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #include "../gate.test.h"
-#include "gate.States.h"
+#include "gate.states.h"
 
 boolean testTrnIsTrigger(void *vTrn) {
   Transition *trn = (Transition *)vTrn;

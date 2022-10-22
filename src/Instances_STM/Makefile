@@ -1,42 +1,55 @@
+# Makefile StateMachine
 #SAFE=echo
-WATCHCMD=test
-WATCHDIR=.
-FNDARGS=-name 'Makefile' -o -name '*.[hc]'
 
-#Project parts
-#Gate
-#IManager
-DIRMAKE_INM=IManager
-ALLDIRS+=$(DIRMAKE_INM)
+## Imports
 
-DIRMAKE_GATE=Gate
-ALLDIRS+=$(DIRMAKE_GATE)
+ROOTDIR=$(realpath ../../)
 
+ifndef CONFIG_SOURCED
 
-#Rules
-default: test
+CFG_MAKE=$(ROOTDIR)/Config.Makefile
+include $(CFG_MAKE)
 
-test: gate_tests inm_tests
+endif
 
-bin_tests: gate_bin_tests inm_bin_tests
+## Watch
 
-clean:
-	make -C ../../ clean
+WDIR=$(MODULE_STATEMACHINE)
 
-watch:
-	find $(WATCHDIR) $(FNDARGS) | entr -ncc make $(WATCHCMD)
+## Module  files
+### Folders
 
-#IManager rules
-inm_bin_tests:
-	$(SAFE) make -C $(DIRMAKE_INM) bin_tests
+DIR_SMC_TRANSITION=Transition
+DIR_SMC_CONDITION=Condition
+DIR_SMC_STATE=State
+DIR_SMC_BODY=Body
 
-inm_tests:
-	$(SAFE) make -C $(DIRMAKE_INM)
+## Local rules
+test: test_all
 
-#Gate rules
-gate_bin_tests:
-	$(SAFE) make -C $(DIRMAKE_GATE) bin_tests
+test_all: test_mod test_side_mod
 
-gate_tests:
-	$(SAFE) make -C $(DIRMAKE_GATE)
+test_side_mod:
+	$(SAFE) $(MKC) $(DIR_SMC_TRANSITION) test_side_mod
+	$(SAFE) $(MKC) $(DIR_SMC_STATE) test_side_mod
+	$(SAFE) $(MKC) $(DIR_SMC_CONDITION) test_side_mod
+	$(SAFE) $(MKC) $(DIR_SMC_BODY) test_side_mod
+
+test_mod:
+	$(SAFE) $(MKC) $(DIR_SMC_TRANSITION) test_mod
+	$(SAFE) $(MKC) $(DIR_SMC_STATE) test_mod
+	$(SAFE) $(MKC) $(DIR_SMC_CONDITION) test_mod
+	$(SAFE) $(MKC) $(DIR_SMC_BODY) test_mod
+
+bin_tests:
+	$(SAFE) $(MKC) $(DIR_SMC_TRANSITION) bin_tests
+	$(SAFE) $(MKC) $(DIR_SMC_STATE) bin_tests
+	$(SAFE) $(MKC) $(DIR_SMC_CONDITION) bin_tests
+	$(SAFE) $(MKC) $(DIR_SMC_BODY) bin_tests
+
+full_mod:
+	$(SAFE) $(MKC) $(DIR_SMC_TRANSITION) full_mod
+	$(SAFE) $(MKC) $(DIR_SMC_STATE) full_mod
+	$(SAFE) $(MKC) $(DIR_SMC_CONDITION) full_mod
+	$(SAFE) $(MKC) $(DIR_SMC_BODY) full_mod
 

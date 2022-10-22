@@ -1,7 +1,7 @@
 # Makefile Commander
 
 ## Import config
-ROOTDIR=$(realpath ../../)
+ROOTDIR=$(realpath ../../../)
 ifndef CONFIG_SOURCED
 
 CFG_MAKE=$(ROOTDIR)/Config.Makefile
@@ -10,14 +10,17 @@ include $(CFG_MAKE)
 endif
 
 ## Module files
-SRC_BASE=list
-MODULE_DIRECTORY=$(MODULE_LIST)
+SRC_BASE=state
+MODULE_DIRECTORY=$(MODULE_STATEMACHINE)/State
 
 ## Side module info
-HAS_SIDEMOD=false
+HAS_SIDEMOD=true
+
+SIDEMOD_SUFIX=List
 
 ## Dependencies
-DEP_MOD=$(MODOBJ_TESTUTILS)
+DEP_MOD=
+DEP_SIDE_MOD=$(DEP_MOD) $(OBJ_MOD_PART) $(MODOBJ_LIST)
 
 # System
 include $(RULES_MAKE)

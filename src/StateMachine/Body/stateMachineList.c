@@ -1,4 +1,4 @@
-#include "../stateMachine.h"
+#include "stateMachine.h"
 #include <stdio.h>
 #include <stdlib.h>
 

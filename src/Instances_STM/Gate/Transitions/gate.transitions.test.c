@@ -10,7 +10,7 @@ boolean testTrnIsTrigger(void *vTrn) {
   Transition *trn = (Transition *)vTrn;
   return trn->isTrigger;
 }
-boolean testTrnIsReal(void *vTrn) { return !testTrnIsReal(vTrn); }
+boolean testTrnIsReal(void *vTrn) { return !testTrnIsTrigger(vTrn); }
 
 #define ttit(v) testTrnIsTrigger(v)
 #define ttir(v) testTrnIsReal(v)

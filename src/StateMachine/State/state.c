@@ -1,4 +1,4 @@
-#include "../state.h"
+#include "state.h"
 #include <stdio.h>
 #include <stdlib.h>
 

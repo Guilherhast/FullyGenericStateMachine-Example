@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../StateMachine/stateMachine.h"
+#include "../StateMachine/Body/stateMachine.h"
 #include "../StrUtils/strUtils.h"
 #include "../consts.h"
 

@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "../../consts.h"
-#include "../stateMachine.h"
+#include "stateMachine.h"
 
 #define TESTOK "TESTOK"
 #define INITIAL "INITIAL"
@@ -222,7 +222,7 @@ Suite *default_suite(void) {
   Suite *s;
   TCase *tc_sm;
 
-  s = suite_create("State Machine State Machine");
+  s = suite_create("State Machine Body");
   tc_sm = tcase_create("Smoke");
 
   tcase_add_test(tc_sm, test_stateMachine_create);

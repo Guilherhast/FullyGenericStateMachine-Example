@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../state.h"
-#include "../stateCondition.h"
+#include "../State/state.h"
+#include "stateCondition.h"
 
 /*
  * STATECONDITION FUNCTIONS

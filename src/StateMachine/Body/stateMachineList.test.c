@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #include "../../consts.h"
-#include "../stateMachine.h"
+#include "stateMachine.h"
 
 #define INITIAL "INITIAL"
 #define NEXT "NEXT"
@@ -147,7 +147,7 @@ Suite *smc_stateMachine_list_suite(void) {
   Suite *s;
   TCase *tc_sm;
 
-  s = suite_create("StateMachine Machine StateMachine List");
+  s = suite_create("StateMachine Machine Body");
   tc_sm = tcase_create("Smoke");
 
   tcase_add_test(tc_sm, test_StateMachineNode_create);

@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../Lists/list.h"
-#include "../consts.h"
+#include "../../Lists/list.h"
+#include "../../consts.h"
 
 typedef struct StateMachine StateMachine;
 typedef struct State State;

@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 #include "../../consts.h"
-#include "../state.h"
-#include "../transition.h"
+#include "../State/state.h"
+#include "../Transition/transition.h"
 
 void *trnFunc(StateMachine *smc) { return smc; }
 
