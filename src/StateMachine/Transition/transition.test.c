@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../state.h"
-#include "../stateCondition.h"
+#include "../State/state.h"
+#include "../Condition/stateCondition.h"
 
 void *trnFunc(StateMachine *smc) { return smc; }
 

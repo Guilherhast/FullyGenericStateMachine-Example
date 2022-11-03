@@ -16,10 +16,10 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "../../StateMachine/state.h"
-#include "../../StateMachine/stateCondition.h"
-#include "../../StateMachine/stateMachine.h"
-#include "../../StateMachine/transition.h"
+#include "../../StateMachine/Transition/transition.h"
+#include "../../StateMachine/State/state.h"
+#include "../../StateMachine/Condition/stateCondition.h"
+#include "../../StateMachine/Body/stateMachine.h"
 #include "../../consts.h"
 
 #define MAX_CLOSED_TIME 300.0
@@ -43,9 +43,7 @@ typedef struct data_smc_gate {
 } data_smc_gate;
 
 /*
- *
  * STATE CONDITION DECLARATIONS
- *
  */
 
 // Constants
@@ -54,9 +52,7 @@ typedef struct data_smc_gate {
 #define MILIS_IN_DAY (MIL * SECS_IN_DAY)
 
 /*
- *
  * Common functions
- *
  */
 void *stt_str2ptr(char *msg, void *data);
 void *trn_str2ptr(char *msg);
@@ -71,9 +67,7 @@ StateConditionList *conditions_stt_closed_create(State *sttLock,
 StateConditionList *conditions_stt_unlock_create(State *sttClosed);
 
 /*
- *
  * TRANSITIONS
- *
  */
 void GateTransitions_addTransitionsFromList(StateList *sttList, char *sttName,
                                             USint n, void **names,
@@ -89,16 +83,12 @@ void GateTransitions_initTmp();
 void GateTransitions_cleanTmp();
 
 /*
- *
  * CONDITIONS
- *
  */
 void GateConditions_addAll(StateList *sttList);
 
 /*
- *
  * STATE DECLARATIONS
- *
  */
 
 StateList *GateStateList_createAll();
@@ -106,9 +96,7 @@ void State_Enter_base(char *, void *);
 void State_Open_enter(void *data);
 
 /*
- *
  * BODY DECLARATIONS
- *
  */
 data_smc_gate *gateData_allocAndInit(boolean ignoreAutoTriggers,
                                      time_t lock_time, time_t unlock_time,

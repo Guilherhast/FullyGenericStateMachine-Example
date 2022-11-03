@@ -58,8 +58,8 @@ void CommandList_deepFree(CommandList *cmdList, wipeDataFunc wipeData) {
     cmdList->dt->list = NULL;
   }
 
-  //The printf below stays because it is beautiful.
-  //printf("Freeing command of name:\t%s\n", cmdList->dt->name);
+  // The printf below stays because it is beautiful.
+  // printf("Freeing command of name:\t%s\n", cmdList->dt->name);
   if (wipeData) {
     wipeData(cmdList->dt);
   }
@@ -67,7 +67,7 @@ void CommandList_deepFree(CommandList *cmdList, wipeDataFunc wipeData) {
   free(cmdList);
 }
 
-void *CommandList_deepRun(CommandList *cmdList, StateMachineList *smcList,
+void *CommandList_deepRun(CommandList *cmdList, List *list,
                           char *str) {
   if (!str) {
     return NULL;
@@ -83,12 +83,11 @@ void *CommandList_deepRun(CommandList *cmdList, StateMachineList *smcList,
   // Perform a deep search in list
   if (l) {
     if (l->dt->list) {
-      l = CommandList_deepRun(l->dt->list, smcList, nxt);
-    } else if (l->dt->func) {
-      return l->dt->func(smcList, nxt);
+      l = CommandList_deepRun(l->dt->list, list, nxt);
+    } else {
+      return Command_exec(l->dt, list, nxt);
     }
   }
-
   return l;
 }
 

@@ -46,10 +46,10 @@ CommandList *createFuncList(char *str) {
   char nm4[sz + 2];
   strcpy(nm4, str), strcat(nm4, "4");
 
-  CommandNode *nd1 = CommandNode_createFullFunc(nm1, f1, NULL);
-  CommandNode *nd2 = CommandNode_createFullFunc(nm2, f2, NULL);
-  CommandNode *nd3 = CommandNode_createFullFunc(nm3, f3, NULL);
-  CommandNode *nd4 = CommandNode_createFullFunc(nm4, f4, NULL);
+  CommandNode *nd1 = CommandNode_createFullFunc(nm1, (void *)f1, NULL);
+  CommandNode *nd2 = CommandNode_createFullFunc(nm2, (void *)f2, NULL);
+  CommandNode *nd3 = CommandNode_createFullFunc(nm3, (void *)f3, NULL);
+  CommandNode *nd4 = CommandNode_createFullFunc(nm4, (void *)f4, NULL);
 
   CommandList *list = NULL;
   list = CommandList_add(list, nd1);
@@ -90,7 +90,7 @@ START_TEST(test_CommandNode_createFullFork) {
   char name[] = "TESTNAME";
 
   CommandNode *nd;
-  nd = CommandNode_createFullFunc(name, cmdrf, nxt);
+  nd = CommandNode_createFullFunc(name, (void *)cmdrf, nxt);
 
   ck_assert_ptr_nonnull(nd);
   ck_assert_ptr_eq(nd->next, nxt);
@@ -197,7 +197,7 @@ START_TEST(test_CommandNode_deepRun) {
 
   ck_assert_list_size((List *)mainList, 2);
 
-  int *rn1, *rn2, *rn3, *rn4, *rn5 ;
+  int *rn1, *rn2, *rn3, *rn4, *rn5;
   // Null checks
   rn1 = (int *)CommandList_deepRun(mainList, NULL, "A a2 f1");
   ck_assert_ptr_null(rn1);
@@ -215,8 +215,8 @@ START_TEST(test_CommandNode_deepRun) {
   ck_assert_ptr_null(rn5);
   // To store answers
 
-  //Answer checks
-  int *r1, *r2, *r3, *r4, *r5 ;
+  // Answer checks
+  int *r1, *r2, *r3, *r4, *r5;
 
   r1 = (int *)CommandList_deepRun(mainList, NULL, "A a1 f1");
   ck_assert_ptr_nonnull(r1); // Avoid segfault

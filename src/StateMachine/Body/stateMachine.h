@@ -3,14 +3,16 @@
 
 #define SIGNAL_WAIT_INTERVAL 5
 
+#define MAXSTR 256
+
 #include <stdarg.h>
 #include <string.h>
 #include <time.h>
 
-#include "../consts.h"
-#include "stateCondition.h"
+#include "../../consts.h"
+#include "../Condition/stateCondition.h"
 
-#include "state.h"
+#include "../State/state.h"
 
 // Some typedefs
 typedef void *(*dataMerger)(void *oldData, void *newData);
@@ -67,6 +69,8 @@ void *StateMachine_setState(StateMachine *smc, char *sttName);
 void *StateMachine_testAndTransit(StateMachine *smc);
 void *StateMachine_update(StateMachine *smc); // Maybe it will check too
 
+void *StateMachine_strMerger(void *str1, void *str2);
+
 Transition *StateMachine_check(StateMachine *smc);
 
 boolean idMatch(void *a, void *b);
@@ -105,7 +109,7 @@ StateMachineNode *StateMachineList_search(StateMachineList *list, testFunc tst,
 #define StateMachineList_searchById(l, i)                                      \
   StateMachineList_search(l, &idMatch, i)
 
-StateMachine *StateMachineList_update(StateMachineList *list);
+void *StateMachineList_updateAll(StateMachineList *list, dataMerger *mgr);
 
 /*
  *IMPLEMENTATION FUNCTIONS

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #include "../../consts.h"
-#include "../state.h"
+#include "state.h"
 
 void* en(State *stt,  void *data) {return data;}
 void* ex(State *stt,  void *data) {return data;}

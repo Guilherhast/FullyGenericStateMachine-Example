@@ -1,4 +1,4 @@
-#include "../state.h"
+#include "state.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -35,7 +35,8 @@ State *State_create(char *name, StateConditionList *sCondList,
 
   return stt;
 }
-void* State_enter(State *stt, void *data) {
+
+void *State_enter(State *stt, void *data) {
   time(&stt->lastTimeEntered);
 
   if (stt->enter) {
@@ -43,15 +44,15 @@ void* State_enter(State *stt, void *data) {
   }
   return NULL;
 }
-void* State_update(State *stt, void *data) {
+void *State_update(State *stt, void *data) {
   time(&stt->lastUpdated);
 
-  if (stt->enter) {
+  if (stt->update) {
     return stt->update(stt, data);
   }
   return NULL;
 }
-void* State_exit(State *stt, void *data) {
+void *State_exit(State *stt, void *data) {
   if (stt->exit) {
     return stt->exit(stt, data);
   }

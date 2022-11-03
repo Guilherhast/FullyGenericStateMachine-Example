@@ -58,25 +58,36 @@ char *IOManager_getNext() {
 
   FILE *inputF = IFILE ? IFILE : stdin;
 
+  // It won't work for a raw terminal
   size = getline(&line, &n, inputF);
 
   cleanNewLine(line, &size);
 
-  return line;
+  USint newSize = strlen(line);
+
+  if (newSize == size) {
+    return line;
+  } else {
+    return NULL;
+  }
 }
 
 char *IOManager_extractStr(ioData *data) { return data->str; }
 
 /*
 void IOManager_answer(ioData *data) {
-  FILE *outF = OFILE ? OFILE : stdin;
-  fprintf(outF, "%s\n", data->str);
+FILE *outF = OFILE ? OFILE : stdin;
+fprintf(outF, "%s\n", data->str);
 }
 */
 
 void IOManager_update(ioData *data, char *str) {
-  FILE *outF = OFILE ? OFILE : stdin;
-  fprintf(outF, "%s\n", str);
+  if (!str) {
+    return;
+  }
+
+  FILE *outFile = OFILE ? OFILE : stdin;
+  fprintf(outFile, "%s\n", str);
 }
 
 void IOManager_updateCur(char *str) { IOManager_update(NULL, str); }

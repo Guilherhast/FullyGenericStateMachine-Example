@@ -1,6 +1,6 @@
 
-#include "../transition.h"
-#include "../state.h"
+#include "transition.h"
+#include "../State/state.h"
 
 void Transition_free(void *VTrn) {
   Transition *trn = (Transition *)VTrn;

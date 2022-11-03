@@ -1,0 +1,30 @@
+# Makefile Commander
+
+## Import config
+ROOTDIR=$(realpath ../../../)
+ifndef CONFIG_SOURCED
+
+CFG_MAKE=$(ROOTDIR)/Config.Makefile
+include $(CFG_MAKE)
+
+endif
+
+## Module files
+SRC_BASE=transition
+MODULE_DIRECTORY=$(MODULE_STATEMACHINE)/Transition
+
+## Side module info
+HAS_SIDEMOD=true
+
+SIDEMOD_SUFIX=List
+
+## Dependencies
+DEP_SUBMOD_TRANSITION= $(MODOBJ_STATEMACHINE_STATE) 
+#DEP_SUBMOD_CONDITION=$(MODOBJ_STATEMACHINE_CONDITION) 
+#DEP_MOD=$(DEP_SUBMOD_CONDITION) $(MODOBJ_STRUTILS) $(MODOBJ_TESTUTILS) $(MODOBJ_LIST)
+DEP_MOD=$(MODOBJ_STATEMACHINE_STATE) $(MODOBJ_LIST)
+DEP_SIDE_MOD=$(DEP_MOD) $(OBJ_MOD_PART)
+
+
+# System
+include $(RULES_MAKE)

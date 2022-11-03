@@ -4,11 +4,13 @@
 #include <string.h>
 
 #include "../../consts.h"
-#include "../stateMachine.h"
+#include "stateMachine.h"
 
 #define TESTOK "TESTOK"
 #define INITIAL "INITIAL"
 #define NEXT "NEXT"
+
+boolean retTrue(void *t) { return true; }
 
 void *testTrans(StateMachine *smc) {
   strcpy(smc->data, TESTOK);
@@ -18,24 +20,29 @@ void *testTrans(StateMachine *smc) {
   return bff;
 }
 
-void *chA(State *stt, void *data) { return "A"; }
-void *chB(State *stt, void *data) { return "B"; }
-void *upA(State *stt, void *data) { return "U"; }
-void *upB(State *stt, void *data) { return "V"; }
-
-void *mgrStr(void *str1, void *str2) {
-  if (!str2) {
-    return str1;
-  }
-  if (!str1) {
-    return str2;
-  }
-  strcat(str1, str2);
-
-  return str1;
+void *chA(State *stt, void *data) {
+  char *r = malloc(sizeof(char) * 2);
+  strcpy(r, "A");
+  return r;
+}
+void *chB(State *stt, void *data) {
+  char *r = malloc(sizeof(char) * 2);
+  strcpy(r, "B");
+  return r;
 }
 
-const void *fmgr = &mgrStr;
+void *upA(State *stt, void *data) {
+  char *r = malloc(sizeof(char) * 2);
+  strcpy(r, "U");
+  return r;
+}
+void *upB(State *stt, void *data) {
+  char *r = malloc(sizeof(char) * 2);
+  strcpy(r, "V");
+  return r;
+}
+
+const void *fmgr = &StateMachine_strMerger;
 
 START_TEST(test_stateMachine_create) {
   time_t now;
@@ -118,6 +125,41 @@ START_TEST(test_stateMachine_testAndTransit) {
 }
 END_TEST
 
+START_TEST(test_stateMachine_update) {
+  StateMachine *smc;
+
+  void *r;
+  char testStr[32];
+
+  // Creating the state list
+  StateNode *next =
+      StateNode_createFull(NEXT, NULL, NULL, chB, upB, NULL, NULL);
+  StateNode *initial =
+      StateNode_createFull(INITIAL, NULL, NULL, NULL, upA, chA, next);
+
+  // Creating a condition and a transition it needs
+  Transition *trn = Transition_createRealShort(next->dt, testTrans, NULL);
+  StateConditionNode *cnd =
+      StateConditionNode_createFull(retTrue, trn, 0, NULL);
+
+  initial->dt->stateConditionList = cnd;
+
+  smc = StateMachine_create(1, initial, NULL, fmgr, testStr);
+  smc->transition = trn;
+
+  r = StateMachine_update(smc);
+
+  ck_assert_str_eq((char *)r, "TABV");
+
+  ck_assert_ptr_null(smc->transition);
+  ck_assert_str_eq(smc->data, TESTOK);
+  ck_assert_ptr_eq(smc->currentState, next->dt);
+
+  free(r);
+  StateMachine_free(smc);
+}
+END_TEST
+
 START_TEST(test_stateMachine_triggerState) {
   StateMachine *smc;
 
@@ -136,7 +178,8 @@ START_TEST(test_stateMachine_triggerState) {
 
   // FIXME:
   // This ID management is bad.
-  // If you pass the id it id will maybe repeat
+  // If you pass the id it id will may repeat
+  // Check before passing it
   smc = StateMachine_create(1, initial, NULL, fmgr, testStr);
 
   r = StateMachine_triggerState(smc, NEXT);
@@ -168,6 +211,7 @@ START_TEST(test_stateMachine_setState) { //
   smc = StateMachine_create(1, initial, NULL, fmgr, testStr);
   StateMachine_setState(smc, NEXT);
 
+  ck_assert_ptr_eq(smc->currentState, next->dt);
   ck_assert_str_eq(smc->currentState->name, NEXT);
 
   StateMachine_free(smc);
@@ -178,13 +222,14 @@ Suite *default_suite(void) {
   Suite *s;
   TCase *tc_sm;
 
-  s = suite_create("State Machine State Machine");
+  s = suite_create("State Machine Body");
   tc_sm = tcase_create("Smoke");
 
   tcase_add_test(tc_sm, test_stateMachine_create);
   tcase_add_test(tc_sm, test_stateMachine_testAndTransit);
   tcase_add_test(tc_sm, test_stateMachine_triggerState);
   tcase_add_test(tc_sm, test_stateMachine_setState);
+  tcase_add_test(tc_sm, test_stateMachine_update);
 
   suite_add_tcase(s, tc_sm);
   return s;

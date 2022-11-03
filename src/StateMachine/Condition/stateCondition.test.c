@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../state.h"
-#include "../stateCondition.h"
+#include "../State/state.h"
+#include "stateCondition.h"
 
 boolean cf_false(void *data) { return false; };
 boolean cf_true(void *data) { return true; };
