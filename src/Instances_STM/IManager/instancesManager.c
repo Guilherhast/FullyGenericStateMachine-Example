@@ -1,9 +1,11 @@
 #include "instancesManager.h"
 
-InstancesManager *InstancesManager_create(StateMachineList *smcs, USint delay) {
+InstancesManager *InstancesManager_create(CommandList *cmdr,
+                                          StateMachineList *smcs, USint delay) {
   InstancesManager *inm = malloc(sizeof(InstancesManager));
 
   inm->stateMachines = smcs;
+  inm->commander = cmdr;
   inm->delay = delay;
 
   inm->last_updated = 0;
@@ -28,14 +30,19 @@ void InstancesManager_cycle(InstancesManager *inm) {
   char *cmdIn, *cmdOut; // Should I free?
 
   while ((cmdIn = IOManager_getNext()) || !InstancesManager_timeUp(inm)) {
-    cmdOut = Commander_run(inm->stateMachines, cmdIn);
+    // Why is it just as function?
+    cmdOut =
+        CommandList_deepRun(inm->commander, (List *)inm->stateMachines, cmdIn);
+
+    IOManager_updateCur(cmdOut);
 
     // Cleaning data
     free(cmdIn);
     free(cmdOut);
   }
 
-  cmdOut = Commander_updateAll();
+  // Why is it receiving no params? //Fixed it sir!
+  cmdOut = Commander_updateAll(inm->stateMachines);
   InstancesManager_cleanTimer(inm);
   IOManager_updateAll(cmdOut);
 

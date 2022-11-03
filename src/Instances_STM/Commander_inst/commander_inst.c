@@ -124,3 +124,7 @@ CommandList *instCommander_create() {
 
   return node_fork_get;
 }
+
+void *Commander_updateAll(StateMachineList *smcs) {
+  return StateMachineList_updateAll(smcs, NULL);
+}

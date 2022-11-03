@@ -31,7 +31,17 @@ COV_DIR=$(ROOTDIR)/coverage
 
 ### Import files
 RULES_MAKE=$(ROOTDIR)/Rules.Makefile
-ALL_MODULE_MAKES=$(shell find $(SRC_DIR) -type f -name Module.Makefile -printf '%p ')
+#MODULE_FIND_ARGS=-type f -name Module.Makefile  -printf '%p '
+MODULE_FIND_ARGS=-type f -name Module.Makefile 
+
+ALL_MODULE_MAKES=$(shell find $(SRC_DIR) $(MODULE_FIND_ARGS)	\
+				| awk '{print length($0) " " $$0}'			\
+				| sort -n										\
+				| cut -f2 -d' '									\
+				| tr '\n' ' '									\
+				)
+
+#ALL_MODULE_MAKES=$(shell find $(SRC_DIR) $(MODULE_FIND_ARGS) )
 
 ## Watch command
 WCMD=test

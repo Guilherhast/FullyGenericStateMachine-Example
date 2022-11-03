@@ -5,14 +5,15 @@
 #include "instancesManager.h"
 
 START_TEST(test_isntancesManager_create) {
-  int a;
-  void *smc = &a;
+  int a, c;
+  void *smcs = &a, *cmdr = &c;
 
-  InstancesManager *inm = InstancesManager_create(smc, 500);
+  InstancesManager *inm = InstancesManager_create(cmdr, smcs, 500);
 
-  ck_assert_int_eq(inm->last_updated,0);
-  ck_assert_ptr_eq(inm->stateMachines,smc);
-  ck_assert_int_eq(inm->delay,500);
+  ck_assert_int_eq(inm->last_updated, 0);
+  ck_assert_ptr_eq(inm->commander, cmdr);
+  ck_assert_ptr_eq(inm->stateMachines, smcs);
+  ck_assert_int_eq(inm->delay, 500);
 }
 END_TEST
 

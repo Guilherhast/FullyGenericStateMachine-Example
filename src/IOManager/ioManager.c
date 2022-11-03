@@ -58,7 +58,7 @@ char *IOManager_getNext() {
 
   FILE *inputF = IFILE ? IFILE : stdin;
 
-  //It won't work for a raw terminal
+  // It won't work for a raw terminal
   size = getline(&line, &n, inputF);
 
   cleanNewLine(line, &size);
@@ -82,8 +82,12 @@ fprintf(outF, "%s\n", data->str);
 */
 
 void IOManager_update(ioData *data, char *str) {
-  FILE *outF = OFILE ? OFILE : stdin;
-  fprintf(outF, "%s\n", str);
+  if (!str) {
+    return;
+  }
+
+  FILE *outFile = OFILE ? OFILE : stdin;
+  fprintf(outFile, "%s\n", str);
 }
 
 void IOManager_updateCur(char *str) { IOManager_update(NULL, str); }

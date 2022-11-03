@@ -1,6 +1,6 @@
 ### Module IOManager
 MODULE_IOMANAGER=$(SRC_DIR)/IOManager
-MODOBJ_IOMANAGER=$(TST_DIR)/IOManager.o
+MODOBJ_IOMANAGER=$(TST_DIR)/ioManager.o
 
 $(MODOBJ_IOMANAGER): $(shell find $(MODULE_IOMANAGER) $(FNDARGS) )
 	$(SAFE) $(MKC) $(MODULE_IOMANAGER) full_mod

@@ -1,2 +1,2 @@
-### Modules incomplete
+#### Module Instances_STM
 MODULE_INSTANCES_STATEMACHINE=$(SRC_DIR)/Instances_STM
