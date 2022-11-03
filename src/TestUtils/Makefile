@@ -1,45 +1,35 @@
-#SAFE=echo
+# Makefile Commander
 
-CC=$(shell which gcc)
+## Import config
+ROOTDIR=$(realpath ../../)
+ifndef CONFIG_SOURCED
 
-#Compiler flags
-CFLAGS = -c -Wall -g3
-PROFILE_FLAGS = -fprofile-arcs -ftest-coverage
+CFG_MAKE=$(ROOTDIR)/Config.Makefile
+include $(CFG_MAKE)
 
-TST_LIBS = -lcheck -lm -lpthread -lrt
-COV_LIBS = -lgcov -coverage
+endif
 
-#Directories
-ROOTDIR=$(shell realpath ../../)
-MIRRORDIR=$(ROOTDIR)/test
-TMPDIR=$(MIRRORDIR)
-#ALLDIRS=$(TMPDIR)/StateCondition $(TMPDIR)/StateMachine $(TMPDIR)/State
+## Module files
+SRC_BASE=testUtils
+MODULE_DIRECTORY=$(MODULE_TESTUTILS)
 
-#Dependencies
-DIR_LST=../Lists
-HDR_LST=list.h
-DEP_HDR_LST=$(DIR_LST)/$(HDR_LST)
+SRC_MOD_PART=$(MODULE_DIRECTORY)/$(SRC_BASE).c
+OBJ_MOD_PART=$(TST_DIR)/$(notdir $(SRC_MOD_PART:.c=.o))
 
-#List files
-DIR_TUT=.
-SRC_HDR_TUT=$(DIR_TUT)/testUtils.h
-SRC_PART_TUT=$(SRC_HDR_TUT:.h=.c)
-OBJ_PART_TUT=$(TMPDIR)/$(notdir $(SRC_PART_TUT:.c=.o))
+## Rule definitions
+test:  test_all
 
-#General rules
-default: dirs objs
+test_all: test_mod
 
-objs:  $(OBJ_PART_TUT)
+test_mod: full_mod msg
 
-clean:
-	$(SAFE) make -C $(ROOTDIR) clean
+bin_tests: full_mod
 
-dirs: $(TMPDIR)
+full_mod: $(OBJ_MOD_PART)
 
-$(TMPDIR):
-	$(SAFE) make -C $(ROOTDIR) test
+$(OBJ_MOD_PART): $(SRC_MOD_PART) $(TST_DIR)
+	$(SAFE) $(CC) $(CFLAGS) $< -o $@
 
-#List rules
-$(OBJ_PART_TUT): $(SRC_PART_TUT) $(SRC_HDR_TUT) $(DEP_HDR_LST) dirs
-	$(SAFE) gcc $(CFLAGS) $(PROFILE_FLAGS) $(SRC_PART_TUT) -o $@
-
+# Configuration overwrite
+msg:
+	$(ECE) $(COLOR_TEST) This module has no tests $(COLOR_RESTORE)

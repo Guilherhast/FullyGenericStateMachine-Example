@@ -19,7 +19,7 @@ START_TEST(test_Commander_create) {
   char name1[] = "Command name 1";
   char name2[] = "Command name 2";
 
-  Command *cmd1 = Command_create(name1, sampleFunc, NULL);
+  Command *cmd1 = Command_create(name1, (void *)sampleFunc, NULL);
   Command *cmd2 = Command_create(name2, NULL, l);
 
   ck_assert_ptr_ne(name1, cmd1->name);
@@ -49,7 +49,7 @@ START_TEST(test_Commander_createError) {
   char name2[] = "Command name 2";
 
   Command *cmd1 = Command_create(NULL, NULL, l);
-  Command *cmd2 = Command_create(name2, sampleFunc, l);
+  Command *cmd2 = Command_create(name2, (void *)sampleFunc, l);
   Command *cmd3 = Command_create(name1, NULL, NULL);
 
   ck_assert_ptr_null(cmd1);
@@ -64,18 +64,18 @@ END_TEST
 
 START_TEST(test_Commander_exec) {
   int t;
-  void *l = &t;
+  void *fake_list = &t;
   char str[] = "abcd";
 
   char name[] = "Command name";
-  Command *cmd = Command_create(name, sampleFunc, NULL);
+  Command *cmd = Command_create(name, (void *)sampleFunc, NULL);
 
   sampleFuncTimesRun = 0;
 
-  void *r = Command_exec(cmd,l,str);
+  void *r = Command_exec(cmd, fake_list, str);
 
-  ck_assert_ptr_eq(r,&str[3]);
-  ck_assert_int_eq(sampleFuncTimesRun,1);
+  ck_assert_ptr_eq(r, &str[3]);
+  ck_assert_int_eq(sampleFuncTimesRun, 1);
 
   Command_free(cmd);
 }

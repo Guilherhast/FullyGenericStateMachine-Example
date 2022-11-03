@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "../stateMachine.h"
+#include "stateMachine.h"
 
 int IDCOUNTER = 0;
 
@@ -57,12 +57,17 @@ void *StateMachine_testAndTransit(StateMachine *smc) {
     }
     if (smc->transition->stateTo) {
       void *tmpData = NULL;
+      void *holder;
 
+      holder = base;
       tmpData = State_exit(smc->currentState, smc->data);
       base = smc->merger(base, tmpData);
+      free(holder);
 
+      holder = base;
       tmpData = State_enter(smc->transition->stateTo, smc->data);
       base = smc->merger(base, tmpData);
+      free(holder);
 
       smc->currentState = smc->transition->stateTo;
     }
@@ -72,13 +77,18 @@ void *StateMachine_testAndTransit(StateMachine *smc) {
 }
 
 void *StateMachine_update(StateMachine *smc) {
-  void *trnData = NULL, *upData = NULL;
+  void *trnData = NULL, *upData = NULL, *resp = NULL;
 
   smc->transition = StateMachine_check(smc);
   trnData = StateMachine_testAndTransit(smc);
   upData = State_update(smc->currentState, smc->data);
 
-  return smc->merger(trnData, upData);
+  resp = smc->merger(trnData, upData);
+
+  free(trnData);
+  free(upData);
+
+  return resp;
 }
 
 void *StateMachine_setState(StateMachine *smc, char *sttName) {
@@ -104,4 +114,26 @@ void *StateMachine_triggerState(StateMachine *smc, char *sttName) {
 Transition *StateMachine_check(StateMachine *smc) {
   return StateConditionList_checkForTransition(
       smc->currentState->stateConditionList, smc->data);
+}
+
+// Help functions
+void *StateMachine_strMerger(void *str1, void *str2) {
+  char *tmp = "";
+  if (!str1) {
+    str1 = tmp;
+  }
+  if (!str2) {
+    str2 = tmp;
+  }
+
+  int s1 = strlen((char *)str1);
+  int s2 = strlen((char *)str2);
+
+  char *str = malloc(sizeof(char) * (1 + s1 + s2));
+
+  str[0] = '\0';
+  strcat(str, str1);
+  strcat(str, str2);
+
+  return str;
 }

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../StateMachine/stateMachine.h"
+#include "../StateMachine/Body/stateMachine.h"
 #include "../StrUtils/strUtils.h"
 #include "../consts.h"
 
@@ -13,7 +13,7 @@
 #define MAXCMD 64
 #define MAXMSG 2048
 
-typedef void *(*cmdrFunc)(StateMachineList *list, char *str);
+typedef void *(*cmdrFunc)(void *list, char *str);
 
 typedef struct Command Command;
 typedef struct CommandNode CommandNode;
@@ -33,18 +33,9 @@ struct CommandNode {
 // Commander functions
 void Command_free(void *cmd);
 Command *Command_create(char *name, cmdrFunc func, CommandList *list);
-void *Command_exec(Command *cmd, StateMachineList *list, char *str);
+void *Command_exec(Command *cmd, List *list, char *str);
 
-char *Commander_run(StateMachineList *smcList, char *cmdIn);
-char *Commander_updateAll();
 boolean Command_nameEqual(void *vCmd, void *vName2);
-
-char *Commander_get(StateMachineList *smcList, char *cmdIn);
-char *Commander_getInfo(StateMachineList *smcList, char *cmdIn);
-char *Commander_getDevices(StateMachineList *smcList, char *cmdIn);
-
-char *Commander_set(StateMachineList *smcList, char *cmdIn);
-char *Commander_setState(StateMachineList *smcList, char *cmdIn);
 
 /*
  * Commander Node FUNCTIONS
@@ -68,11 +59,11 @@ CommandNode *CommandNode_create(Command *cmd, CommandNode *next);
 
 CommandNode *CommandNode_attatch(CommandNode *curcmd, CommandNode *newcmd);
 
-//CommandNode *CommandNode_clone(CommandNode *nd);
+// CommandNode *CommandNode_clone(CommandNode *nd);
 
 /*
 #define CommandList_findAndClone(l, t, d)                                      \
-  CommandNode_clone(CommandList_search(l, t, d))
+CommandNode_clone(CommandList_search(l, t, d))
 */
 
 /*
@@ -87,29 +78,26 @@ void CommandList_deepFree(CommandList *cmdList, wipeDataFunc wipeData);
 #define CommandList_deepFreeSafe(s) CommandList_deepFree(s, NULL)
 #define CommandList_deepFreeWipe(s) CommandList_deepFree(s, &Command_free)
 
-
 CommandList *CommandList_sortedAdd(CommandList *cmdList, CommandNode *cmdNode,
                                    sortFunc sfn, boolean swapData);
 #define CommandList_add(t, n) CommandList_sortedAdd(t, n, NULL, false)
 
-
-//CommandList *CommandList_cat(CommandList *list1, CommandList *list2);
+// CommandList *CommandList_cat(CommandList *list1, CommandList *list2);
 
 CommandNode *CommandList_search(CommandList *cmdList, testFunc tst, void *data);
 
-#define CommandList_searchByName(t, d)                                     \
+#define CommandList_searchByName(t, d)                                         \
   CommandList_search(t, &Command_nameEqual, d)
 
 CommandNode *CommandList_searchNth(CommandList *cmdList, testFunc tst,
                                    void *data, unsigned short int n);
 
-void *CommandList_deepRun(CommandList *cmdList, StateMachineList *smcList, char *str);
+void *CommandList_deepRun(CommandList *cmdList, List *list, char *str);
 /*
 void *CommandList_deepRun(CommandList *cmdList, testFunc tst, void *data);
 #define CommandList_deepRunByName(t, d)                                     \
-  CommandList_deepRun(t, &Command_nameEqual, d)
+CommandList_deepRun(t, &Command_nameEqual, d)
 */
-
 
 /*
  * Search functions

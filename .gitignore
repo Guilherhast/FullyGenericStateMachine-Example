@@ -2,6 +2,7 @@
 #Binaries
 /test
 /build
+/coverage
 
 #personal files
 .bash_local

@@ -1,0 +1,26 @@
+# Makefile Commander Instance
+
+## Import config
+ROOTDIR=$(realpath ../../../)
+ifndef CONFIG_SOURCED
+
+CFG_MAKE=$(ROOTDIR)/Config.Makefile
+include $(CFG_MAKE)
+
+endif
+
+## Module files
+SRC_BASE=commander_inst
+MODULE_DIRECTORY=$(SUBMODULE_INSTANCES_MANAGER_COMMANDER)
+
+## Side module info
+HAS_SIDEMOD=false
+
+## Dependencies
+DEP_STATEMACHINE_FULL=$(MODOBJ_STATEMACHINE) $(MODOBJ_LIST)
+DEP_UTILS=$(MODOBJ_STRUTILS) $(MODOBJ_TESTUTILS)
+DEP_COMMANDER=$(MODOBJ_COMMANDER_OBJ) $(DEP_STATEMACHINE_FULL) $(DEP_UTILS)
+DEP_MOD=$(DEP_COMMANDER) $(MODOBJ_COMMANDER_LIST)
+
+# System
+include $(RULES_MAKE)

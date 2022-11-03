@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 #include "../../consts.h"
-#include "../state.h"
-#include "../transition.h"
+#include "../State/state.h"
+#include "../Transition/transition.h"
 
 #define STR_ENTER "ENTERED"
 #define STR_EXIT "EXITED"

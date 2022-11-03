@@ -3,10 +3,10 @@
 
 #include <stdarg.h>
 
-#include "../Lists/list.h"
-#include "../consts.h"
+#include "../../Lists/list.h"
+#include "../../consts.h"
 
-#include "./transition.h"
+#include "../Transition/transition.h"
 
 
 // Some typedefs

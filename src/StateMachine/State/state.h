@@ -10,10 +10,10 @@
 #include <string.h>
 #include <time.h>
 
-#include "../Lists/list.h"
-#include "../consts.h"
+#include "../../Lists/list.h"
+#include "../../consts.h"
 
-#include "stateCondition.h"
+#include "../Condition/stateCondition.h"
 
 // Some typedefs
 typedef struct State State;
