@@ -16,8 +16,11 @@ MODULE_DIRECTORY=$(MODULE_TESTUTILS)
 SRC_MOD_PART=$(MODULE_DIRECTORY)/$(SRC_BASE).c
 OBJ_MOD_PART=$(TST_DIR)/$(notdir $(SRC_MOD_PART:.c=.o))
 
+## Colors
+COLOR_TEST=$(COLOR_RED)
+
 ## Rule definitions
-test:  test_all
+test:  test_mod
 
 test_all: test_mod
 

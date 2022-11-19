@@ -142,8 +142,8 @@ void GateStateList_addTriggerTransitions(StateList *list) {
                       NAME_OPENNING);
 
   // Act of openning
-  gt_triggerFastClone(list, NAME_FCDOPENNING, NAME_OPENNING, NAME_INOPENNING);
-  gt_triggerFastClone(list, NAME_OPENNING, NAME_FCDOPENNING, NAME_INOPENNING);
+  gt_triggerFastClone(list, NAME_FCDOPENNING, NAME_OPENNING, NAME_INOPENNING, NAME_OPEN);
+  gt_triggerFastClone(list, NAME_OPENNING, NAME_FCDOPENNING, NAME_INOPENNING, NAME_OPEN);
 
   // Interrupted actions
   gt_triggerFastClone(list, NAME_INOPENNING, NAME_OPENNING, NAME_FCDOPENNING,
@@ -152,8 +152,8 @@ void GateStateList_addTriggerTransitions(StateList *list) {
                       NAME_CLOSING, NAME_FCDCLOSING);
 
   // Act of closing
-  gt_triggerFastClone(list, NAME_CLOSING, NAME_FCDCLOSING, NAME_INCLOSING);
-  gt_triggerFastClone(list, NAME_FCDCLOSING, NAME_CLOSING, NAME_INCLOSING);
+  gt_triggerFastClone(list, NAME_CLOSING, NAME_FCDCLOSING, NAME_INCLOSING, NAME_CLOSED);
+  gt_triggerFastClone(list, NAME_FCDCLOSING, NAME_CLOSING, NAME_INCLOSING, NAME_CLOSED);
 
   // Opened states
   gt_triggerFastClone(list, NAME_OPEN, NAME_CLOSING, NAME_FCDCLOSING);

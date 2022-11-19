@@ -15,11 +15,15 @@ MKC=make -C
 CC=$(shell which gcc)
 
 ### Compiler flags
-CFLAGS= -c -Wall -g3
+BASEFLAGS= -c -Wall
+DEBUGFLAGS= -g3
+CFLAGS= $(BASEFLAGS) $(DEBUGFLAGS)
 PROFILE_FLAGS=-fprofile-arcs -ftest-coverage
 
 TST_LIBS= -lcheck -lm -lpthread -lrt
 COV_LIBS= -lgcov -coverage
+
+LIB_FLAGS=$(TST_LIBS) $(COV_LIBS)
 
 ## Files
 
@@ -31,8 +35,7 @@ COV_DIR=$(ROOTDIR)/coverage
 
 ### Import files
 RULES_MAKE=$(ROOTDIR)/Rules.Makefile
-#MODULE_FIND_ARGS=-type f -name Module.Makefile  -printf '%p '
-MODULE_FIND_ARGS=-type f -name Module.Makefile 
+MODULE_FIND_ARGS=-type f -name Module.Makefile
 
 ALL_MODULE_MAKES=$(shell find $(SRC_DIR) $(MODULE_FIND_ARGS)	\
 				| awk '{print length($0) " " $$0}'			\
@@ -41,7 +44,6 @@ ALL_MODULE_MAKES=$(shell find $(SRC_DIR) $(MODULE_FIND_ARGS)	\
 				| tr '\n' ' '									\
 				)
 
-#ALL_MODULE_MAKES=$(shell find $(SRC_DIR) $(MODULE_FIND_ARGS) )
 
 ## Watch command
 WCMD=test
@@ -78,7 +80,8 @@ REDPAGE=$(COV_DIR)/index.html
 ##  Auxiliar variables
 COLOR_RED="\033[1;31m"
 COLOR_GREEN="\033[1;32m"
-COLOR_BLUE="\033[1;33m"
+COLOR_BLUE="\033[1;34m"
+COLOR_YELLOW="\033[1;33m"
 COLOR_MAG="\033[0;35m"
 COLOR_CYAN="\033[0;36m"
 COLOR_RESTORE="\033[0m"
@@ -90,11 +93,16 @@ endif
 ## Global rules
 default: test
 
+color_reset:
+	$(ECE) $(COLOR_RESTORE)
+
 clean:
 	$(SAFE) rm -rf $(BUILD_DIR) $(TST_DIR) $(COV_DIR)
 
 watch:
-	( $(LDS) $(ALWAYSWATCH); find $(WDIR) $(FNDARGS) ) | entr -nrc $(MK) $(WCMD)
+	( $(LDS) $(ALWAYSWATCH);		\
+	find $(WDIR) $(FNDARGS) ) |		\
+	entr -nrc $(MK) color_reset $(WCMD)
 
 dirs: $(TST_DIR) $(BUILD_DIR) $(COV_DIR)
 
@@ -120,8 +128,39 @@ $(BUILD_DIR):
 $(COV_DIR):
 	$(SAFE) mkdir -p $(COV_DIR)
 
+
 ## Import modules
+### Defining SETUP
+ifndef BUILD
+
+TARGET_DIR=$(TST_DIR)
+
+else
+
+TARGET_DIR=$(BUILD_DIR)
+CFLAGS=$(BASEFLAGS)
+PROFILE_FLAGS=
+
+endif
+
+### Importing
 include $(ALL_MODULE_MAKES)
+
+## Project
+### Project files
+EXECUTABLE=$(TARGET_DIR)/main.bin
+
+### Project rules
+$(EXECUTABLE): $(MODOBJ_MAIN) $(ALL_MODOBJS)
+	$(SAFE) $(CC) $^ $(LIB_FLAGS) -o $@
+
+run: $(EXECUTABLE) 
+	$(LSS) $<
+	$(ECE) $(COLOR_GREEN)
+	$(SAFE) $(GDB) $<
+	$(ECE) $(COLOR_RESTORE)
+
+build: $(BUILD_DIR) main
 
 ## System
 CONFIG_SOURCED=true

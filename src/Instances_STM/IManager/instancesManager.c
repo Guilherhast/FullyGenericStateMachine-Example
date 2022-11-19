@@ -8,29 +8,34 @@ InstancesManager *InstancesManager_create(CommandList *cmdr,
   inm->commander = cmdr;
   inm->delay = delay;
 
-  inm->last_updated = 0;
+  InstancesManager_cleanTimer(inm);
 
   return inm;
 }
 
 void InstancesManager_cleanTimer(InstancesManager *inm) {
-  time(&inm->last_updated);
+  gettimeofday(&inm->last_updated, NULL);
 }
 
 boolean InstancesManager_timeUp(InstancesManager *inm) {
-  time_t now;
-  time(&now);
+  struct timeval now;
+  gettimeofday(&now, NULL);
 
-  return (now - inm->last_updated) < inm->delay;
+  unsigned int delay = (now.tv_sec - inm->last_updated.tv_sec) * 1000 +
+                       (now.tv_usec - inm->last_updated.tv_usec) / 1000;
+
+  return delay >= inm->delay;
 }
 
 // IOManager create io
 // IOmanager extractString
 void InstancesManager_cycle(InstancesManager *inm) {
-  char *cmdIn, *cmdOut; // Should I free?
+  char *cmdIn = NULL, *cmdOut = NULL; // Should I free?
 
+  // Consider sleeping until delay
   while ((cmdIn = IOManager_getNext()) || !InstancesManager_timeUp(inm)) {
     // Why is it just as function?
+
     cmdOut =
         CommandList_deepRun(inm->commander, (List *)inm->stateMachines, cmdIn);
 

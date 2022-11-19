@@ -61,7 +61,9 @@ char *IOManager_getNext() {
   // It won't work for a raw terminal
   size = getline(&line, &n, inputF);
 
-  cleanNewLine(line, &size);
+  if (line && size) {
+    cleanNewLine(line, &size);
+  }
 
   USint newSize = strlen(line);
 
@@ -86,7 +88,7 @@ void IOManager_update(ioData *data, char *str) {
     return;
   }
 
-  FILE *outFile = OFILE ? OFILE : stdin;
+  FILE *outFile = OFILE ? OFILE : stdout;
   fprintf(outFile, "%s\n", str);
 }
 
