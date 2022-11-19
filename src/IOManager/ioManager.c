@@ -59,13 +59,15 @@ char *IOManager_getNext() {
   FILE *inputF = IFILE ? IFILE : stdin;
 
   // It won't work for a raw terminal
-  size = getline(&line, &n, inputF);
+  size = getline(&line, &n, inputF);//FIXME <- it sucks
 
-  cleanNewLine(line, &size);
+  if (line && line[0] != '\0' && size) {
+    cleanNewLine(line, &size);
+  }
 
   USint newSize = strlen(line);
 
-  if (newSize == size) {
+  if (size && newSize == size) {
     return line;
   } else {
     return NULL;
@@ -86,7 +88,7 @@ void IOManager_update(ioData *data, char *str) {
     return;
   }
 
-  FILE *outFile = OFILE ? OFILE : stdin;
+  FILE *outFile = OFILE ? OFILE : stdout;
   fprintf(outFile, "%s\n", str);
 }
 

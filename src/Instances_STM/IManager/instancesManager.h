@@ -1,5 +1,6 @@
 #include <stdlib.h>
-#include <time.h>
+//#include <time.h>
+#include <sys/time.h>
 
 #include "../../Commander/commander.h"
 #include "../Commander_inst/commander_inst.h"
@@ -7,15 +8,15 @@
 #include "../../IOManager/ioManager.h"
 #include "../../StateMachine/Body/stateMachine.h"
 
-
 typedef struct InstancesManager InstancesManager;
+
 
 // Using only functions from commander and ioManager
 struct InstancesManager {
   StateMachineList *stateMachines;
   CommandList *commander;
   USint delay;
-  time_t last_updated;
+  struct timeval last_updated;
 };
 
 InstancesManager *InstancesManager_create(CommandList *cmdr,

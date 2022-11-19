@@ -41,7 +41,7 @@ void *get_info(void *list, char *str) {
   char bff[SIZEBUFFERINFO];
 
   unsigned int id;
-  while (*idList != 0) {
+  while (idList && *idList != 0) {
     id = *idList;
 
     tmp = StateMachineList_searchById(smcList, &id);

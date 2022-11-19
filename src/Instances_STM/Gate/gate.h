@@ -1,8 +1,6 @@
 #ifndef GATE_H
 #define GATE_H
 
-#define MAXMSG 256
-
 #define NAME_LOCKED "Locked"
 #define NAME_CLOSED "Closed"
 #define NAME_CLOSING "Closing"

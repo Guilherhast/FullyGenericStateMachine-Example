@@ -1,0 +1,10 @@
+### Main module
+MAIN_MODULE=$(SRC_DIR)/Main
+
+MODOBJ_MAIN_CORE=$(TARGET_DIR)/main.o
+MODOBJ_MAIN_FUNC=$(TARGET_DIR)/functions.o
+
+MODOBJ_MAIN=$(MODOBJ_MAIN_CORE) $(MODOBJ_MAIN_FUNC)
+
+$(MODOBJ_MAIN): $(shell find $(MAIN_MODULE) $(FNDARGS) )
+	$(SAFE) $(MKC) $(MAIN_MODULE) full_mod

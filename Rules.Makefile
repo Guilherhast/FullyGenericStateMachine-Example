@@ -23,11 +23,12 @@ SRC_MOD_PART=$(MOD_HDR:.h=.c)
 SRC_MOD_TEST=$(SRC_MOD_PART:.c=.test.c)
 
 ### Objects
-OBJ_MOD_PART=$(TST_DIR)/$(notdir $(SRC_MOD_PART:.c=.o))
-OBJ_MOD_TEST=$(TST_DIR)/$(notdir $(SRC_MOD_TEST:.c=.o))
+OBJ_MOD_PART=$(TARGET_DIR)/$(notdir $(SRC_MOD_PART:.c=.o))
+OBJ_MOD_TEST=$(TARGET_DIR)/$(notdir $(SRC_MOD_TEST:.c=.o))
 
 ### Binary tests
 BIN_MOD_TEST=$(OBJ_MOD_TEST:.o=.bin)
+
 ## Module Rules
 test_mod: $(BIN_MOD_TEST)
 	$(LSS) $<
@@ -38,10 +39,10 @@ test_mod: $(BIN_MOD_TEST)
 $(BIN_MOD_TEST): $(DEP_MOD) $(OBJ_MOD_PART) $(OBJ_MOD_TEST)
 	$(SAFE) $(CC) $^ $(TST_LIBS) $(COV_LIBS) -o $@
 
-$(OBJ_MOD_TEST): $(SRC_MOD_TEST) $(MOD_HDR) $(TST_DIR)
+$(OBJ_MOD_TEST): $(SRC_MOD_TEST) $(MOD_HDR) $(TARGET_DIR)
 	$(SAFE) $(CC) $(CFLAGS)  $< -o $@
 
-$(OBJ_MOD_PART): $(SRC_MOD_PART) $(MOD_HDR) $(TST_DIR)
+$(OBJ_MOD_PART): $(SRC_MOD_PART) $(MOD_HDR) $(TARGET_DIR)
 	$(SAFE) $(CC) $(CFLAGS) $(PROFILE_FLAGS) $< -o $@
 
 
@@ -59,8 +60,8 @@ SRC_SIDE_MOD_PART=$(MOD_HDR:.h=$(SIDEMOD_SUFIX).c)
 SRC_SIDE_MOD_TEST=$(SRC_SIDE_MOD_PART:.c=.test.c)
 
 ### Objects
-OBJ_SIDE_MOD_PART=$(TST_DIR)/$(notdir $(SRC_SIDE_MOD_PART:.c=.o))
-OBJ_SIDE_MOD_TEST=$(TST_DIR)/$(notdir $(SRC_SIDE_MOD_TEST:.c=.o))
+OBJ_SIDE_MOD_PART=$(TARGET_DIR)/$(notdir $(SRC_SIDE_MOD_PART:.c=.o))
+OBJ_SIDE_MOD_TEST=$(TARGET_DIR)/$(notdir $(SRC_SIDE_MOD_TEST:.c=.o))
 
 ### Binary tests
 BIN_SIDE_MOD_TEST=$(OBJ_SIDE_MOD_TEST:.o=.bin)
@@ -74,12 +75,12 @@ test_side_mod: $(BIN_SIDE_MOD_TEST)
 
 
 $(BIN_SIDE_MOD_TEST): $(DEP_SIDE_MOD) $(OBJ_SIDE_MOD_PART) $(OBJ_SIDE_MOD_TEST)
-	$(SAFE) $(CC) $^ $(TST_LIBS) $(COV_LIBS) -o $@
+	$(SAFE) $(CC) $^ $(LIB_FLAGS) -o $@
 
-$(OBJ_SIDE_MOD_TEST): $(SRC_SIDE_MOD_TEST) $(MOD_HDR) $(TST_DIR)
+$(OBJ_SIDE_MOD_TEST): $(SRC_SIDE_MOD_TEST) $(MOD_HDR) $(TARGET_DIR)
 	$(SAFE) $(CC) $(CFLAGS) $<  -o $@
 
-$(OBJ_SIDE_MOD_PART): $(SRC_SIDE_MOD_PART) $(MOD_HDR) $(TST_DIR)
+$(OBJ_SIDE_MOD_PART): $(SRC_SIDE_MOD_PART) $(MOD_HDR) $(TARGET_DIR)
 	$(SAFE) $(CC) $(CFLAGS) $(PROFILE_FLAGS) $< -o $@
 
 else
@@ -93,10 +94,10 @@ undefine BIN_SIDE_MOD_TEST
 endif
 
 # Local rules
-test: test_all
+test: color_reset test_all
 
 test_all: $(TESTED_MODULES)
 
-full_mod: $(OBJ_MOD_PART) $(OBJ_SIDE_MOD_PART)
+full_mod: color_reset $(OBJ_MOD_PART) $(OBJ_SIDE_MOD_PART)
 
 bin_tests: $(BIN_MOD_TEST) $(BIN_SIDE_MOD_TEST)
