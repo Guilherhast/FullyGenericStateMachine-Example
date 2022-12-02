@@ -21,7 +21,7 @@ boolean openState_timeOutCheck(void *data) {
   if (smc_data->ignoreAutoTriggers) {
     return false;
   }
-  return timeOutCheckOnlyTime(smc_data->auto_open_time, CHECK_LOCK_TOLERANCE);
+  return timeOutCheckOnlyTime(smc_data->auto_open_time, CHECK_OPEN_TOLERANCE);
 }
 
 boolean lockState_timeOutCheck(void *data) {

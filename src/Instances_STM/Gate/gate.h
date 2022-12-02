@@ -20,7 +20,8 @@
 #include "../../StateMachine/Body/stateMachine.h"
 #include "../../consts.h"
 
-#define MAX_CLOSED_TIME 300.0
+
+#define MAX_OPEN_TIME 300.0
 #define OPEN_WARNNING_INTERVAL 30.0
 
 #define CHECK_LOCK_TOLERANCE 300.0

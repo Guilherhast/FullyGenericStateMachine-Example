@@ -58,8 +58,7 @@ void *StateMachineList_updateAll(StateMachineList *smcs, dataMerger *mgr) {
     return NULL;
   }
 
-  char *r, *tmp;
-  r = malloc(sizeof(char) * MAXSTR);
+  char r[MAXSTR], *tmp;
 
   strcpy(r, "");
   for (; smcs; smcs = smcs->next) {
@@ -70,7 +69,12 @@ void *StateMachineList_updateAll(StateMachineList *smcs, dataMerger *mgr) {
       free(tmp);
     }
   }
-  return r;
+
+  USint l = strlen(r);
+  char *ans = malloc(sizeof(char) * l);
+  strcpy(ans, r);
+
+  return ans; // TODO: Trimm before return
 }
 
 // Search functions

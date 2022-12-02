@@ -24,14 +24,7 @@ data_smc_gate *gateData_allocAndInit(boolean ignoreAutoTriggers,
   return data;
 }
 
-// TODO:
-// Here you could put functions to set:
-//	auto_lock_time
-//	auto_unlock_time
-//	auto_open_time
 StateMachineNode *GateSMC_create(SMCID id, data_smc_gate *data) {
-  // After you have made it there is no need to clone
-  // States depends on data so one list will work for all
   StateList *sttL = GateStateList_createAll();
   State *iStt = Sl_searchByNameReturnData(sttL, NAME_CLOSED);
 

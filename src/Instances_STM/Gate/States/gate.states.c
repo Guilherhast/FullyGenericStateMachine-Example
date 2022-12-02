@@ -61,7 +61,7 @@ void* OpenState_update(State *stt, void *data) {
   time(&curr);
 
   // Is open for too long
-  if (difftime(stt->lastTimeEntered, curr) > MAX_CLOSED_TIME) {
+  if (difftime(stt->lastTimeEntered, curr) > MAX_OPEN_TIME) {
     // Has not warnned yet
     // Has warnned long ago
     if (difftime(smc_data->last_open_warnning, curr) > OPEN_WARNNING_INTERVAL) {
