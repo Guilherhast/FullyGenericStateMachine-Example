@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "../consts.h"
 
@@ -37,6 +38,9 @@ void IOManager_updateAll(char *data);
 char *IOManager_extractStr(ioData *data);
 
 void IOManager_checkForNew();
+int ioManager_nextReady();
+
+char *ioManager_readIO(int inDesc);
 
 void IOManager_setStreams(FILE *in, FILE *out);
 FILE *IOManager_getInput();

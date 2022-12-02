@@ -16,9 +16,11 @@ void before(char *line) {
   tmpIn = tmpfile();
   tmpOut = tmpfile();
 
-  fprintf(tmpIn, "%s\n", line);
-
-  rewind(tmpIn);
+  if (line) {
+    fprintf(tmpIn, "%s\n", line);
+    rewind(tmpIn);
+    fflush(tmpIn);
+  }
 
   IOManager_setStreams(tmpIn, tmpOut);
 }
@@ -69,6 +71,45 @@ START_TEST(test_ioManager_getNext) {
 END_TEST
 
 
+START_TEST(test_ioManager_nextReady_text) {
+  before(LINEIN);
+
+  int data;
+
+  data = ioManager_nextReady();
+
+  ck_assert_int_ne(data, -1);
+
+  after();
+}
+END_TEST
+
+START_TEST(test_ioManager_readIO_NULL) {
+  before(NULL);
+
+  int des = fileno(tmpIn);
+
+  char *r = ioManager_readIO(des);
+
+  ck_assert_ptr_null(r);
+
+  after();
+}
+END_TEST
+
+START_TEST(test_ioManager_readIO_data) {
+  before(LINEIN);
+
+  int des = fileno(tmpIn);
+
+  char *r = ioManager_readIO(des);
+
+  ck_assert_str_eq(r,LINEIN);
+
+  after();
+}
+END_TEST
+
 START_TEST(test_ioManager_update) {
   before(LINEIN);
 
@@ -81,7 +122,7 @@ START_TEST(test_ioManager_update) {
   strcpy(data->str, LINEOUT);
 
   // Calling the function
-  IOManager_update(data,data->str);
+  IOManager_update(data, data->str);
 
   // Preparing to read the data
   FILE *out = IOManager_getOutput();
@@ -114,7 +155,10 @@ Suite *smc_state_list_suite(void) {
   tcase_add_test(tc_sm, test_ioManager_streams_beforeSetting);
   tcase_add_test(tc_sm, test_ioManager_streams_afterSetting);
   tcase_add_test(tc_sm, test_ioManager_getNext);
-  //tcase_add_test(tc_sm, test_ioManager_answer);
+  tcase_add_test(tc_sm, test_ioManager_nextReady_text);
+  tcase_add_test(tc_sm, test_ioManager_readIO_NULL);
+  tcase_add_test(tc_sm, test_ioManager_readIO_data);
+  // tcase_add_test(tc_sm, test_ioManager_answer);
   tcase_add_test(tc_sm, test_ioManager_update);
 
   suite_add_tcase(s, tc_sm);
@@ -131,6 +175,8 @@ int main(void) {
 
   s = smc_state_list_suite();
   runner = srunner_create(s);
+
+  srunner_set_fork_status(runner, CK_NOFORK);
 
   srunner_run_all(runner, CK_NORMAL);
   no_failed = srunner_ntests_failed(runner);
