@@ -10,6 +10,7 @@
 
 typedef struct InstancesManager InstancesManager;
 
+#define MILION 1000000
 
 // Using only functions from commander and ioManager
 struct InstancesManager {

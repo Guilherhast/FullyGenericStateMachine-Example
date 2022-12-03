@@ -80,7 +80,7 @@ START_TEST(test_isntancesManager_cycle_null) {
   InstancesManager_cycle(inm);
 
   // Test functions
-  ck_assert_int_gt(IOManager_getNext_fake.call_count, 1);
+  ck_assert_int_eq(IOManager_getNext_fake.call_count, 1);
 
   /*
   ck_assert_int_eq(CommandList_deepRun_fake.call_count,0);

@@ -17,6 +17,18 @@ void InstancesManager_cleanTimer(InstancesManager *inm) {
   gettimeofday(&inm->last_updated, NULL);
 }
 
+long int InstancesManager_timeRemaining(InstancesManager *inm) {
+  struct timeval now;
+  gettimeofday(&now, NULL);
+
+  return (now.tv_sec - inm->last_updated.tv_sec) * MILION +
+         (now.tv_usec - inm->last_updated.tv_usec);
+}
+
+void InstancesManager_killTime(InstancesManager *inm) {
+  usleep(InstancesManager_timeRemaining(inm));
+}
+
 boolean InstancesManager_timeUp(InstancesManager *inm) {
   struct timeval now;
   gettimeofday(&now, NULL);
@@ -33,9 +45,7 @@ void InstancesManager_cycle(InstancesManager *inm) {
   char *cmdIn = NULL, *cmdOut = NULL; // Should I free?
 
   // Consider sleeping until delay
-  while ((cmdIn = IOManager_getNext()) || !InstancesManager_timeUp(inm)) {
-    // Why is it just as function?
-
+  while ((cmdIn = IOManager_getNext()) ) {
     cmdOut =
         CommandList_deepRun(inm->commander, (List *)inm->stateMachines, cmdIn);
 
@@ -52,4 +62,5 @@ void InstancesManager_cycle(InstancesManager *inm) {
 
   // Cleaning data
   free(cmdOut);
+  InstancesManager_killTime(inm);
 }
