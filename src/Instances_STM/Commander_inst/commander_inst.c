@@ -69,12 +69,14 @@ void *set_state(void *list, char *str) {
 
   if (!nxt || !sttTo[0]) {
     fprintf(stderr, "Error: command set_state wrong string format.\n");
+    return NULL;
   }
 
   unsigned int *idList = strToIdList(nxt);
 
   if (!idList) {
     fprintf(stderr, "Error: command set_state can't retrieve ids.\n");
+    return NULL;
   }
 
   unsigned int id;
