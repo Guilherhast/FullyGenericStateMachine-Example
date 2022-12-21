@@ -8,6 +8,7 @@
 #include "../../StateMachine/Condition/stateCondition.h"
 #include "../../StateMachine/State/state.h"
 #include "../../StateMachine/Transition/transition.h"
+#include "../../StrUtils/strUtils.h"
 #include "../../CfgUtils/cfgUtils.h"
 #include "../../consts.h"
 
@@ -27,7 +28,9 @@
 #define MAX_OPEN_TIME 30.0
 #define OPEN_WARNNING_INTERVAL 10.0
 
-#define CHECK_LOCK_TOLERANCE 300.0
+#define SIGNAL_COOLDOWN 20.0
+
+#define CHECK_LOCK_TOLERANCE 60.0
 #define CHECK_UNLOCK_TOLERANCE 30.0
 #define CHECK_OPEN_TOLERANCE 60.0
 
@@ -44,6 +47,9 @@ typedef struct data_smc_gate {
   time_t auto_unlock_time;
   time_t auto_open_time;
 
+  //Signal timeout
+  time_t last_signal_sent;
+
   // Overwrite auto triggers
   boolean ignoreAutoTriggers;
 } data_smc_gate;
@@ -56,12 +62,6 @@ typedef struct data_smc_gate {
 #define SECS_IN_DAY (60 * 60 * 24)
 #define MIL 1000
 #define MILIS_IN_DAY (MIL * SECS_IN_DAY)
-
-/*
- * Common functions
- */
-void *stt_str2ptr(char *msg, void *data);
-void *trn_str2ptr(char *msg);
 
 // Functions for checking condition transitions
 boolean timeOutCheck(time_t triggerTime, float tolerance);

@@ -8,32 +8,13 @@ static TransitionList *tmpRealList = NULL;
 static TransitionList *tmpTriggerList = NULL;
 
 // Transition Functions
-void* LockedState_sendSignal(StateMachine *smc) {
-  return trn_str2ptr(smc->transition->stateToName);
-}
-void* ClosedState_sendSignal(StateMachine *smc) {
-  return trn_str2ptr(smc->transition->stateToName);
-}
-void* ClosingState_sendSignal(StateMachine *smc) {
-  return trn_str2ptr(smc->transition->stateToName);
-}
-void* ForcedClosingState_sendSignal(StateMachine *smc) {
-  return trn_str2ptr(smc->transition->stateToName);
-}
-void* IntClosingState_sendSignal(StateMachine *smc) {
-  return trn_str2ptr(smc->transition->stateToName);
-}
-void* OpenningState_sendSignal(StateMachine *smc) {
-  return trn_str2ptr(smc->transition->stateToName);
-}
-void* ForcedOpenningState_sendSignal(StateMachine *smc) {
-  return trn_str2ptr(smc->transition->stateToName);
-}
-void* IntOpenningState_sendSignal(StateMachine *smc) {
-  return trn_str2ptr(smc->transition->stateToName);
-}
-void* OpenState_sendSignal(StateMachine *smc) {
-  return trn_str2ptr(smc->transition->stateToName);
+
+void *GateTransitions_sendSignalByName(StateMachine *smc) {
+  data_smc_gate *smc_data = (data_smc_gate *)smc->data;
+  char str[64];
+  sprintf(str, "%d - Sending signal", smc->id);
+  time(&smc_data->last_signal_sent);
+  return strUtils_wrap(str, smc->transition->stateToName);
 }
 
 boolean GateTransitions_initializationCheck() {
@@ -96,15 +77,15 @@ TransitionList *GateTransitions_createTriggerTmp() {
   // TODO:
   // Make a function to create the list so you can test
   TransitionList *list = NULL;
-  gt_fastCreate(list, NAME_LOCKED, LockedState_sendSignal);
-  gt_fastCreate(list, NAME_CLOSED, ClosedState_sendSignal);
-  gt_fastCreate(list, NAME_CLOSING, ClosingState_sendSignal);
-  gt_fastCreate(list, NAME_INTERRUPTEDCLOSING, IntClosingState_sendSignal);
-  gt_fastCreate(list, NAME_FORCEDCLOSING, ForcedClosingState_sendSignal);
-  gt_fastCreate(list, NAME_OPENNING, OpenningState_sendSignal);
-  gt_fastCreate(list, NAME_INTERRUPTEDOPENNING, IntOpenningState_sendSignal);
-  gt_fastCreate(list, NAME_FORCEDOPENNING, ForcedOpenningState_sendSignal);
-  gt_fastCreate(list, NAME_OPEN, OpenState_sendSignal);
+  gt_fastCreate(list, NAME_LOCKED);
+  gt_fastCreate(list, NAME_CLOSED);
+  gt_fastCreate(list, NAME_CLOSING);
+  gt_fastCreate(list, NAME_INTERRUPTEDCLOSING);
+  gt_fastCreate(list, NAME_FORCEDCLOSING);
+  gt_fastCreate(list, NAME_OPENNING);
+  gt_fastCreate(list, NAME_INTERRUPTEDOPENNING);
+  gt_fastCreate(list, NAME_FORCEDOPENNING);
+  gt_fastCreate(list, NAME_OPEN);
 
   return list;
 }

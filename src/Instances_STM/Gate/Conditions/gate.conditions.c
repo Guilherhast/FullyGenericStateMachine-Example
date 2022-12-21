@@ -9,20 +9,24 @@ boolean timeOutCheck(time_t triggerTime, float tolerance) {
   return d >= 0 && d < tolerance;
 }
 
+boolean coolDownCheck(time_t triggerTime, float coolTime) {
+  time_t curr;
+  time(&curr);
+  time_t d = difftime(curr, triggerTime);
+  return d > coolTime;
+}
+
 boolean timeOutCheckOnlyTime(time_t triggerTime, float tolerance) {
   time_t curr;
   time(&curr);
   int d = (int)difftime(curr % SECS_IN_DAY, triggerTime % SECS_IN_DAY);
 
-  /*
-  printf("Diff:\t%d\n",d );
-  printf("Trigger\n");
-  printTime_t(triggerTime);
-  printf("Current:\n");
-  printTime_t(curr);
-  */
-
   return d >= 0 && d < tolerance;
+}
+
+boolean signalCheckCooledDown(void *data) {
+  data_smc_gate *smc_data = (data_smc_gate *)data;
+  return coolDownCheck(smc_data->last_signal_sent, SIGNAL_COOLDOWN);
 }
 
 // State functions
@@ -31,7 +35,8 @@ boolean openState_timeOutCheck(void *data) {
   if (smc_data->ignoreAutoTriggers) {
     return false;
   }
-  return timeOutCheckOnlyTime(smc_data->auto_open_time, CHECK_OPEN_TOLERANCE);
+  return signalCheckCooledDown(data) &&
+         timeOutCheckOnlyTime(smc_data->auto_open_time, CHECK_OPEN_TOLERANCE);
 }
 
 boolean lockState_timeOutCheck(void *data) {
@@ -39,7 +44,8 @@ boolean lockState_timeOutCheck(void *data) {
   if (smc_data->ignoreAutoTriggers) {
     return false;
   }
-  return timeOutCheckOnlyTime(smc_data->auto_lock_time, CHECK_LOCK_TOLERANCE);
+  return signalCheckCooledDown(data) &&
+         timeOutCheckOnlyTime(smc_data->auto_lock_time, CHECK_LOCK_TOLERANCE);
 }
 
 boolean unlockState_timeOutCheck(void *data) {
@@ -47,7 +53,8 @@ boolean unlockState_timeOutCheck(void *data) {
   if (smc_data->ignoreAutoTriggers) {
     return false;
   }
-  return timeOutCheckOnlyTime(smc_data->auto_unlock_time,
+  return signalCheckCooledDown(data) &&
+         timeOutCheckOnlyTime(smc_data->auto_unlock_time,
                               CHECK_UNLOCK_TOLERANCE);
 }
 

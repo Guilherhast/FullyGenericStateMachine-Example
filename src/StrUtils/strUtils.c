@@ -120,3 +120,10 @@ void *stt_str2ptr(char *msg, void *data) {
   //
   return str2ptr(msg);
 }
+
+void *strUtils_wrap(char *desc, char *wrapped) {
+  int l = strlen(desc) + strlen(wrapped) + 4;
+  char *str = malloc(sizeof(char) * l);
+  sprintf(str, "%s:\t%s\n", desc, wrapped);
+  return str;
+}

@@ -7,10 +7,11 @@
 #define TransitionList_createTriggerSoft(n, f)                                 \
   TransitionNode_createFullTrigger(n, f, NULL, NULL)
 
-#define gt_fastCreate(l, n, f)                                                 \
+#define gt_fastCreate(l, n)                                                 \
   {                                                                            \
-    TransitionNode *tn = TransitionList_createTriggerSoft(n, f);             \
-    l = TransitionList_add(l, tn);                                           \
+    TransitionNode *tn =                                                       \
+        TransitionList_createTriggerSoft(n, GateTransitions_sendSignalByName); \
+    l = TransitionList_add(l, tn);                                             \
   }
 
 #endif

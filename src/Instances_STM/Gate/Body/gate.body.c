@@ -15,6 +15,7 @@ data_smc_gate *gateData_allocAndInit(boolean ignoreAutoTriggers,
 
   /*Initializating  config vars*/
   data->last_open_warnning = now;
+  data->last_signal_sent = now;
 
   /*Initializating auto timers*/
   data->auto_lock_time = lock_time;
