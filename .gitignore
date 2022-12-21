@@ -1,8 +1,10 @@
-
-#Binaries
+#Folders
 /test
 /build
 /coverage
+
+#Temp files
+.env
 
 #personal files
 .bash_local

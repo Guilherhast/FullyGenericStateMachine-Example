@@ -1,6 +1,17 @@
 #ifndef GATE_H
 #define GATE_H
 
+#include <stdio.h>
+#include <time.h>
+
+#include "../../StateMachine/Body/stateMachine.h"
+#include "../../StateMachine/Condition/stateCondition.h"
+#include "../../StateMachine/State/state.h"
+#include "../../StateMachine/Transition/transition.h"
+#include "../../CfgUtils/cfgUtils.h"
+#include "../../consts.h"
+
+// Gate State names
 #define NAME_LOCKED "Locked"
 #define NAME_CLOSED "Closed"
 #define NAME_CLOSING "Closing"
@@ -11,22 +22,18 @@
 #define NAME_INTERRUPTEDOPENNING "InterruptedOpenning"
 #define NAME_OPEN "Open"
 
-#include <stdio.h>
-#include <time.h>
-
-#include "../../StateMachine/Transition/transition.h"
-#include "../../StateMachine/State/state.h"
-#include "../../StateMachine/Condition/stateCondition.h"
-#include "../../StateMachine/Body/stateMachine.h"
-#include "../../consts.h"
-
-
-#define MAX_OPEN_TIME 300.0
-#define OPEN_WARNNING_INTERVAL 30.0
+// Gate config constants
+// Could be in gate conditions
+#define MAX_OPEN_TIME 30.0
+#define OPEN_WARNNING_INTERVAL 10.0
 
 #define CHECK_LOCK_TOLERANCE 300.0
 #define CHECK_UNLOCK_TOLERANCE 30.0
 #define CHECK_OPEN_TOLERANCE 60.0
+
+#define DEFAULTTIMESTR "06:00"
+
+// Tupes and structures
 
 typedef struct data_smc_gate {
   // Monitor warnnings
@@ -111,5 +118,7 @@ StateMachineList *GateSMCS_createList(USint n, SMCID *IDS,
 /*
  * Gate Declarations
  */
-StateMachineList *GateStateMachine_createAll();
+StateMachineList *GateStateMachine_createAll(FILE *cfgFile);
+void printTime(struct tm time);
+void printTime_t(time_t time);
 #endif

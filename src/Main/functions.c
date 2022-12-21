@@ -15,9 +15,23 @@
 static struct InstancesManager *iManager = NULL;
 
 // Functions
+void setup(int argc, char *argv[]) {
 
-void setup() {
-  StateMachineList *stateMachines = GateStateMachine_createAll();
+  if (argc < MINNARGS) {
+    fprintf(stderr, "Error: Missing args.\n");
+    fprintf(stderr, "Received %d, expected at least %d\n", argc, MINNARGS);
+    exit(1);
+  }
+
+  FILE *cfg = fopen(argv[1], "r");
+
+  if (!cfg) {
+    fprintf(stderr, "Error: Could'nt open file %s\n", argv[1]);
+  }
+
+  StateMachineList *stateMachines = GateStateMachine_createAll(cfg);
+  fclose(cfg);
+
   CommandList *commander = instCommander_create();
 
   iManager = InstancesManager_create(commander, stateMachines, DELAY);

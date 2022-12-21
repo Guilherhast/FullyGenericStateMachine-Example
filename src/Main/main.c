@@ -1,5 +1,4 @@
 #include "main.h"
-#include <stdio.h>//FIXME remove after debug is complete
 
 // Static variabes
 
@@ -18,7 +17,7 @@ void proccesExit(int status){
 
 int main(int argc, char* argv[]){
 
-	setup();
+	setup(argc, argv);
 
 	while(running){
 		update();

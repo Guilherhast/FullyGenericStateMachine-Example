@@ -4,8 +4,21 @@
 
 #include "gate.h"
 
+FILE *tmpIn;
+
+void before() {
+  tmpIn = tmpfile();
+
+  char line[] = "Lock=22:00\nUnlock=05:00\nOpen1=05:30\nOpen2=07:00";
+
+  fprintf(tmpIn, "%s\n", line);
+  rewind(tmpIn);
+}
+
 START_TEST(test_gate_createAll) {
-  StateMachineList *gateList = GateStateMachine_createAll();
+  before();
+
+  StateMachineList *gateList = GateStateMachine_createAll(tmpIn);
 
   ck_assert_ptr_nonnull(gateList);
 }

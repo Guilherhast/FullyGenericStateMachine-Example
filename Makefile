@@ -30,6 +30,7 @@ WDIR=$(ROOTDIR)
 # Tests
 
 ALLTESTSRULES=str_utils_bt		\
+			cfg_utils_bt		\
 			list_bt				\
 			stateMachine_bt		\
 			io_manager_bt		\
@@ -53,7 +54,7 @@ exec_bin_tests:
 			$(LSS) $$i;					\
 			$(ECE) $(COLOR_CYAN);		\
 			$(SAFE) ./$$i || exit 1;    \
-			$(ECE) $(COLOR_RESTORE);   	\
+			$(ECE) $(COLOR_RESTORE);	\
 		done
 
 
@@ -88,6 +89,9 @@ io_manager_bt: $(shell find $(MODULE_IOMANAGER) -type f )
 
 str_utils_bt: $(shell find $(MODMODULE_STRUTILS) -type f )
 	$(SAFE) $(MKC) $(MODULE_STRUTILS) test COLOR_SGST='$(COLOR_SGST)'
+
+cfg_utils_bt: $(shell find $(MODMODULE_CFGUTILS) -type f )
+	$(SAFE) $(MKC) $(MODULE_CFGUTILS) test COLOR_SGST='$(COLOR_SGST)'
 
 cmdr_bt: $(shell find $(MODULE_COMMANDER) -type f )
 	$(SAFE) $(MKC) $(MODULE_COMMANDER) test COLOR_SGST='$(COLOR_SGST)'

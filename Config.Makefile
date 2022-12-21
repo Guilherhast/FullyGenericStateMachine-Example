@@ -150,14 +150,27 @@ include $(ALL_MODULE_MAKES)
 ### Project files
 EXECUTABLE=$(TARGET_DIR)/main.bin
 
+ENV_CFG=$(ROOTDIR)/.env
+
+define ENV_STR
+Lock=22:00
+Unlock=05:00
+Open1=05:30
+Open2=07:00
+endef
+
+export ENV_STR
+$(ENV_CFG):
+	[ ! -f $@ ] && $(ECE) "$$ENV_STR" > $@
+
 ### Project rules
 $(EXECUTABLE): $(MODOBJ_MAIN) $(ALL_MODOBJS)
 	$(SAFE) $(CC) $^ $(LIB_FLAGS) -o $@
 
-run: $(EXECUTABLE) 
+run: $(EXECUTABLE) $(ENV_CFG)
 	$(LSS) $<
 	$(ECE) $(COLOR_GREEN)
-	$(SAFE) $(GDB) $<
+	$(SAFE) $(GDB) $< $(ENV_CFG)
 	$(ECE) $(COLOR_RESTORE)
 
 build: $(BUILD_DIR) main

@@ -8,10 +8,20 @@ boolean timeOutCheck(time_t triggerTime, float tolerance) {
   time_t d = difftime(curr, triggerTime);
   return d >= 0 && d < tolerance;
 }
+
 boolean timeOutCheckOnlyTime(time_t triggerTime, float tolerance) {
   time_t curr;
   time(&curr);
-  int d = (int)difftime(curr % MILIS_IN_DAY, triggerTime % MILIS_IN_DAY);
+  int d = (int)difftime(curr % SECS_IN_DAY, triggerTime % SECS_IN_DAY);
+
+  /*
+  printf("Diff:\t%d\n",d );
+  printf("Trigger\n");
+  printTime_t(triggerTime);
+  printf("Current:\n");
+  printTime_t(curr);
+  */
+
   return d >= 0 && d < tolerance;
 }
 
@@ -45,12 +55,24 @@ void GateConditions_addConditionFromName(StateList *sttList, char *sttName,
                                          char *trnName, checkerFunct check,
                                          USint priority) {
   StateNode *sttNode = StateList_searchByName(sttList, sttName);
+  if (!sttNode) {
+    fprintf(stderr, "Error: Could not find state: %s\n", sttName);
+    exit(1);
+  }
 
   TransitionNode *trnNode =
       TransitionList_searchTriggerByName(sttNode->dt->transitions, trnName);
+  if (!trnNode) {
+    fprintf(stderr, "Error: Could not find transition to: %s\n", trnName);
+    exit(1);
+  }
 
   StateConditionNode *cndNode =
       StateConditionNode_createFull(check, trnNode->dt, priority, NULL);
+  if (!cndNode) {
+    fprintf(stderr, "Error: Could not crete condition:\n");
+    exit(1);
+  }
 
   sttNode->dt->stateConditionList =
       StateConditionList_add(sttNode->dt->stateConditionList, cndNode);

@@ -6,10 +6,10 @@
 
 /*
 void *stt_str2ptr(char *msg, void *data) {
-  int size = strlen(msg);
-  char *tmp = malloc(sizeof(char) * ++size);
-  strcpy(tmp, msg);
-  return tmp;
+int size = strlen(msg);
+char *tmp = malloc(sizeof(char) * ++size);
+strcpy(tmp, msg);
+return tmp;
 }
 */
 
@@ -40,19 +40,26 @@ void *IntOpenningState_enter(State *stt, void *data) {
 }
 void *OpenState_enter(State *stt, void *data) {
   data_smc_gate *smc_data = (data_smc_gate *)data;
-  return stt_str2ptr("ACTION: Gate fully open.\n", data);
 
   // Update last warnning time
   time(&smc_data->last_open_warnning);
+
+  return stt_str2ptr("ACTION: Gate fully open.\n", data);
 }
 
 // EXIT TRANSITIONS
-void* IntOpenningState_exit(State *stt, void *data) {
-  return stt_str2ptr("WARNNING: Gate unblocked.\n",data);
+void *IntOpenningState_exit(State *stt, void *data) {
+  return stt_str2ptr("WARNNING: Gate unblocked.\n", data);
 }
 
 // Update Functions
-void* OpenState_update(State *stt, void *data) {
+void *OpenState_update(State *stt, void *data) {
+  // Look:
+  // The lastTimeEntered should be a field in the data
+  // This way stt would not be needed
+  // The machine could be just a type
+  // The machine would save the data for each instance in a file
+
   // Update clock.
   // If takes too long send warnning.
   data_smc_gate *smc_data = (data_smc_gate *)data;
@@ -61,14 +68,14 @@ void* OpenState_update(State *stt, void *data) {
   time(&curr);
 
   // Is open for too long
-  if (difftime(stt->lastTimeEntered, curr) > MAX_OPEN_TIME) {
+  if (difftime(curr, stt->lastTimeEntered) > MAX_OPEN_TIME) {
     // Has not warnned yet
     // Has warnned long ago
-    if (difftime(smc_data->last_open_warnning, curr) > OPEN_WARNNING_INTERVAL) {
+    if (difftime(curr, smc_data->last_open_warnning) > OPEN_WARNNING_INTERVAL) {
       // Store last warnning time
       data_smc_gate *smc_data = (data_smc_gate *)data;
       time(&smc_data->last_open_warnning);
-      return stt_str2ptr("WARNNING: Time opened exeeded limit\n",data);
+      return stt_str2ptr("WARNNING: Time opened exeeded limit\n", data);
     }
   }
   return NULL;
@@ -83,15 +90,16 @@ StateList *GateStateList_baseFactory() {
   StateList *list = NULL;
 
   gs_fastCreate(list, NAME_LOCKED, LockedState_enter, NULL, NULL);
+
   gs_fastCreate(list, NAME_CLOSED, ClosedState_enter, NULL, NULL);
   gs_fastCreate(list, NAME_CLOSING, ClosingState_enter, NULL, NULL);
   gs_fastCreate(list, NAME_FCDCLOSING, ForcedClosingState_enter, NULL, NULL);
   gs_fastCreate(list, NAME_INCLOSING, IntclosingState_enter, NULL, NULL);
-  gs_fastCreate(list, NAME_OPEN, OpenState_enter, NULL, NULL);
-  gs_fastCreate(list, NAME_FCDOPENNING, OpenState_enter, NULL, NULL);
+
+  gs_fastCreate(list, NAME_OPEN, OpenState_enter, OpenState_update, NULL);
+  gs_fastCreate(list, NAME_FCDOPENNING, ForcedOpenningState_enter, NULL, NULL);
   gs_fastCreate(list, NAME_INOPENNING, IntOpenningState_enter, NULL, IONGSE);
-  gs_fastCreate(list, NAME_OPENNING, OpenningState_enter, OpenState_update,
-                NULL);
+  gs_fastCreate(list, NAME_OPENNING, OpenningState_enter, NULL, NULL);
 
   // To create acelerating and desacelerating states
   /*
@@ -142,8 +150,10 @@ void GateStateList_addTriggerTransitions(StateList *list) {
                       NAME_OPENNING);
 
   // Act of openning
-  gt_triggerFastClone(list, NAME_FCDOPENNING, NAME_OPENNING, NAME_INOPENNING, NAME_OPEN);
-  gt_triggerFastClone(list, NAME_OPENNING, NAME_FCDOPENNING, NAME_INOPENNING, NAME_OPEN);
+  gt_triggerFastClone(list, NAME_FCDOPENNING, NAME_OPENNING, NAME_INOPENNING,
+                      NAME_OPEN);
+  gt_triggerFastClone(list, NAME_OPENNING, NAME_FCDOPENNING, NAME_INOPENNING,
+                      NAME_OPEN);
 
   // Interrupted actions
   gt_triggerFastClone(list, NAME_INOPENNING, NAME_OPENNING, NAME_FCDOPENNING,
@@ -152,8 +162,10 @@ void GateStateList_addTriggerTransitions(StateList *list) {
                       NAME_CLOSING, NAME_FCDCLOSING);
 
   // Act of closing
-  gt_triggerFastClone(list, NAME_CLOSING, NAME_FCDCLOSING, NAME_INCLOSING, NAME_CLOSED);
-  gt_triggerFastClone(list, NAME_FCDCLOSING, NAME_CLOSING, NAME_INCLOSING, NAME_CLOSED);
+  gt_triggerFastClone(list, NAME_CLOSING, NAME_FCDCLOSING, NAME_INCLOSING,
+                      NAME_CLOSED);
+  gt_triggerFastClone(list, NAME_FCDCLOSING, NAME_CLOSING, NAME_INCLOSING,
+                      NAME_CLOSED);
 
   // Opened states
   gt_triggerFastClone(list, NAME_OPEN, NAME_CLOSING, NAME_FCDCLOSING);

@@ -53,6 +53,27 @@ START_TEST(test_timeOutCheckOnlyTime) {
 }
 END_TEST
 
+START_TEST(test_timeOutCheckOnlyTime_justNow) {
+  time_t now, few_secs_ago, many_secs_ago, secs_from_now;
+
+  time(&now);
+
+  few_secs_ago = now - 10;
+  many_secs_ago = now - 100;
+  secs_from_now = now + 10;
+
+  boolean check_now = timeOutCheckOnlyTime(now, 2);
+  boolean check_few_secs_ago = timeOutCheckOnlyTime(few_secs_ago, 30);
+  boolean check_many_secs_ago = timeOutCheckOnlyTime(many_secs_ago, 30);
+  boolean check_secs_from_now = timeOutCheckOnlyTime(secs_from_now, 30);
+
+  ck_assert(check_now);
+  ck_assert(check_few_secs_ago);
+  ck_assert(!check_many_secs_ago);
+  ck_assert(!check_secs_from_now);
+}
+END_TEST
+
 START_TEST(test_State_checks) {
   time_t now;
   time(&now);
@@ -96,6 +117,7 @@ Suite *default_suite(void) {
 
   tcase_add_test(tc_sm, test_timeOutCheck);
   tcase_add_test(tc_sm, test_timeOutCheckOnlyTime);
+  tcase_add_test(tc_sm, test_timeOutCheckOnlyTime_justNow);
   tcase_add_test(tc_sm, test_State_checks);
 
   suite_add_tcase(s, tc_sm);
