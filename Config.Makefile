@@ -116,7 +116,7 @@ color_reset:
 	$(ECE) $(COLOR_RESTORE)
 
 clean:
-	$(SAFE) rm -rf $(BUILD_DIR) $(TST_DIR) $(META_DIR)
+	$(SAFE) rm -rf $(BUILD_DIR) $(TST_DIR) $(META_DIR) $(ENV_CFG)
 
 watch:
 	( $(LDS) $(ALWAYSWATCH);		\
