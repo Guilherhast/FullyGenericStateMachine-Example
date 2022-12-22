@@ -88,8 +88,6 @@ START_TEST(test_GateStateList_transitions) {
                               ttit);
   // Opened state
   ck_assert_list_sizeWithFunc((List *)stt_OPEN->dt->transitions, 2, ttit);
-  /*
-   */
 }
 END_TEST
 
@@ -107,44 +105,6 @@ START_TEST(test_GateStateList_conditions) {
 }
 END_TEST
 
-/*
-START_TEST(test_State_EnterBase) {
-data_smc_gate data;
-time_t now, long_ago;
-time(&now);
-
-long_ago = now - 3 * MILIS_IN_DAY;
-
-data.last_state_change = long_ago;
-
-State_Enter_base("", &data);
-
-int d = (int)difftime(now, data.last_state_change);
-
-ck_assert_int_eq(d, 0);
-}
-END_TEST
-
-// TODO:
-// Supress output
-START_TEST(test_State_Open_enter) {
-data_smc_gate data;
-time_t now, long_ago;
-time(&now);
-
-long_ago = now - 3 * MILIS_IN_DAY;
-
-data.last_state_change = long_ago;
-data.last_open_warnning = long_ago;
-
-State_Open_enter(0, &data);
-
-int d = (int)difftime(now, data.last_open_warnning);
-
-ck_assert_int_eq(d, 0);
-}
-END_TEST
-*/
 
 Suite *default_suite(void) {
   Suite *s;

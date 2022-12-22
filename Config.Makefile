@@ -190,7 +190,6 @@ export ENV_STR
 $(ENV_CFG):
 	[ ! -f $@ ] && $(ECE) "$$ENV_STR" > $@
 
-.INTERMEDIATE: $(wildcard $(BUILD_DIR)/*.o)
 ### Project rules
 $(EXECUTABLE): $(MODOBJ_MAIN) $(ALL_MODOBJS)
 	$(SAFE) $(CC) $^ $(LIB_FLAGS) -o $@

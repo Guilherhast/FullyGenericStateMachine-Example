@@ -73,6 +73,8 @@ void *set_state(void *list, char *str) {
   }
 
   unsigned int *idList = strToIdList(nxt);
+  unsigned int *idListStart = idList;
+
 
   if (!idList) {
     fprintf(stderr, "Error: command set_state can't retrieve ids.\n");
@@ -104,6 +106,8 @@ void *set_state(void *list, char *str) {
     }
     idList++;
   }
+
+  free(idListStart);
 
   return r;
 }

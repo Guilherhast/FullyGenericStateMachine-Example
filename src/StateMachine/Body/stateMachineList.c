@@ -74,7 +74,7 @@ void *StateMachineList_updateAll(StateMachineList *smcs, dataMerger *mgr) {
   char *ans = malloc(sizeof(char) * l);
   strcpy(ans, r);
 
-  return ans; // TODO: Trimm before return
+  return ans; 
 }
 
 // Search functions

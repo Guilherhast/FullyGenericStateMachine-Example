@@ -74,8 +74,6 @@ void GateTransitions_addTransitionsFromList(StateList *sttList, char *sttName,
 }
 
 TransitionList *GateTransitions_createTriggerTmp() {
-  // TODO:
-  // Make a function to create the list so you can test
   TransitionList *list = NULL;
   gt_fastCreate(list, NAME_LOCKED);
   gt_fastCreate(list, NAME_CLOSED);

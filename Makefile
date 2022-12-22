@@ -12,10 +12,6 @@
 # full_mod: Create all files needed to import module
 #
 
-#TODO
-# For production:
-# Make the lib generation run without cov
-
 # Imports
 ROOTDIR=$(realpath .)
 ifndef CONFIG_SOURCED
@@ -57,21 +53,6 @@ exec_bin_tests:
 			$(ECE) $(COLOR_RESTORE);	\
 		done
 
-
-## Build
-
-
-# TODO
-# Change TST_DIR to TARGET_DIR
-# When test use TARGET_DIR = TST_DIR
-# When build use TARGET_DIR = BUILD_DIR
-#
-# Inside full_mod receive TARGET_DIR
-# If empty use TST_DIR
-# So full_mod_build is full_mod with altered:
-# 1. TARGET_DIR
-# 2. PROFILE_FLAGS
-#
 
 ## Binary tests
 
