@@ -35,6 +35,7 @@ Instructions to use it and make the tests are written below.
 ### Libraries
 
 `check.h`
+`fff.h`
 
 ## Using
 
@@ -334,4 +335,7 @@ ACTION: Gate closed.
 ### Entr
 
 <https://www.doxygen.nl/manual/index.html>
+
+### fff
+<https://github.com/meekrosoft/fff>
 
