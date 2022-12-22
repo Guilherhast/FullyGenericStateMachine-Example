@@ -33,12 +33,12 @@ START_TEST(test_GateStateList_transitions) {
   StateNode *stt_LOCKED = StateList_searchByName(list, NAME_LOCKED);
   StateNode *stt_CLOSED = StateList_searchByName(list, NAME_CLOSED);
 
-  StateNode *stt_FORCEDOPENNING =
-      StateList_searchByName(list, NAME_FORCEDOPENNING);
+  StateNode *stt_FORCEDOPENING =
+      StateList_searchByName(list, NAME_FORCEDOPENING);
 
-  StateNode *stt_OPENNING = StateList_searchByName(list, NAME_OPENNING);
-  StateNode *stt_INTERRUPTEDOPENNING =
-      StateList_searchByName(list, NAME_INTERRUPTEDOPENNING);
+  StateNode *stt_OPENING = StateList_searchByName(list, NAME_OPENING);
+  StateNode *stt_INTERRUPTEDOPENING =
+      StateList_searchByName(list, NAME_INTERRUPTEDOPENING);
 
   StateNode *stt_FORCEDCLOSING =
       StateList_searchByName(list, NAME_FORCEDCLOSING);
@@ -54,11 +54,11 @@ START_TEST(test_GateStateList_transitions) {
   ck_assert_list_sizeWithFunc((List *)stt_LOCKED->dt->transitions, 1, ttir);
   ck_assert_list_sizeWithFunc((List *)stt_CLOSED->dt->transitions, 3, ttir);
   // Act of openning
-  ck_assert_list_sizeWithFunc((List *)stt_FORCEDOPENNING->dt->transitions, 3,
+  ck_assert_list_sizeWithFunc((List *)stt_FORCEDOPENING->dt->transitions, 3,
                               ttir);
-  ck_assert_list_sizeWithFunc((List *)stt_OPENNING->dt->transitions, 3, ttir);
+  ck_assert_list_sizeWithFunc((List *)stt_OPENING->dt->transitions, 3, ttir);
   // Interrupted actions
-  ck_assert_list_sizeWithFunc((List *)stt_INTERRUPTEDOPENNING->dt->transitions,
+  ck_assert_list_sizeWithFunc((List *)stt_INTERRUPTEDOPENING->dt->transitions,
                               3, ttir);
   // Act of closing
   ck_assert_list_sizeWithFunc((List *)stt_INTERRUPTEDCLOSING->dt->transitions,
@@ -74,11 +74,11 @@ START_TEST(test_GateStateList_transitions) {
   ck_assert_list_sizeWithFunc((List *)stt_LOCKED->dt->transitions, 1, ttit);
   ck_assert_list_sizeWithFunc((List *)stt_CLOSED->dt->transitions, 3, ttit);
   // Act of openning
-  ck_assert_list_sizeWithFunc((List *)stt_FORCEDOPENNING->dt->transitions, 2,
+  ck_assert_list_sizeWithFunc((List *)stt_FORCEDOPENING->dt->transitions, 2,
                               ttit);
-  ck_assert_list_sizeWithFunc((List *)stt_OPENNING->dt->transitions, 2, ttit);
+  ck_assert_list_sizeWithFunc((List *)stt_OPENING->dt->transitions, 2, ttit);
   // Interrupted actions
-  ck_assert_list_sizeWithFunc((List *)stt_INTERRUPTEDOPENNING->dt->transitions,
+  ck_assert_list_sizeWithFunc((List *)stt_INTERRUPTEDOPENING->dt->transitions,
                               4, ttit);
   ck_assert_list_sizeWithFunc((List *)stt_INTERRUPTEDCLOSING->dt->transitions,
                               4, ttit);

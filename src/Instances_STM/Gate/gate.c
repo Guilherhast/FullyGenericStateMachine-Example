@@ -62,7 +62,7 @@ StateMachineList *GateStateMachine_createAll(FILE *cfgFile) {
 
   SMCID ids[] = {1, 2};
 
-  // Creating gates with the different openning time,
+  // Creating gates with the different opening time,
   // but with the same lock and unlock time
   const unsigned short int nGates = 2;
   data_smc_gate *data[] = {gateData_allocAndInitNOIG(lock, unlock, open1),

@@ -80,9 +80,9 @@ TransitionList *GateTransitions_createTriggerTmp() {
   gt_fastCreate(list, NAME_CLOSING);
   gt_fastCreate(list, NAME_INTERRUPTEDCLOSING);
   gt_fastCreate(list, NAME_FORCEDCLOSING);
-  gt_fastCreate(list, NAME_OPENNING);
-  gt_fastCreate(list, NAME_INTERRUPTEDOPENNING);
-  gt_fastCreate(list, NAME_FORCEDOPENNING);
+  gt_fastCreate(list, NAME_OPENING);
+  gt_fastCreate(list, NAME_INTERRUPTEDOPENING);
+  gt_fastCreate(list, NAME_FORCEDOPENING);
   gt_fastCreate(list, NAME_OPEN);
 
   return list;

@@ -2,9 +2,9 @@
 #define GATE_STATES_H
 
 #define NAME_FCDCLOSING NAME_FORCEDCLOSING
-#define NAME_FCDOPENNING NAME_FORCEDOPENNING
+#define NAME_FCDOPENING NAME_FORCEDOPENING
 #define NAME_INCLOSING NAME_INTERRUPTEDCLOSING
-#define NAME_INOPENNING NAME_INTERRUPTEDOPENNING
+#define NAME_INOPENING NAME_INTERRUPTEDOPENING
 
 #define gt_realFastClone(l, sttName, ...)                                      \
   {                                                                            \

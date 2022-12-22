@@ -87,7 +87,7 @@ void GateConditions_addConditionFromName(StateList *sttList, char *sttName,
 
 void GateConditions_addAll(StateList *sttList) {
   // Close -> Open
-  GateConditions_addConditionFromName(sttList, NAME_CLOSED, NAME_OPENNING,
+  GateConditions_addConditionFromName(sttList, NAME_CLOSED, NAME_OPENING,
                                       openState_timeOutCheck, 1);
   // Close -> Lock
   GateConditions_addConditionFromName(sttList, NAME_CLOSED, NAME_LOCKED,

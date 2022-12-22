@@ -29,13 +29,13 @@ void *ForcedClosingState_enter(State *stt, void *data) {
 void *IntclosingState_enter(State *stt, void *data) {
   return stt_str2ptr("WARNNING: Gate closing procces intrrupted!\n", data);
 }
-void *OpenningState_enter(State *stt, void *data) {
-  return stt_str2ptr("ACTION: Openning gate.\n", data);
+void *OpeningState_enter(State *stt, void *data) {
+  return stt_str2ptr("ACTION: Opening gate.\n", data);
 }
-void *ForcedOpenningState_enter(State *stt, void *data) {
-  return stt_str2ptr("WARNNING: Forced gate Openning.\n", data);
+void *ForcedOpeningState_enter(State *stt, void *data) {
+  return stt_str2ptr("WARNNING: Forced gate Opening.\n", data);
 }
-void *IntOpenningState_enter(State *stt, void *data) {
+void *IntOpeningState_enter(State *stt, void *data) {
   return stt_str2ptr("WARNNING: Gate openning procces intrrupted!\n", data);
 }
 void *OpenState_enter(State *stt, void *data) {
@@ -48,7 +48,7 @@ void *OpenState_enter(State *stt, void *data) {
 }
 
 // EXIT TRANSITIONS
-void *IntOpenningState_exit(State *stt, void *data) {
+void *IntOpeningState_exit(State *stt, void *data) {
   return stt_str2ptr("WARNNING: Gate unblocked.\n", data);
 }
 
@@ -84,7 +84,7 @@ void *OpenState_update(State *stt, void *data) {
 // Factories
 
 // Making things one line
-#define IONGSE IntOpenningState_exit
+#define IONGSE IntOpeningState_exit
 
 StateList *GateStateList_baseFactory() {
   StateList *list = NULL;
@@ -97,9 +97,9 @@ StateList *GateStateList_baseFactory() {
   gs_fastCreate(list, NAME_INCLOSING, IntclosingState_enter, NULL, NULL);
 
   gs_fastCreate(list, NAME_OPEN, OpenState_enter, OpenState_update, NULL);
-  gs_fastCreate(list, NAME_FCDOPENNING, ForcedOpenningState_enter, NULL, NULL);
-  gs_fastCreate(list, NAME_INOPENNING, IntOpenningState_enter, NULL, IONGSE);
-  gs_fastCreate(list, NAME_OPENNING, OpenningState_enter, NULL, NULL);
+  gs_fastCreate(list, NAME_FCDOPENING, ForcedOpeningState_enter, NULL, NULL);
+  gs_fastCreate(list, NAME_INOPENING, IntOpeningState_enter, NULL, IONGSE);
+  gs_fastCreate(list, NAME_OPENING, OpeningState_enter, NULL, NULL);
 
   // To create acelerating and desacelerating states
   /*
@@ -117,19 +117,19 @@ void GateStateList_addRealTransitions(StateList *list) {
 
   // Closed states states
   gt_realFastClone(list, NAME_LOCKED, NAME_CLOSED);
-  gt_realFastClone(list, NAME_CLOSED, NAME_LOCKED, NAME_FCDOPENNING,
-                   NAME_OPENNING);
+  gt_realFastClone(list, NAME_CLOSED, NAME_LOCKED, NAME_FCDOPENING,
+                   NAME_OPENING);
 
   // Act of openning
-  gt_realFastClone(list, NAME_FCDOPENNING, NAME_OPEN, NAME_OPENNING,
-                   NAME_INOPENNING);
-  gt_realFastClone(list, NAME_OPENNING, NAME_OPEN, NAME_FCDOPENNING,
-                   NAME_INOPENNING);
+  gt_realFastClone(list, NAME_FCDOPENING, NAME_OPEN, NAME_OPENING,
+                   NAME_INOPENING);
+  gt_realFastClone(list, NAME_OPENING, NAME_OPEN, NAME_FCDOPENING,
+                   NAME_INOPENING);
 
   // Interrupted actions
-  gt_realFastClone(list, NAME_INOPENNING, NAME_INCLOSING, NAME_OPENNING,
-                   NAME_FCDOPENNING);
-  gt_realFastClone(list, NAME_INCLOSING, NAME_INOPENNING, NAME_CLOSING,
+  gt_realFastClone(list, NAME_INOPENING, NAME_INCLOSING, NAME_OPENING,
+                   NAME_FCDOPENING);
+  gt_realFastClone(list, NAME_INCLOSING, NAME_INOPENING, NAME_CLOSING,
                    NAME_FCDCLOSING);
 
   // Act of closing
@@ -146,19 +146,19 @@ void GateStateList_addTriggerTransitions(StateList *list) {
 
   // Closed states states
   gt_triggerFastClone(list, NAME_LOCKED, NAME_CLOSED);
-  gt_triggerFastClone(list, NAME_CLOSED, NAME_LOCKED, NAME_FCDOPENNING,
-                      NAME_OPENNING);
+  gt_triggerFastClone(list, NAME_CLOSED, NAME_LOCKED, NAME_FCDOPENING,
+                      NAME_OPENING);
 
   // Act of openning
-  gt_triggerFastClone(list, NAME_FCDOPENNING, NAME_OPENNING, NAME_INOPENNING,
+  gt_triggerFastClone(list, NAME_FCDOPENING, NAME_OPENING, NAME_INOPENING,
                       NAME_OPEN);
-  gt_triggerFastClone(list, NAME_OPENNING, NAME_FCDOPENNING, NAME_INOPENNING,
+  gt_triggerFastClone(list, NAME_OPENING, NAME_FCDOPENING, NAME_INOPENING,
                       NAME_OPEN);
 
   // Interrupted actions
-  gt_triggerFastClone(list, NAME_INOPENNING, NAME_OPENNING, NAME_FCDOPENNING,
+  gt_triggerFastClone(list, NAME_INOPENING, NAME_OPENING, NAME_FCDOPENING,
                       NAME_CLOSING, NAME_FCDCLOSING);
-  gt_triggerFastClone(list, NAME_INCLOSING, NAME_OPENNING, NAME_FCDOPENNING,
+  gt_triggerFastClone(list, NAME_INCLOSING, NAME_OPENING, NAME_FCDOPENING,
                       NAME_CLOSING, NAME_FCDCLOSING);
 
   // Act of closing

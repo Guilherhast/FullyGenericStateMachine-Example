@@ -18,9 +18,9 @@
 #define NAME_CLOSING "Closing"
 #define NAME_FORCEDCLOSING "ForcedClosing"
 #define NAME_INTERRUPTEDCLOSING "InterruptedClosing"
-#define NAME_OPENNING "Openning"
-#define NAME_FORCEDOPENNING "ForcedOpenning"
-#define NAME_INTERRUPTEDOPENNING "InterruptedOpenning"
+#define NAME_OPENING "Opening"
+#define NAME_FORCEDOPENING "ForcedOpening"
+#define NAME_INTERRUPTEDOPENING "InterruptedOpening"
 #define NAME_OPEN "Open"
 
 // Gate config constants

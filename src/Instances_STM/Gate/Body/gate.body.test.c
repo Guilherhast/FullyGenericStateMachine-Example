@@ -80,9 +80,9 @@ START_TEST(test_GateBody_setState) {
 
   StateMachine *smc = g->dt;
 
-  StateMachine_setState(smc, NAME_OPENNING);
+  StateMachine_setState(smc, NAME_OPENING);
 
-  ck_assert_str_eq(smc->currentState->name, NAME_OPENNING);
+  ck_assert_str_eq(smc->currentState->name, NAME_OPENING);
 
   free(dt);
   StateMachineNode_freeSafe(g);
@@ -95,11 +95,11 @@ START_TEST(test_GateBody_set_testAndTransit) {
 
   StateMachine *smc = g->dt;
 
-  StateMachine_setState(smc, NAME_OPENNING);
+  StateMachine_setState(smc, NAME_OPENING);
   StateMachine_testAndTransit(smc);
 
   ck_assert_ptr_null(smc->transition);
-  ck_assert_str_eq(smc->currentState->name, NAME_OPENNING);
+  ck_assert_str_eq(smc->currentState->name, NAME_OPENING);
 
   free(dt);
   StateMachineNode_freeSafe(g);
