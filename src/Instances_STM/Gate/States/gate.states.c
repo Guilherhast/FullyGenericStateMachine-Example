@@ -75,7 +75,7 @@ void *OpenState_update(State *stt, void *data) {
       // Store last warnning time
       data_smc_gate *smc_data = (data_smc_gate *)data;
       time(&smc_data->last_open_warnning);
-      return stt_str2ptr("WARNNING: Time opened exeeded limit\n", data);
+      return stt_str2ptr("WARNNING: Time opened exceeded limit\n", data);
     }
   }
   return NULL;

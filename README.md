@@ -295,11 +295,11 @@ set Open 2
 ACTION: Gate fully open.
 
 [ 22-12-2022 15:02:13 ]
-WARNNING: Time opened exeeded limit
+WARNNING: Time opened exceeded limit
 [ 22-12-2022 15:02:24 ]
-WARNNING: Time opened exeeded limit
+WARNNING: Time opened exceeded limit
 [ 22-12-2022 15:02:35 ]
-WARNNING: Time opened exeeded limit
+WARNNING: Time opened exceeded limit
 set Closing 2
 [ 22-12-2022 15:02:37 ]
 2
