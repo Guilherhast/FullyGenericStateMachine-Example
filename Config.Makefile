@@ -10,6 +10,9 @@ LDS=ls -d1
 MK=make
 MKC=make -C
 
+RM=rm
+
+DXG=doxygen
 
 ## Compiler
 CC=$(shell which gcc)
@@ -30,8 +33,14 @@ LIB_FLAGS=$(TST_LIBS) $(COV_LIBS)
 ### Global directories
 SRC_DIR=$(ROOTDIR)/src
 TST_DIR=$(ROOTDIR)/test
-BUILD_DIR=$(ROOTDIR)/build
-COV_DIR=$(ROOTDIR)/coverage
+BUILD_DIR=$(ROOTDIR)/bin
+
+###Documentation
+META_DIR=$(ROOTDIR)/meta
+COV_DIR=$(META_DIR)/coverage
+DOC_DIR=$(META_DIR)/html
+
+DOX_CFG=$(ROOTDIR)/docs.config
 
 ### Import files
 RULES_MAKE=$(ROOTDIR)/Rules.Makefile
@@ -66,16 +75,26 @@ PY=$(shell which python)
 
 PORT=8000
 
-SERVERFLAGS= -m http.server --directory $(COV_DIR) $(PORT)
+SERVERFLAGS= -m http.server --directory $(META_DIR) $(PORT)
 
-REDHTML= '<html>										\
-		<head>											\
-			<meta http-equiv="refresh"					\
-			content="0; url=coverage_details.html" />	\
-		</head>											\
-	</html>'
+define REDHTML
+<!DOCTYPE html>
+<html style="display:flex; justify-content: center; background-color: #080808;">
+<head>
+	<title>Docs</title>
+	<style>
+	a { background-color: black; color: white; height: 48px;}
+		a:hover { background-color: midnightblue; }
+	</style>
+</head>
+<body style="display:flex; max-height: 96px; flex-direction: column; font-size: 48px;">
+	<a href="$(notdir $(DOC_DIR))/files.html">Docs</a>
+	<a href="$(notdir $(COV_DIR))/coverage_details.html">Coverage</a>
+</body>
+</html>
+endef
 
-REDPAGE=$(COV_DIR)/index.html
+REDPAGE=$(META_DIR)/index.html
 
 ##  Auxiliar variables
 COLOR_RED="\033[1;31m"
@@ -97,22 +116,28 @@ color_reset:
 	$(ECE) $(COLOR_RESTORE)
 
 clean:
-	$(SAFE) rm -rf $(BUILD_DIR) $(TST_DIR) $(COV_DIR)
+	$(SAFE) rm -rf $(BUILD_DIR) $(TST_DIR) $(META_DIR)
 
 watch:
 	( $(LDS) $(ALWAYSWATCH);		\
 	find $(WDIR) $(FNDARGS) ) |		\
 	entr -nrc $(MK) color_reset $(WCMD)
 
-dirs: $(TST_DIR) $(BUILD_DIR) $(COV_DIR)
+dirs: $(TST_DIR) $(BUILD_DIR) $(COV_DIR) $(DOC_DIR)
 
 gcov: $(COV_DIR) $(REDPAGE) test
 	$(SAFE) $(GCOV) $(GCOV_FLAGS)
 
-$(REDPAGE): $(COV_DIR)
-	$(ECE) $(REDHTML) > $(REDPAGE)
+dox:
+	$(SAFE) $(DXG) $(DOX_CFG)
 
-serve: gcov
+doc: gcov dox
+
+export REDHTML
+$(REDPAGE): $(COV_DIR)
+	$(ECE) "$$REDHTML" > $(REDPAGE)
+
+serve: doc
 	$(SAFE) $(PY) $(SERVERFLAGS)
 
 count:
@@ -128,6 +153,8 @@ $(BUILD_DIR):
 $(COV_DIR):
 	$(SAFE) mkdir -p $(COV_DIR)
 
+$(DOC_DIR):
+	$(SAFE) mkdir -p $(COV_DIR)
 
 ## Import modules
 ### Defining SETUP
@@ -163,6 +190,7 @@ export ENV_STR
 $(ENV_CFG):
 	[ ! -f $@ ] && $(ECE) "$$ENV_STR" > $@
 
+.INTERMEDIATE: $(wildcard $(BUILD_DIR)/*.o)
 ### Project rules
 $(EXECUTABLE): $(MODOBJ_MAIN) $(ALL_MODOBJS)
 	$(SAFE) $(CC) $^ $(LIB_FLAGS) -o $@
@@ -173,7 +201,15 @@ run: $(EXECUTABLE) $(ENV_CFG)
 	$(SAFE) $(GDB) $< $(ENV_CFG)
 	$(ECE) $(COLOR_RESTORE)
 
-build: $(BUILD_DIR) main
+build: $(BUILD_DIR)
+	$(SAFE) $(MK) BUILD=true $(BUILD_DIR)/$(notdir $(EXECUTABLE))
+
+bin_clear:
+	$(SAFE) $(RM) $(BUILD_DIR)/*.o
+
+bin_only:
+	$(MKC) $(ROOTDIR) build bin_clear
+
 
 ## System
 CONFIG_SOURCED=true

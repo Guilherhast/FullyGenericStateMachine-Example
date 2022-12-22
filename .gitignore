@@ -1,7 +1,7 @@
 #Folders
 /test
-/build
-/coverage
+/bin
+/meta
 
 #Temp files
 .env
