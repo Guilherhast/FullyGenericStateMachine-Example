@@ -6,9 +6,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define MAXSTR 256
 #define MAXDEVICES 64
+#define STAMPSIZE 24
 
 void reverse(char *s);
 void itoa(int n, char s[]);
@@ -25,5 +27,7 @@ unsigned int *strToIdList(char *str);
 char *str_toUpper(char *str);
 char *cp_word(char *in, char *out);
 #define cp_wordUpper(i, o) str_toUpper(cp_word(i, o))
+
+char *strUtils_getTimeStamp();
 
 #endif

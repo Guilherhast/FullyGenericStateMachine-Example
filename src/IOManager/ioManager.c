@@ -107,20 +107,15 @@ char *IOManager_getNext() {
 
 char *IOManager_extractStr(ioData *data) { return data->str; }
 
-/*
-void IOManager_answer(ioData *data) {
-FILE *outF = OFILE ? OFILE : stdin;
-fprintf(outF, "%s\n", data->str);
-}
-*/
-
 void IOManager_update(ioData *data, char *str) {
-  if (!str) {
+  if (!(str && str[0])) {
     return;
   }
+  char *time = strUtils_getTimeStamp();
 
   FILE *outFile = OFILE ? OFILE : stdout;
-  fprintf(outFile, "%s", str);
+  fprintf(outFile, "[ %s ]\n%s", time, str);
+  free(time);
 }
 
 void IOManager_updateCur(char *str) { IOManager_update(NULL, str); }

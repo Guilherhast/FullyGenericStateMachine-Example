@@ -10,7 +10,12 @@ static FILE *tmpOut;
 #define LINEIN "getinfo 1990"
 #define LINEOUT "Machine online"
 
+#define FAKESTAMP "01-01-1900 00:00:00"
+#define FAKESTAMPSUROUNDED "[ 01-01-1900 00:00:00 ]"
+
 void cleanNewLine(char *str, USint *size);
+
+char *strUtils_getTimeStamp() { return strdup(FAKESTAMP); }
 
 void before(char *line) {
   tmpIn = tmpfile();
@@ -70,7 +75,6 @@ START_TEST(test_ioManager_getNext) {
 }
 END_TEST
 
-
 START_TEST(test_ioManager_nextReady_text) {
   before(LINEIN);
 
@@ -104,7 +108,7 @@ START_TEST(test_ioManager_readIO_data) {
 
   char *r = ioManager_readIO(des);
 
-  ck_assert_str_eq(r,LINEIN);
+  ck_assert_str_eq(r, LINEIN);
 
   after();
 }
@@ -130,14 +134,16 @@ START_TEST(test_ioManager_update) {
 
   char *line = NULL;
   size_t size = 0;
+
   USint len = getline(&line, &size, out);
 
   cleanNewLine(line, &len);
+  ck_assert_str_eq(line, FAKESTAMPSUROUNDED);
 
+  len = getline(&line, &size, out);
+
+  cleanNewLine(line, &len);
   ck_assert_str_eq(line, data->str);
-
-  /*
-   */
 
   free(data->str);
   free(data);

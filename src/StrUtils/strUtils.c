@@ -1,5 +1,17 @@
 #include "strUtils.h"
 
+char *strUtils_getTimeStamp() {
+  char *buffer = malloc(sizeof(char) * STAMPSIZE);
+  char fmt[] = "%d-%m-%Y %H:%M:%S";
+
+  time_t tt;
+  time(&tt);
+
+  strftime(buffer, STAMPSIZE, fmt, localtime(&tt));
+
+  return buffer;
+}
+
 unsigned int *strToIdList(char *str) {
   if (!str) {
     return NULL;

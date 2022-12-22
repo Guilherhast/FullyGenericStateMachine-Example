@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include "../consts.h"
+#include "../StrUtils/strUtils.h"
 
 #define MAXLINE 256
 

@@ -40,8 +40,11 @@ void setup(int argc, char *argv[]) {
     proccesExit(1);
   }
 
-  printf("The state machines were initalizated.\n");
-  printf("Updating each %dms\n", DELAY);
+  char str[MAXLINE];
+  sprintf(str, "Updating each %dms\n", DELAY);
+
+  IOManager_updateAll("The state machines were initalizated.\n");
+  IOManager_updateAll(str);
 }
 
 void update() { //<- Domesticating my linter
