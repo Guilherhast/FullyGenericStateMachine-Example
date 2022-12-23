@@ -249,6 +249,7 @@ make watch WCMD='run'
 ```
 
 This command will fire a `make run` every time the source is changed.
+In this case you won't be able to use the `stdin` of the program.
 
 ## Example
 
