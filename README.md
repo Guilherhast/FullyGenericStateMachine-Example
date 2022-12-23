@@ -23,6 +23,8 @@ Instructions to use it and make the tests are written below.
 
 ## Dependencies
 
+All the commands used in this document are supposed to be ran in a Linux enviroment.
+
 ### Programs
 
 `make`
@@ -331,14 +333,18 @@ ACTION: Gate closed.
 
 <https://libcheck.github.io/check/>
 
+### fff
+
+<https://github.com/meekrosoft/fff>
+
 ### Doxygen
 
 <https://www.doxygen.nl/manual/index.html>
 
+### Graphviz
+
+<https://graphviz.org/>
+
 ### Entr
 
-<https://www.doxygen.nl/manual/index.html>
-
-### fff
-<https://github.com/meekrosoft/fff>
-
+<https://github.com/eradman/entr>
