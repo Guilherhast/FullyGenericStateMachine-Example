@@ -25,12 +25,14 @@ Instructions to use it and make the tests are written below.
 
 ### Programs
 
-`gcc`
 `make`
+`gcc`
+`gcovr`
 `python`
 `awk`
 `entr`
 `doxygen`
+`graphviz`
 
 ### Libraries
 

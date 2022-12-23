@@ -1,18 +1,19 @@
 # Global makefile variables
 
 ## Fast Commands
-ECE=echo -e
-ENE=echo -ne
+ECE=$(shell which echo) -e
+ENE=$(shell which echo) -ne
 
-LSS=ls -d --color=auto
-LDS=ls -d1
+LSS=$(shell which ls) -d --color=auto
+LDS=$(shell which ls) -d1
 
-MK=make
-MKC=make -C
+MK=$(shell which make)
+MKC=$(shell which make) -C
 
-RM=rm
+RM=$(shell which rm)
 
-DXG=doxygen
+DXG=$(shell which doxygen)
+
 
 ## Compiler
 CC=$(shell which gcc)
@@ -23,10 +24,22 @@ DEBUGFLAGS= -g3
 CFLAGS= $(BASEFLAGS) $(DEBUGFLAGS)
 PROFILE_FLAGS=-fprofile-arcs -ftest-coverage
 
-TST_LIBS= -lcheck -lm -lpthread -lrt
 COV_LIBS= -lgcov -coverage
+TST_LIBS= -lcheck -lm -lpthread -lrt
 
 LIB_FLAGS=$(TST_LIBS) $(COV_LIBS)
+
+#### Debian fix
+DVNL=/dev/null
+CEMPTY=-x c -o $(DVNL) - >$(DVNL) 2>$(DVNL)
+CPROG="int main(){}"
+
+SU=-lsubunit
+HASSU=$(shell $(ECE) $(CPROG) | $(CC) $(SU) $(CEMPTY)  ; $(ECE) $$? )
+
+ifeq ($(HASSU),0)
+TST_LIBS+= $(SU)
+endif
 
 ## Files
 
@@ -65,13 +78,13 @@ ALWAYSWATCH=$(RULES_MAKE)	\
 
 ## Coverage
 GCOV=$(shell which gcovr)
-GCOV_FOLDERS=-r $(ROOTDIR)/ --object-directory=$(TST_DIR)/ -o $(COV_DIR)/
+GCOV_FOLDERS=-r $(ROOTDIR)/ --object-directory=$(TST_DIR)/ -o $(COV_DIR)/index.html
 GCOV_ARGS=--html-details
 
 GCOV_FLAGS=$(GCOV_FOLDERS) $(GCOV_ARGS)
 
 ### Server
-PY=$(shell which python)
+PY=$(shell which python3)
 
 PORT=8000
 
@@ -89,7 +102,7 @@ define REDHTML
 </head>
 <body style="display:flex; max-height: 96px; flex-direction: column; font-size: 48px;">
 	<a href="$(notdir $(DOC_DIR))/files.html">Docs</a>
-	<a href="$(notdir $(COV_DIR))/coverage_details.html">Coverage</a>
+	<a href="$(notdir $(COV_DIR))/index.html">Coverage</a>
 </body>
 </html>
 endef
